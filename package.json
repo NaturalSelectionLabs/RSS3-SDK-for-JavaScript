@@ -1,0 +1,49 @@
+{
+    "name": "rss3",
+    "version": "0.1.0",
+    "description": "",
+    "browser": "lib/index.ts",
+    "scripts": {
+        "dev": "webpack serve --mode development",
+        "build": "webpack --mode production",
+        "prepare": "husky install"
+    },
+    "lint-staged": {
+        "**/*": "prettier --write --ignore-unknown"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/NaturalSelectionLabs/RSS3-SDK.git"
+    },
+    "keywords": [
+        "rss3"
+    ],
+    "author": "DIYgod",
+    "bugs": {
+        "url": "https://github.com/NaturalSelectionLabs/RSS3-SDK/issues"
+    },
+    "homepage": "https://github.com/NaturalSelectionLabs/RSS3-SDK#readme",
+    "dependencies": {
+        "assert": "2.0.0",
+        "axios": "0.21.1",
+        "buffer": "6.0.3",
+        "crypto-browserify": "3.12.0",
+        "eth-crypto": "1.9.0",
+        "process": "0.11.10",
+        "stream-browserify": "3.0.0",
+        "typescript-is": "0.18.2"
+    },
+    "devDependencies": {
+        "@babel/core": "7.14.3",
+        "@babel/preset-env": "7.14.2",
+        "babel-loader": "8.2.2",
+        "husky": "6.0.0",
+        "lint-staged": "11.0.0",
+        "prettier": "2.3.0",
+        "ts-loader": "9.2.1",
+        "typescript": "4.2.4",
+        "webpack": "5.37.1",
+        "webpack-cli": "4.7.0",
+        "webpack-dev-server": "4.0.0-beta.3"
+    }
+}
