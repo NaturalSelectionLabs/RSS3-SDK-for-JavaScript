@@ -7,7 +7,7 @@ import axois from 'axios';
 interface IOption {
     endpoint: string;
     privateKey?: string;
-    initCallback?: () => void;
+    callback?: (persona?: IRSS3) => void;
 }
 
 interface IItemIn {
@@ -45,9 +45,11 @@ class RSS3 {
         this.endpoint = option.endpoint;
         if (option.privateKey) {
             this.privateKey = option.privateKey;
-            this.address = EthCrypto.publicKey.toAddress(option.privateKey);
+            this.address = EthCrypto.publicKey.toAddress(
+                EthCrypto.publicKeyByPrivateKey(option.privateKey),
+            );
             this.getFile(this.address).then(() => {
-                option.initCallback?.();
+                option.callback?.(<IRSS3>this.files[this.address]);
             });
         } else {
             const keys = EthCrypto.createIdentity();
@@ -61,7 +63,7 @@ class RSS3 {
                 date_updated: nowDate,
             };
             this.dirtyFiles[this.address] = 1;
-            option.initCallback?.();
+            option.callback?.(<IRSS3>this.files[this.address]);
         }
     }
 
@@ -202,25 +204,42 @@ class RSS3 {
             });
         } else {
             return new Promise(async (resolve, reject) => {
-                const content = await axois({
-                    method: 'get',
-                    url: `${this.endpoint}/files/${fileID}`,
-                });
-                if (equals<IRSS3Content>(content)) {
-                    const message = JSON.stringify(
-                        utils.removeNotSignProperties(content),
-                    );
-                    const signer = EthCrypto.recover(
-                        content.signature,
-                        EthCrypto.hash.keccak256(message),
-                    );
-                    if (signer === fileID.split('-')[0]) {
-                        resolve(content);
+                try {
+                    const content = await axois({
+                        method: 'get',
+                        url: `${this.endpoint}/files/${fileID}`,
+                    });
+                    if (equals<IRSS3Content>(content)) {
+                        const message = JSON.stringify(
+                            utils.removeNotSignProperties(content),
+                        );
+                        const signer = EthCrypto.recover(
+                            content.signature,
+                            EthCrypto.hash.keccak256(message),
+                        );
+                        if (signer === fileID.split('-')[0]) {
+                            this.files[fileID] = content;
+                            resolve(this.files[fileID]);
+                        } else {
+                            reject();
+                        }
                     } else {
                         reject();
                     }
-                } else {
-                    reject();
+                } catch (error) {
+                    if (error.response.status === 404) {
+                        const nowDate = new Date().toISOString();
+                        this.files[fileID] = {
+                            id: fileID,
+                            '@version': 'rss3.io/version/v0.1.0',
+                            date_created: nowDate,
+                            date_updated: nowDate,
+                        };
+                        this.dirtyFiles[fileID] = 1;
+                        resolve(this.files[fileID]);
+                    } else {
+                        reject();
+                    }
                 }
             });
         }
