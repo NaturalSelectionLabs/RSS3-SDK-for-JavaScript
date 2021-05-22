@@ -205,10 +205,11 @@ class RSS3 {
         } else {
             return new Promise(async (resolve, reject) => {
                 try {
-                    const content = await axois({
+                    const data = await axois({
                         method: 'get',
                         url: `${this.endpoint}/files/${fileID}`,
                     });
+                    const content = data.data;
                     if (equals<IRSS3Content>(content)) {
                         const message = JSON.stringify(
                             utils.removeNotSignProperties(content),
@@ -221,10 +222,10 @@ class RSS3 {
                             this.files[fileID] = content;
                             resolve(this.files[fileID]);
                         } else {
-                            reject();
+                            reject('The signature does not match.');
                         }
                     } else {
-                        reject();
+                        reject('Incorrectly formatted content.');
                     }
                 } catch (error) {
                     if (error.response.status === 404) {
@@ -238,14 +239,14 @@ class RSS3 {
                         this.dirtyFiles[fileID] = 1;
                         resolve(this.files[fileID]);
                     } else {
-                        reject();
+                        reject('Server response error.');
                     }
                 }
             });
         }
     }
 
-    deleteFile(fileID: string) {
+    deleteFile() {
         return axois({
             method: 'delete',
             url: `${this.endpoint}/files`,
