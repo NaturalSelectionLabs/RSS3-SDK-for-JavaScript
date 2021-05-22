@@ -47,7 +47,7 @@ class RSS3 {
             this.privateKey = option.privateKey;
             this.address = EthCrypto.publicKey.toAddress(option.privateKey);
             this.getFile(this.address).then(() => {
-                option.initCallback();
+                option.initCallback?.();
             });
         } else {
             const keys = EthCrypto.createIdentity();
@@ -60,7 +60,8 @@ class RSS3 {
                 date_created: nowDate,
                 date_updated: nowDate,
             };
-            option.initCallback();
+            this.dirtyFiles[this.address] = 1;
+            option.initCallback?.();
         }
     }
 
@@ -180,19 +181,18 @@ class RSS3 {
     }
 
     syncFile(fileIDs: string[] = Object.keys(this.dirtyFiles)) {
-        return Promise.all(
-            fileIDs.map(async (fileID) => {
-                const content = this.files[fileID];
-                content.signature = this.sign(content);
-                return axois({
-                    method: 'put',
-                    url: `${this.endpoint}/file/${fileID}`,
-                    data: {
-                        content: content,
-                    },
-                });
-            }),
-        );
+        const contents = fileIDs.map((fileID) => {
+            const content = this.files[fileID];
+            content.signature = this.sign(content);
+            return content;
+        });
+        return axois({
+            method: 'put',
+            url: `${this.endpoint}/files`,
+            data: {
+                contents: contents,
+            },
+        });
     }
 
     getFile(fileID: string): Promise<IRSS3Content> {
@@ -204,7 +204,7 @@ class RSS3 {
             return new Promise(async (resolve, reject) => {
                 const content = await axois({
                     method: 'get',
-                    url: `${this.endpoint}/file/${fileID}`,
+                    url: `${this.endpoint}/files/${fileID}`,
                 });
                 if (equals<IRSS3Content>(content)) {
                     const message = JSON.stringify(
@@ -229,11 +229,11 @@ class RSS3 {
     deleteFile(fileID: string) {
         return axois({
             method: 'delete',
-            url: `${this.endpoint}/file/${fileID}`,
+            url: `${this.endpoint}/files`,
             data: {
                 signature: EthCrypto.sign(
                     this.privateKey,
-                    EthCrypto.hash.keccak256(`delete${fileID}`),
+                    EthCrypto.hash.keccak256(`delete`),
                 ),
             },
         });

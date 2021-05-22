@@ -1,5 +1,3 @@
-import EthCrypto from 'eth-crypto';
-
 export default {
     removeEmptyProperties(
         obj: any,
@@ -33,7 +31,7 @@ export default {
             if (key[0] === '@' || key === 'signature') {
                 delete obj[key];
             } else if (typeof obj[key] === 'object') {
-                this.removeAtProperties(obj[key]);
+                this.removeNotSignProperties(obj[key]);
             }
         }
         return obj;
