@@ -68,7 +68,10 @@ class RSS3 {
     }
 
     profilePatch(profile: IRSS3Profile) {
-        if (equals<IRSS3Profile>(profile)) {
+        if (
+            utils.attributeslengthCheck(profile) &&
+            equals<IRSS3Profile>(profile)
+        ) {
             const file = <IRSS3>this.files[this.address];
             file.profile = Object.assign({}, file.profile, profile);
             utils.removeEmptyProperties(file.profile, {
@@ -83,7 +86,7 @@ class RSS3 {
     }
 
     itemPost(itemIn: IItemIn) {
-        if (equals<IItemIn>(itemIn)) {
+        if (utils.attributeslengthCheck(itemIn) && equals<IItemIn>(itemIn)) {
             const nowDate = new Date().toISOString();
             const file = <IRSS3>this.files[this.address];
             if (!file.items) {
@@ -114,9 +117,9 @@ class RSS3 {
                 const newList = file.items.slice(1);
                 const newID =
                     this.address +
-                    '-' +
+                    '-items-' +
                     (file.items_next
-                        ? parseInt(file.items_next.split('-')[1]) + 1
+                        ? parseInt(file.items_next.split('-')[2]) + 1
                         : 1);
                 this.files[newID] = {
                     id: newID,
@@ -144,7 +147,11 @@ class RSS3 {
     }
 
     async itemsPatch(itemIn: IItemIn, fileID: string) {
-        if (itemIn.id && equals<IItemIn>(itemIn)) {
+        if (
+            utils.attributeslengthCheck(itemIn) &&
+            itemIn.id &&
+            equals<IItemIn>(itemIn)
+        ) {
             const file = await this.getFile(fileID);
             if (equals<IRSS3 | IRSS3Items>(file)) {
                 const index = file.items.findIndex(
@@ -194,6 +201,10 @@ class RSS3 {
             data: {
                 contents: contents,
             },
+        }).then(() => {
+            fileIDs.forEach((fileID) => {
+                delete this.dirtyFiles[fileID];
+            });
         });
     }
 

@@ -1,3 +1,5 @@
+import config from './config';
+
 export default {
     removeEmptyProperties(
         obj: any,
@@ -35,5 +37,25 @@ export default {
             }
         }
         return obj;
+    },
+
+    attributeslengthCheck(obj: any) {
+        let result = true;
+        for (let key in obj) {
+            if (
+                typeof obj[key] === 'object' &&
+                !this.attributeslengthCheck(obj[key])
+            ) {
+                result = false;
+                break;
+            } else if (
+                obj[key].length &&
+                obj[key].length > config.maxValueLength
+            ) {
+                result = false;
+                break;
+            }
+        }
+        return result;
     },
 };
