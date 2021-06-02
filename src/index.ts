@@ -58,7 +58,7 @@ class RSS3 {
             const nowDate = new Date().toISOString();
             (<RSS3Index>this.files[this.address]) = {
                 id: this.address,
-                '@version': 'rss3.io/version/v0.1.0',
+                '@version': config.version,
                 date_created: nowDate,
                 date_updated: nowDate,
                 signature: '',
@@ -125,7 +125,7 @@ class RSS3 {
                         : 1);
                 this.files[newID] = {
                     id: newID,
-                    '@version': 'rss3.io/version/v0.1.0',
+                    '@version': config.version,
                     date_created: nowDate,
                     date_updated: nowDate,
                     signature: '',
@@ -246,7 +246,7 @@ class RSS3 {
                         const nowDate = new Date().toISOString();
                         this.files[fileID] = {
                             id: fileID,
-                            '@version': 'rss3.io/version/v0.1.0',
+                            '@version': config.version,
                             date_created: nowDate,
                             date_updated: nowDate,
                             signature: '',
