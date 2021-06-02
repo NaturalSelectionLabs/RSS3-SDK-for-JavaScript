@@ -1,40 +1,39 @@
-type IRSS3ID = string;
-type IRSS3ItemID = string;
-type IRSS3ItemsID = string;
-type IRSS3ListID = string;
+type RSS3ID = string;
+type RSS3ItemID = string;
+type RSS3ItemsID = string;
+type RSS3ListID = string;
 type ThirdPartyAddress = string[];
 
-type IRSS3Content = IRSS3 | IRSS3Items | IRSS3List;
+type RSS3IContent = RSS3Index | RSS3Items;
+type RSS3Content = RSS3IContent | RSS3List;
 
 // Common attributes for each files
-interface IRSS3Base {
-    id: IRSS3ID | IRSS3ItemsID | IRSS3ListID;
+interface RSS3Base {
+    id: RSS3ID | RSS3ItemsID | RSS3ListID;
     '@version': 'rss3.io/version/v0.1.0';
     date_created: string;
     date_updated: string;
-    signature?: string;
 }
 
-// Entrance, IRSS3 file
-interface IRSS3 extends IRSS3Base {
-    id: IRSS3ID;
+// Entrance, RSS3 file
+interface RSS3Index extends RSS3Base {
+    id: RSS3ID;
+    signature: string;
 
-    profile?: IRSS3Profile;
+    profile?: RSS3Profile;
 
-    items?: IRSS3Item[];
-    items_next?: IRSS3ItemsID;
+    items?: RSS3Item[];
+    items_next?: RSS3ItemsID;
 
     links?: {
         type: string;
         tags?: string[];
-        list: IRSS3ID[];
-        list_next?: IRSS3ListID;
-        signature?: string;
+        list: RSS3ID[];
+        signature: string;
     }[];
     '@backlinks'?: {
         type: string;
-        list: IRSS3ID[];
-        list_next?: IRSS3ListID;
+        list: RSS3ListID;
     }[];
 
     assets?: {
@@ -44,25 +43,26 @@ interface IRSS3 extends IRSS3Base {
     }[];
 }
 
-// IRSS3Items file
-interface IRSS3Items extends IRSS3Base {
-    id: IRSS3ItemsID;
+// RSS3Items file
+interface RSS3Items extends RSS3Base {
+    id: RSS3ItemsID;
+    signature: string;
 
-    items: IRSS3Item[];
-    items_next?: IRSS3ItemsID;
+    items: RSS3Item[];
+    items_next?: RSS3ItemsID;
 }
 
-// IRSS3List file
-interface IRSS3List extends IRSS3Base {
-    id: IRSS3ListID;
+// RSS3List file
+interface RSS3List extends RSS3Base {
+    id: RSS3ListID;
 
-    list: IRSS3ID[] | IRSS3ItemID[];
-    list_next?: IRSS3ListID;
+    list?: RSS3ID[] | RSS3ItemID[];
+    list_next?: RSS3ListID;
 }
 
-interface IRSS3Item {
-    id: IRSS3ItemID;
-    authors?: IRSS3ID[];
+interface RSS3Item {
+    id: RSS3ItemID;
+    authors?: RSS3ID[];
     title?: string;
     summary?: string;
     tags?: string[];
@@ -70,7 +70,7 @@ interface IRSS3Item {
     date_modified?: string;
 
     type?: string;
-    upstream?: IRSS3ItemID;
+    upstream?: RSS3ItemID;
 
     contents?: {
         address: ThirdPartyAddress;
@@ -83,17 +83,16 @@ interface IRSS3Item {
 
     '@contexts'?: {
         type?: string;
-        list: IRSS3ItemID[];
-        list_next?: IRSS3ListID;
+        list: RSS3ListID;
     }[];
 
-    signature?: string;
+    signature: string;
 }
 
-interface IRSS3Profile {
+interface RSS3Profile {
     name?: string;
     avatar?: ThirdPartyAddress;
     bio?: string;
     tags?: string[];
-    signature?: string;
+    signature: string;
 }

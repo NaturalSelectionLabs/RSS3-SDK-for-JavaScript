@@ -7,18 +7,18 @@ import axois from 'axios';
 interface IOption {
     endpoint: string;
     privateKey?: string;
-    callback?: (persona?: IRSS3) => void;
+    callback?: (persona?: RSS3Index) => void;
 }
 
 interface IItemIn {
     id?: string;
-    authors?: IRSS3ID[];
+    authors?: RSS3ID[];
     title?: string;
     summary?: string;
     tags?: string[];
 
     type?: string;
-    upstream?: IRSS3ItemID;
+    upstream?: RSS3ItemID;
 
     contents?: {
         address: ThirdPartyAddress;
@@ -34,7 +34,7 @@ class RSS3 {
     private privateKey: string;
     private address: string;
     private files: {
-        [key: string]: IRSS3Content;
+        [key: string]: RSS3IContent;
     } = {};
     private dirtyFiles: {
         [key: string]: number;
@@ -49,30 +49,31 @@ class RSS3 {
                 EthCrypto.publicKeyByPrivateKey(option.privateKey),
             );
             this.getFile(this.address).then(() => {
-                option.callback?.(<IRSS3>this.files[this.address]);
+                option.callback?.(<RSS3Index>this.files[this.address]);
             });
         } else {
             const keys = EthCrypto.createIdentity();
             this.privateKey = keys.privateKey;
             this.address = keys.address;
             const nowDate = new Date().toISOString();
-            (<IRSS3>this.files[this.address]) = {
+            (<RSS3Index>this.files[this.address]) = {
                 id: this.address,
                 '@version': 'rss3.io/version/v0.1.0',
                 date_created: nowDate,
                 date_updated: nowDate,
+                signature: '',
             };
             this.dirtyFiles[this.address] = 1;
-            option.callback?.(<IRSS3>this.files[this.address]);
+            option.callback?.(<RSS3Index>this.files[this.address]);
         }
     }
 
-    profilePatch(profile: IRSS3Profile) {
+    profilePatch(profile: RSS3Profile) {
         if (
             utils.attributeslengthCheck(profile) &&
-            equals<IRSS3Profile>(profile)
+            equals<RSS3Profile>(profile)
         ) {
-            const file = <IRSS3>this.files[this.address];
+            const file = <RSS3Index>this.files[this.address];
             file.profile = Object.assign({}, file.profile, profile);
             utils.removeEmptyProperties(file.profile, {
                 obj: file,
@@ -88,7 +89,7 @@ class RSS3 {
     itemPost(itemIn: IItemIn) {
         if (utils.attributeslengthCheck(itemIn) && equals<IItemIn>(itemIn)) {
             const nowDate = new Date().toISOString();
-            const file = <IRSS3>this.files[this.address];
+            const file = <RSS3Index>this.files[this.address];
             if (!file.items) {
                 file.items = [];
             }
@@ -97,7 +98,7 @@ class RSS3 {
                 ? parseInt(file.items[0].id.split('-')[2]) + 1
                 : 0;
 
-            const item: IRSS3Item = Object.assign(
+            const item: RSS3Item = Object.assign(
                 {
                     authors: [this.address],
                 },
@@ -106,6 +107,7 @@ class RSS3 {
                     id: `${this.address}-item-${id}`,
                     date_published: nowDate,
                     date_modified: nowDate,
+                    signature: '',
                 },
             );
             utils.removeEmptyProperties(item);
@@ -126,6 +128,7 @@ class RSS3 {
                     '@version': 'rss3.io/version/v0.1.0',
                     date_created: nowDate,
                     date_updated: nowDate,
+                    signature: '',
 
                     items: newList,
                     items_next: file.items_next,
@@ -153,7 +156,7 @@ class RSS3 {
             equals<IItemIn>(itemIn)
         ) {
             const file = await this.getFile(fileID);
-            if (equals<IRSS3 | IRSS3Items>(file)) {
+            if (equals<RSS3IContent>(file)) {
                 const index = file.items.findIndex(
                     (item) => item.id === itemIn.id,
                 );
@@ -208,7 +211,7 @@ class RSS3 {
         });
     }
 
-    getFile(fileID: string): Promise<IRSS3Content> {
+    getFile(fileID: string): Promise<RSS3IContent> {
         if (this.files[fileID]) {
             return new Promise((resolve) => {
                 resolve(this.files[fileID]);
@@ -221,7 +224,7 @@ class RSS3 {
                         url: `${this.endpoint}/files/${fileID}`,
                     });
                     const content = data.data;
-                    if (equals<IRSS3Content>(content)) {
+                    if (equals<RSS3IContent>(content)) {
                         const message = JSON.stringify(
                             utils.removeNotSignProperties(content),
                         );
@@ -246,6 +249,7 @@ class RSS3 {
                             '@version': 'rss3.io/version/v0.1.0',
                             date_created: nowDate,
                             date_updated: nowDate,
+                            signature: '',
                         };
                         this.dirtyFiles[fileID] = 1;
                         resolve(this.files[fileID]);

@@ -1,5 +1,4 @@
 export default {
-    itemPageSize: 20,
-    listPageSize: 2000,
+    itemPageSize: 100,
     maxValueLength: 280,
 };
