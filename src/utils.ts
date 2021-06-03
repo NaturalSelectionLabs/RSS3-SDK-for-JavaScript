@@ -79,11 +79,7 @@ export default {
     },
 
     sign(obj: AnyObject, privateKey: string) {
-        const message = JSON.stringify(removeNotSignProperties(obj));
-        obj.signature = EthCrypto.sign(
-            privateKey,
-            EthCrypto.hash.keccak256(message),
-        );
+        obj.signature = EthCrypto.sign(privateKey, hash(obj));
     },
 
     check(obj: AnyObject, persona: string) {
