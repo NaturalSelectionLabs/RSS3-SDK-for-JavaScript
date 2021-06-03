@@ -29,6 +29,12 @@ interface IItemIn {
         duration_in_seconds?: string;
     }[];
 }
+interface IProfileIn {
+    name?: string;
+    avatar?: ThirdPartyAddress;
+    bio?: string;
+    tags?: string[];
+}
 
 class RSS3 {
     private privateKey: string;
@@ -68,13 +74,14 @@ class RSS3 {
         }
     }
 
-    profilePatch(profile: RSS3Profile) {
+    profilePatch(profile: IProfileIn) {
         if (
             utils.attributeslengthCheck(profile) &&
-            equals<RSS3Profile>(profile)
+            equals<IProfileIn>(profile)
         ) {
             const file = <RSS3Index>this.files[this.address];
             file.profile = Object.assign({}, file.profile, profile);
+            utils.sign(file.profile, this.privateKey);
             utils.removeEmptyProperties(file.profile, {
                 obj: file,
                 key: 'profile',
@@ -111,7 +118,7 @@ class RSS3 {
                 },
             );
             utils.removeEmptyProperties(item);
-            item.signature = this.sign(item);
+            utils.sign(item, this.privateKey);
 
             file.items.unshift(item);
 
@@ -169,7 +176,7 @@ class RSS3 {
                         },
                     );
                     utils.removeEmptyProperties(file.items[index]);
-                    file.items[index].signature = this.sign(file.items[index]);
+                    utils.sign(file.items[index], this.privateKey);
 
                     this.dirtyFiles[fileID] = 1;
                     return file.items[index];
@@ -195,12 +202,12 @@ class RSS3 {
     syncFile(fileIDs: string[] = Object.keys(this.dirtyFiles)) {
         const contents = fileIDs.map((fileID) => {
             const content = this.files[fileID];
-            content.signature = this.sign(content);
+            utils.sign(content, this.privateKey);
             return content;
         });
         return axois({
             method: 'put',
-            url: `${this.endpoint}/files`,
+            url: this.endpoint,
             data: {
                 contents: contents,
             },
@@ -221,18 +228,15 @@ class RSS3 {
                 try {
                     const data = await axois({
                         method: 'get',
-                        url: `${this.endpoint}/files/${fileID}`,
+                        url: `${this.endpoint}/${fileID}`,
                     });
                     const content = data.data;
                     if (equals<RSS3IContent>(content)) {
-                        const message = JSON.stringify(
-                            utils.removeNotSignProperties(content),
+                        const check = utils.check(
+                            content,
+                            fileID.split('-')[0],
                         );
-                        const signer = EthCrypto.recover(
-                            content.signature,
-                            EthCrypto.hash.keccak256(message),
-                        );
-                        if (signer === fileID.split('-')[0]) {
+                        if (check) {
                             this.files[fileID] = content;
                             resolve(this.files[fileID]);
                         } else {
@@ -264,7 +268,7 @@ class RSS3 {
     deleteFile() {
         return axois({
             method: 'delete',
-            url: `${this.endpoint}/files`,
+            url: this.endpoint,
             data: {
                 signature: EthCrypto.sign(
                     this.privateKey,
@@ -272,14 +276,6 @@ class RSS3 {
                 ),
             },
         });
-    }
-
-    sign(obj: any) {
-        const message = JSON.stringify(utils.removeNotSignProperties(obj));
-        return EthCrypto.sign(
-            this.privateKey,
-            EthCrypto.hash.keccak256(message),
-        );
     }
 }
 
