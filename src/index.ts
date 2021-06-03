@@ -46,6 +46,7 @@ class RSS3 {
         [key: string]: number;
     } = {};
     private endpoint: string;
+    private initPromise: Promise<RSS3IContent>;
 
     constructor(option: IOption) {
         this.endpoint = option.endpoint;
@@ -54,9 +55,7 @@ class RSS3 {
             this.address = EthCrypto.publicKey.toAddress(
                 EthCrypto.publicKeyByPrivateKey(option.privateKey),
             );
-            this.getFile(this.address).then(() => {
-                option.callback?.(<RSS3Index>this.files[this.address]);
-            });
+            this.initPromise = this.getFile(this.address);
         } else {
             const keys = EthCrypto.createIdentity();
             this.privateKey = keys.privateKey;
@@ -70,15 +69,21 @@ class RSS3 {
                 signature: '',
             };
             this.dirtyFiles[this.address] = 1;
-            option.callback?.(<RSS3Index>this.files[this.address]);
+            this.initPromise = new Promise((resolve) =>
+                resolve(this.files[this.address]),
+            );
         }
+        this.initPromise.then(() => {
+            option.callback?.(<RSS3Index>this.files[this.address]);
+        });
     }
 
-    profilePatch(profile: IProfileIn) {
+    async profilePatch(profile: IProfileIn) {
         if (
             utils.attributeslengthCheck(profile) &&
             equals<IProfileIn>(profile)
         ) {
+            await this.initPromise;
             const file = <RSS3Index>this.files[this.address];
             file.profile = Object.assign({}, file.profile, profile);
             utils.sign(file.profile, this.privateKey);
@@ -93,9 +98,9 @@ class RSS3 {
         }
     }
 
-    itemPost(itemIn: IItemIn) {
+    async itemPost(itemIn: IItemIn) {
         if (utils.attributeslengthCheck(itemIn) && equals<IItemIn>(itemIn)) {
-            const nowDate = new Date().toISOString();
+            await this.initPromise;
             const file = <RSS3Index>this.files[this.address];
             if (!file.items) {
                 file.items = [];
@@ -105,6 +110,7 @@ class RSS3 {
                 ? parseInt(file.items[0].id.split('-')[2]) + 1
                 : 0;
 
+            const nowDate = new Date().toISOString();
             const item: RSS3Item = Object.assign(
                 {
                     authors: [this.address],
