@@ -135,7 +135,7 @@ class RSS3 {
                     '-items-' +
                     (file.items_next
                         ? parseInt(file.items_next.split('-')[2]) + 1
-                        : 1);
+                        : 0);
                 this.files[newID] = {
                     id: newID,
                     '@version': config.version,
@@ -174,15 +174,17 @@ class RSS3 {
                     (item) => item.id === itemIn.id,
                 );
                 if (index !== -1) {
+                    const nowDate = new Date().toISOString();
                     file.items[index] = Object.assign(
                         file.items[index],
                         itemIn,
                         {
-                            date_modified: new Date().toISOString(),
+                            date_modified: nowDate,
                         },
                     );
                     utils.removeEmptyProperties(file.items[index]);
                     utils.sign(file.items[index], this.privateKey);
+                    file.date_updated = nowDate;
 
                     this.dirtyFiles[fileID] = 1;
                     return file.items[index];
