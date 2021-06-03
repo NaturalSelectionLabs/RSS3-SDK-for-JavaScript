@@ -21,22 +21,27 @@ yarn add rss3
 ```ts
 import RSS3 from 'rss3';
 
-const persona = new RSS3({
+const rss3 = new RSS3({
     endpoint: 'https://rss3-hub-playground-6raed.ondigitalocean.app',
     privateKey:
         '0x47e18d6c386898b424025cd9db446f779ef24ad33a26c499c87bb3d9372540ba',
-    callback: function (data) {
-        console.log(data);
-
-        persona.profilePatch({
-            name: 'RSS3',
-        });
-        persona.itemPost({
-            title: 'Hello',
-        });
-        persona.syncFile();
-    },
 });
+
+await rss3.profilePatch({
+    name: 'RSS3',
+});
+await rss3.itemPost({
+    title: 'Hello',
+});
+await rss3.itemsPatch(
+    {
+        id: rss3.address + '-item-0',
+        title: 'Hi',
+    },
+    rss3.address,
+);
+
+await rss3.syncFile();
 ```
 
 ## API
