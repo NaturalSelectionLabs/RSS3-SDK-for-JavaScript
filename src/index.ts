@@ -37,8 +37,6 @@ interface IProfileIn {
 }
 
 class RSS3 {
-    private privateKey: string;
-    private address: string;
     private files: {
         [key: string]: RSS3IContent;
     } = {};
@@ -47,6 +45,9 @@ class RSS3 {
     } = {};
     private endpoint: string;
     private initPromise: Promise<RSS3IContent>;
+
+    privateKey: string;
+    address: string;
 
     constructor(option: IOption) {
         this.endpoint = option.endpoint;
@@ -274,14 +275,18 @@ class RSS3 {
     }
 
     deleteFile() {
+        const nowDate = new Date().toISOString();
         return axois({
             method: 'delete',
             url: this.endpoint,
             data: {
                 signature: EthCrypto.sign(
                     this.privateKey,
-                    EthCrypto.hash.keccak256(`delete`),
+                    EthCrypto.hash.keccak256(
+                        `Delete my RSS3 persona at ${nowDate}`,
+                    ),
                 ),
+                date: nowDate,
             },
         });
     }
