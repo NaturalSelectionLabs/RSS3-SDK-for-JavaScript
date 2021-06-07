@@ -14,13 +14,16 @@ const rss3 = new RSS3({
 
 await rss3.profilePatch({
     name: 'RSS3',
+    avatar: 'https://cloudflare-ipfs.com/ipfs/QmZWWSspbyFtWpLZtoAK35AjEYK75woNawqLgKC4DRpqxu',
+    bio: 'RSS3 is an open protocol designed for content and social networks in the Web 3.0 era.',
 });
 await rss3.itemPost({
-    title: 'Hello',
+    title: 'Hello RSS3',
+    summary: 'RSS3 is an open protocol designed for content and social networks in the Web 3.0 era.',
 });
 await rss3.itemsPatch({
     id: rss3.address + '-item-0',
-    title: 'Hi',
+    title: 'Hi RSS3',
 }, rss3.address);
 
 await rss3.syncFile();

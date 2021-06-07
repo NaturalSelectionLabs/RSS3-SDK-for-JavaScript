@@ -29,14 +29,18 @@ const rss3 = new RSS3({
 
 await rss3.profilePatch({
     name: 'RSS3',
+    avatar: 'https://cloudflare-ipfs.com/ipfs/QmZWWSspbyFtWpLZtoAK35AjEYK75woNawqLgKC4DRpqxu',
+    bio: 'RSS3 is an open protocol designed for content and social networks in the Web 3.0 era.',
 });
 await rss3.itemPost({
-    title: 'Hello',
+    title: 'Hello RSS3',
+    summary:
+        'RSS3 is an open protocol designed for content and social networks in the Web 3.0 era.',
 });
 await rss3.itemsPatch(
     {
         id: rss3.address + '-item-0',
-        title: 'Hi',
+        title: 'Hi RSS3',
     },
     rss3.address,
 );
@@ -58,20 +62,133 @@ const persona = new RSS3({
 });
 ```
 
-| Name       | Optional | Description                                                         |
-| ---------- | -------- | ------------------------------------------------------------------- |
-| endpoint   | false    | RSS3 Hub Address                                                    |
-| privateKey | true     | Persona's private key, a new persona will be created if it is empty |
-| callback   | false    | Initialization callback                                             |
+Options:
+
+```ts
+config: {
+    endpoint: string; // RSS3 Hub Address
+    privateKey?: string; // Persona's private key, a new persona will be created if it is empty
+    callback?: (persona) => void; // Initialization callback
+}
+```
 
 ### ProfilePatch
 
+```ts
+await rss3.profilePatch({
+    name: 'RSS3',
+    avatar: 'https://cloudflare-ipfs.com/ipfs/QmZWWSspbyFtWpLZtoAK35AjEYK75woNawqLgKC4DRpqxu',
+    bio: 'RSS3 is an open protocol designed for content and social networks in the Web 3.0 era.',
+});
+```
+
+Options:
+
+```ts
+profile: {
+    name?: string;
+    avatar?: ThirdPartyAddress;
+    bio?: string;
+    tags?: string[];
+}
+```
+
 ### ItemPost
+
+```ts
+await rss3.itemPost({
+    title: 'Hello RSS3',
+    summary:
+        'RSS3 is an open protocol designed for content and social networks in the Web 3.0 era.',
+});
+```
+
+Options:
+
+```ts
+item: {
+    authors?: RSS3ID[];
+    title?: string;
+    summary?: string;
+    tags?: string[];
+
+    type?: string;
+    upstream?: RSS3ItemID;
+
+    contents?: {
+        address: ThirdPartyAddress;
+        mime_type: string;
+        name?: string;
+        tags?: string[];
+        size_in_bytes?: string;
+        duration_in_seconds?: string;
+    }[];
+}
+```
 
 ### ItemsPatch
 
+```ts
+await rss3.itemsPatch(
+    {
+        id: rss3.address + '-item-0',
+        title: 'Hi RSS3',
+    },
+    rss3.address,
+);
+```
+
+Options:
+
+```ts
+item: {
+    id: string;
+    authors?: RSS3ID[];
+    title?: string;
+    summary?: string;
+    tags?: string[];
+
+    type?: string;
+    upstream?: RSS3ItemID;
+
+    contents?: {
+        address: ThirdPartyAddress;
+        mime_type: string;
+        name?: string;
+        tags?: string[];
+        size_in_bytes?: string;
+        duration_in_seconds?: string;
+    }[];
+}
+fileID: string;
+```
+
 ### SyncFile
+
+```ts
+await rss3.syncFile();
+```
 
 ### GetFile
 
+```ts
+await rss3.getFile(rss3.address.items_next);
+```
+
+Options:
+
+```ts
+fileID: string;
+```
+
 ### DeleteFile
+
+```ts
+await rss3.deleteFile(rss3.address);
+```
+
+Options:
+
+```ts
+personaID: string;
+```
