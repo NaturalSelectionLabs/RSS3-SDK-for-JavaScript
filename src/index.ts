@@ -1,4 +1,4 @@
-import EthCrypto from 'eth-crypto';
+import EthCrypto, { util } from 'eth-crypto';
 import { equals } from 'typescript-is';
 import config from './config';
 import utils from './utils';
@@ -76,12 +76,12 @@ class RSS3 {
     }
 
     async profilePatch(profile: IProfileIn) {
-        if (utils.attributeslengthCheck(profile) && equals<IProfileIn>(profile)) {
+        if (utils.check.valueLength(profile) && equals<IProfileIn>(profile)) {
             await this.initPromise;
             const file = <RSS3Index>this.files[this.address];
             file.profile = Object.assign({}, file.profile, profile);
-            utils.sign(file.profile, this.privateKey);
-            utils.removeEmptyProperties(file.profile, {
+            utils.signature.sign(file.profile, this.privateKey);
+            utils.object.removeEmpty(file.profile, {
                 obj: file,
                 key: 'profile',
             });
@@ -93,14 +93,14 @@ class RSS3 {
     }
 
     async itemPost(itemIn: IItemIn) {
-        if (utils.attributeslengthCheck(itemIn) && equals<IItemIn>(itemIn)) {
+        if (utils.check.valueLength(itemIn) && equals<IItemIn>(itemIn)) {
             await this.initPromise;
             const file = <RSS3Index>this.files[this.address];
             if (!file.items) {
                 file.items = [];
             }
 
-            const id = file.items[0] ? parseInt(file.items[0].id.split('-')[2]) + 1 : 0;
+            const id = file.items[0] ? utils.id.parse(file.items[0].id).index + 1 : 0;
 
             const nowDate = new Date().toISOString();
             const item: RSS3Item = Object.assign(
@@ -115,15 +115,15 @@ class RSS3 {
                     signature: '',
                 },
             );
-            utils.removeEmptyProperties(item);
-            utils.sign(item, this.privateKey);
+            utils.object.removeEmpty(item);
+            utils.signature.sign(item, this.privateKey);
 
             file.items.unshift(item);
 
             if (file.items.length > config.itemPageSize) {
                 const newList = file.items.slice(1);
                 const newID =
-                    this.address + '-items-' + (file.items_next ? parseInt(file.items_next.split('-')[2]) + 1 : 0);
+                    this.address + '-items-' + (file.items_next ? utils.id.parse(file.items_next).index + 1 : 0);
                 this.files[newID] = {
                     id: newID,
                     '@version': config.version,
@@ -151,7 +151,7 @@ class RSS3 {
     }
 
     async itemPatch(itemIn: IItemIn) {
-        if (utils.attributeslengthCheck(itemIn) && itemIn.id && equals<IItemIn>(itemIn)) {
+        if (utils.check.valueLength(itemIn) && itemIn.id && equals<IItemIn>(itemIn)) {
             await this.initPromise;
 
             // try index file first
@@ -159,7 +159,7 @@ class RSS3 {
             let file = this.files[fileID];
             let index = file.items.findIndex((item) => item.id === itemIn.id);
             if (index === -1) {
-                const parsed = utils.parseID(itemIn.id);
+                const parsed = utils.id.parse(itemIn.id);
                 let fileID = this.address + '-items-' + Math.ceil(parsed.index / config.itemPageSize);
                 file = await this.getFile(fileID);
                 index = file.items.findIndex((item) => item.id === itemIn.id);
@@ -169,8 +169,8 @@ class RSS3 {
                 file.items[index] = Object.assign(file.items[index], itemIn, {
                     date_modified: nowDate,
                 });
-                utils.removeEmptyProperties(file.items[index]);
-                utils.sign(file.items[index], this.privateKey);
+                utils.object.removeEmpty(file.items[index]);
+                utils.signature.sign(file.items[index], this.privateKey);
                 file.date_updated = nowDate;
 
                 this.dirtyFiles[fileID] = 1;
@@ -191,10 +191,10 @@ class RSS3 {
         // TODO
     }
 
-    syncFile(fileIDs: string[] = Object.keys(this.dirtyFiles)) {
+    syncPersona(fileIDs: string[] = Object.keys(this.dirtyFiles)) {
         const contents = fileIDs.map((fileID) => {
             const content = this.files[fileID];
-            utils.sign(content, this.privateKey);
+            utils.signature.sign(content, this.privateKey);
             return content;
         });
         return axois({
@@ -210,7 +210,7 @@ class RSS3 {
         });
     }
 
-    getFile(fileID: string): Promise<RSS3IContent> {
+    private getFile(fileID: string): Promise<RSS3IContent> {
         if (this.files[fileID]) {
             return new Promise((resolve) => {
                 resolve(this.files[fileID]);
@@ -224,7 +224,7 @@ class RSS3 {
                     });
                     const content = data.data;
                     if (equals<RSS3IContent>(content)) {
-                        const check = utils.check(content, fileID.split('-')[0]);
+                        const check = utils.signature.check(content, utils.id.parse(fileID).persona);
                         if (check) {
                             this.files[fileID] = content;
                             resolve(this.files[fileID]);
@@ -254,7 +254,7 @@ class RSS3 {
         }
     }
 
-    deleteFile() {
+    deletePersona() {
         const nowDate = new Date().toISOString();
         return axois({
             method: 'delete',
