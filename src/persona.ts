@@ -1,6 +1,5 @@
 import Main from './index';
 import EthCrypto from 'eth-crypto';
-import config from './config';
 
 class Persona {
     private main: Main;

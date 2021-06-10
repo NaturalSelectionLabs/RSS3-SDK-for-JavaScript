@@ -79,10 +79,8 @@ const changedFiles = rss3.persona.sync();
 **profile.get()**
 
 ```ts
-profile.get(personaID?: string): Promise<RSS3Profile>
+profile.get(personaID: string = persona.id): Promise<RSS3Profile>
 ```
-
-`personaID`: optional, default to `persona.id`
 
 Example:
 
@@ -111,13 +109,11 @@ const newProfile = await rss3.profile.patch({
 **items.get()**
 
 ```ts
-items.get(fileID?: string): Promise<{
+items.get(fileID: string = persona.id): Promise<{
     items: RSS3Item[],
     items_next?: string,
 }>
 ```
-
-`fileID`: optional, default to `persona.id`
 
 Example:
 

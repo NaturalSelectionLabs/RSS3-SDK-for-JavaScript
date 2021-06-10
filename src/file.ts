@@ -19,14 +19,13 @@ class File {
 
     new(fileID: string) {
         const nowDate = new Date().toISOString();
-        this.list[fileID] = {
+        this.set({
             id: fileID,
             '@version': config.version,
             date_created: nowDate,
             date_updated: nowDate,
             signature: '',
-        };
-        this.setDirty(fileID);
+        });
 
         return this.list[fileID];
     }
@@ -75,8 +74,10 @@ class File {
         }
     }
 
-    setDirty(fileID: string) {
-        this.dirtyList[fileID] = 1;
+    set(content: RSS3IContent) {
+        content.date_updated = new Date().toISOString();
+        this.list[content.id] = content;
+        this.dirtyList[content.id] = 1;
     }
 
     sync() {
