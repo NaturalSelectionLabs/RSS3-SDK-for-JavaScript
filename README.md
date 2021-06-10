@@ -19,10 +19,9 @@ yarn add rss3
 ### Initialization
 
 ```ts
-new RSS3(config: {
+new RSS3(options: {
     endpoint: string; // RSS3 Hub Address
     privateKey?: string; // Persona's private key, a new persona will be created if it is empty
-    callback?: (persona: RSS3Index) => void; // Initialization callback
 })
 ```
 
@@ -32,13 +31,22 @@ Example:
 const rss3 = new RSS3({
     endpoint: 'https://rss3-hub-playground-6raed.ondigitalocean.app',
     privateKey: '0x47e18d6c386898b424025cd9db446f779ef24ad33a26c499c87bb3d9372540ba',
-    callback: (persona) => {
-        console.log(persona);
-    },
 });
 ```
 
 ### Persona
+
+**persona.privateKey**
+
+```ts
+persona.privateKey: string
+```
+
+Example:
+
+```ts
+const privateKey = rss3.persona.privateKey;
+```
 
 **persona.id**
 
