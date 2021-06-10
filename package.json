@@ -1,8 +1,14 @@
 {
     "name": "rss3",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "description": "",
-    "main": "lib/index.ts",
+    "main": "dist/RSS3.js",
+    "types": "types/index.d.ts",
+    "files": [
+        "src",
+        "dist/*.js",
+        "types/*.d.ts"
+    ],
     "scripts": {
         "dev": "webpack serve --mode development",
         "build": "webpack --mode production",
