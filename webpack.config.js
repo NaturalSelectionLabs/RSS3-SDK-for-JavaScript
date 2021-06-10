@@ -1,7 +1,6 @@
 const webpack = require('webpack');
 const path = require('path');
-const typescriptIsTransformer =
-    require('typescript-is/lib/transform-inline/transformer').default;
+const typescriptIsTransformer = require('typescript-is/lib/transform-inline/transformer').default;
 
 const config = {
     entry: {
