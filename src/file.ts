@@ -44,7 +44,7 @@ class File {
                     });
                     const content = data.data;
                     if (equals<RSS3IContent>(content)) {
-                        const check = utils.signature.check(content, utils.id.parse(fileID).persona);
+                        const check = utils.accounts.check(content, utils.id.parse(fileID).persona);
                         if (check) {
                             this.list[fileID] = content;
                             resolve(this.list[fileID]);
@@ -84,7 +84,7 @@ class File {
         const fileIDs = Object.keys(this.dirtyList);
         const contents = fileIDs.map((fileID) => {
             const content = this.list[fileID];
-            utils.signature.sign(content, this.main.persona.privateKey);
+            utils.accounts.sign(content, this.main.persona.privateKey);
             return content;
         });
         return axois({

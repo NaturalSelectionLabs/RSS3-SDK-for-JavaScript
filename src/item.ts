@@ -79,7 +79,7 @@ class Item {
                 },
             );
             utils.object.removeEmpty(item);
-            utils.signature.sign(item, this.main.persona.privateKey);
+            utils.accounts.sign(item, this.main.persona.privateKey);
 
             file.items.unshift(item);
 
@@ -116,7 +116,7 @@ class Item {
                     date_modified: nowDate,
                 });
                 utils.object.removeEmpty(position.file.items[position.index]);
-                utils.signature.sign(position.file.items[position.index], this.main.persona.privateKey);
+                utils.accounts.sign(position.file.items[position.index], this.main.persona.privateKey);
 
                 this.main.file.set(position.file);
                 return position.file.items[position.index];

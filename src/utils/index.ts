@@ -1,10 +1,10 @@
-import signature from './signature';
+import accounts from './accounts';
 import check from './check';
 import id from './id';
 import object from './object';
 
 export default {
-    signature,
+    accounts,
     check,
     id,
     object,

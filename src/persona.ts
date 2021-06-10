@@ -1,5 +1,5 @@
 import Main from './index';
-import EthCrypto from 'eth-crypto';
+import utils from './utils';
 
 class Persona {
     private main: Main;
@@ -12,9 +12,9 @@ class Persona {
 
         if (main.options.privateKey) {
             this.privateKey = main.options.privateKey;
-            this.id = EthCrypto.publicKey.toAddress(EthCrypto.publicKeyByPrivateKey(main.options.privateKey));
+            this.id = utils.accounts.privateKeyToAddress(main.options.privateKey);
         } else {
-            const keys = EthCrypto.createIdentity();
+            const keys = utils.accounts.create();
             this.privateKey = keys.privateKey;
             this.id = keys.address;
             this.main.file.new(this.id);

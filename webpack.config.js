@@ -43,6 +43,9 @@ const config = {
             stream: require.resolve('stream-browserify'),
             buffer: require.resolve('buffer/'),
             assert: require.resolve('assert/'),
+            https: require.resolve('https-browserify'),
+            http: require.resolve('stream-http'),
+            os: require.resolve('os-browserify/browser'),
         },
     },
     plugins: [

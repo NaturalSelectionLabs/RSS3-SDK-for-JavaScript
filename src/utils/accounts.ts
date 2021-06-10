@@ -1,4 +1,4 @@
-import EthCrypto from 'eth-crypto';
+import Accounts from 'web3-eth-accounts';
 
 function removeNotSignProperties(obj: AnyObject) {
     obj = JSON.parse(JSON.stringify(obj));
@@ -25,21 +25,32 @@ function obj2Array(obj: AnyObject): mulripleStringArray[] {
         });
 }
 
-function hash(obj: AnyObject) {
+function stringify(obj: AnyObject) {
     let message = obj2Array(removeNotSignProperties(obj));
-    return EthCrypto.hash.keccak256(JSON.stringify(message));
+    return JSON.stringify(message);
 }
+
+// @ts-ignore
+const accounts = new Accounts();
 
 export default {
     sign(obj: AnyObject, privateKey: string) {
-        obj.signature = EthCrypto.sign(privateKey, hash(obj));
+        obj.signature = accounts.sign(stringify(obj), privateKey).signature;
     },
 
     check(obj: AnyObject, persona: string) {
         if (!obj.signature) {
             return false;
         } else {
-            return EthCrypto.recover(obj.signature, hash(obj)) === persona;
+            return accounts.recover(stringify(obj), obj.signature) === persona;
         }
+    },
+
+    privateKeyToAddress(privateKey: string) {
+        return accounts.privateKeyToAccount(privateKey).address;
+    },
+
+    create() {
+        return accounts.create();
     },
 };

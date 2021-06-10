@@ -25,7 +25,7 @@ class Profile {
         if (utils.check.valueLength(profile) && equals<IProfileIn>(profile)) {
             const file = <RSS3Index>await this.main.file.get(this.main.persona.id);
             file.profile = Object.assign({}, file.profile, profile);
-            utils.signature.sign(file.profile, this.main.persona.privateKey);
+            utils.accounts.sign(file.profile, this.main.persona.privateKey);
             utils.object.removeEmpty(file.profile, {
                 obj: file,
                 key: 'profile',
