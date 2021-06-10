@@ -23,8 +23,7 @@ import RSS3 from 'rss3';
 
 const rss3 = new RSS3({
     endpoint: 'https://rss3-hub-playground-6raed.ondigitalocean.app',
-    privateKey:
-        '0x47e18d6c386898b424025cd9db446f779ef24ad33a26c499c87bb3d9372540ba',
+    privateKey: '0x47e18d6c386898b424025cd9db446f779ef24ad33a26c499c87bb3d9372540ba',
 });
 
 await rss3.profilePatch({
@@ -34,16 +33,12 @@ await rss3.profilePatch({
 });
 await rss3.itemPost({
     title: 'Hello RSS3',
-    summary:
-        'RSS3 is an open protocol designed for content and social networks in the Web 3.0 era.',
+    summary: 'RSS3 is an open protocol designed for content and social networks in the Web 3.0 era.',
 });
-await rss3.itemsPatch(
-    {
-        id: rss3.address + '-item-0',
-        title: 'Hi RSS3',
-    },
-    rss3.address,
-);
+await rss3.itemPatch({
+    id: rss3.address + '-item-0',
+    title: 'Hi RSS3',
+});
 
 await rss3.syncFile();
 ```
@@ -98,8 +93,7 @@ profile: {
 ```ts
 await rss3.itemPost({
     title: 'Hello RSS3',
-    summary:
-        'RSS3 is an open protocol designed for content and social networks in the Web 3.0 era.',
+    summary: 'RSS3 is an open protocol designed for content and social networks in the Web 3.0 era.',
 });
 ```
 
@@ -126,16 +120,13 @@ item: {
 }
 ```
 
-### ItemsPatch
+### ItemPatch
 
 ```ts
-await rss3.itemsPatch(
-    {
-        id: rss3.address + '-item-0',
-        title: 'Hi RSS3',
-    },
-    rss3.address,
-);
+await rss3.itemPatch({
+    id: rss3.address + '-item-0',
+    title: 'Hi RSS3',
+});
 ```
 
 Options:
@@ -160,7 +151,6 @@ item: {
         duration_in_seconds?: string;
     }[];
 }
-fileID: string;
 ```
 
 ### SyncFile

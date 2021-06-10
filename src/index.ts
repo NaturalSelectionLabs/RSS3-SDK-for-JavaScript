@@ -53,9 +53,7 @@ class RSS3 {
         this.endpoint = option.endpoint;
         if (option.privateKey) {
             this.privateKey = option.privateKey;
-            this.address = EthCrypto.publicKey.toAddress(
-                EthCrypto.publicKeyByPrivateKey(option.privateKey),
-            );
+            this.address = EthCrypto.publicKey.toAddress(EthCrypto.publicKeyByPrivateKey(option.privateKey));
             this.initPromise = this.getFile(this.address);
         } else {
             const keys = EthCrypto.createIdentity();
@@ -70,9 +68,7 @@ class RSS3 {
                 signature: '',
             };
             this.dirtyFiles[this.address] = 1;
-            this.initPromise = new Promise((resolve) =>
-                resolve(this.files[this.address]),
-            );
+            this.initPromise = new Promise((resolve) => resolve(this.files[this.address]));
         }
         this.initPromise.then(() => {
             option.callback?.(<RSS3Index>this.files[this.address]);
@@ -80,10 +76,7 @@ class RSS3 {
     }
 
     async profilePatch(profile: IProfileIn) {
-        if (
-            utils.attributeslengthCheck(profile) &&
-            equals<IProfileIn>(profile)
-        ) {
+        if (utils.attributeslengthCheck(profile) && equals<IProfileIn>(profile)) {
             await this.initPromise;
             const file = <RSS3Index>this.files[this.address];
             file.profile = Object.assign({}, file.profile, profile);
@@ -107,9 +100,7 @@ class RSS3 {
                 file.items = [];
             }
 
-            const id = file.items[0]
-                ? parseInt(file.items[0].id.split('-')[2]) + 1
-                : 0;
+            const id = file.items[0] ? parseInt(file.items[0].id.split('-')[2]) + 1 : 0;
 
             const nowDate = new Date().toISOString();
             const item: RSS3Item = Object.assign(
@@ -132,11 +123,7 @@ class RSS3 {
             if (file.items.length > config.itemPageSize) {
                 const newList = file.items.slice(1);
                 const newID =
-                    this.address +
-                    '-items-' +
-                    (file.items_next
-                        ? parseInt(file.items_next.split('-')[2]) + 1
-                        : 0);
+                    this.address + '-items-' + (file.items_next ? parseInt(file.items_next.split('-')[2]) + 1 : 0);
                 this.files[newID] = {
                     id: newID,
                     '@version': config.version,
@@ -163,35 +150,31 @@ class RSS3 {
         }
     }
 
-    async itemsPatch(itemIn: IItemIn, fileID: string) {
-        if (
-            utils.attributeslengthCheck(itemIn) &&
-            itemIn.id &&
-            equals<IItemIn>(itemIn)
-        ) {
-            const file = await this.getFile(fileID);
-            if (equals<RSS3IContent>(file)) {
-                const index = file.items.findIndex(
-                    (item) => item.id === itemIn.id,
-                );
-                if (index !== -1) {
-                    const nowDate = new Date().toISOString();
-                    file.items[index] = Object.assign(
-                        file.items[index],
-                        itemIn,
-                        {
-                            date_modified: nowDate,
-                        },
-                    );
-                    utils.removeEmptyProperties(file.items[index]);
-                    utils.sign(file.items[index], this.privateKey);
-                    file.date_updated = nowDate;
+    async itemPatch(itemIn: IItemIn) {
+        if (utils.attributeslengthCheck(itemIn) && itemIn.id && equals<IItemIn>(itemIn)) {
+            await this.initPromise;
 
-                    this.dirtyFiles[fileID] = 1;
-                    return file.items[index];
-                } else {
-                    return null;
-                }
+            // try index file first
+            let fileID = this.address;
+            let file = this.files[fileID];
+            let index = file.items.findIndex((item) => item.id === itemIn.id);
+            if (index === -1) {
+                const parsed = utils.parseID(itemIn.id);
+                let fileID = this.address + '-items-' + Math.ceil(parsed.index / config.itemPageSize);
+                file = await this.getFile(fileID);
+                index = file.items.findIndex((item) => item.id === itemIn.id);
+            }
+            if (index !== -1) {
+                const nowDate = new Date().toISOString();
+                file.items[index] = Object.assign(file.items[index], itemIn, {
+                    date_modified: nowDate,
+                });
+                utils.removeEmptyProperties(file.items[index]);
+                utils.sign(file.items[index], this.privateKey);
+                file.date_updated = nowDate;
+
+                this.dirtyFiles[fileID] = 1;
+                return file.items[index];
             } else {
                 return null;
             }
@@ -241,10 +224,7 @@ class RSS3 {
                     });
                     const content = data.data;
                     if (equals<RSS3IContent>(content)) {
-                        const check = utils.check(
-                            content,
-                            fileID.split('-')[0],
-                        );
+                        const check = utils.check(content, fileID.split('-')[0]);
                         if (check) {
                             this.files[fileID] = content;
                             resolve(this.files[fileID]);
@@ -282,9 +262,7 @@ class RSS3 {
             data: {
                 signature: EthCrypto.sign(
                     this.privateKey,
-                    EthCrypto.hash.keccak256(
-                        `Delete my RSS3 persona at ${nowDate}`,
-                    ),
+                    EthCrypto.hash.keccak256(`Delete my RSS3 persona at ${nowDate}`),
                 ),
                 date: nowDate,
             },

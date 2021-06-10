@@ -61,16 +61,10 @@ export default {
     attributeslengthCheck(obj: any) {
         let result = true;
         for (let key in obj) {
-            if (
-                typeof obj[key] === 'object' &&
-                !this.attributeslengthCheck(obj[key])
-            ) {
+            if (typeof obj[key] === 'object' && !this.attributeslengthCheck(obj[key])) {
                 result = false;
                 break;
-            } else if (
-                obj[key].length &&
-                obj[key].length > config.maxValueLength
-            ) {
+            } else if (obj[key].length && obj[key].length > config.maxValueLength) {
                 result = false;
                 break;
             }
@@ -88,5 +82,14 @@ export default {
         } else {
             return EthCrypto.recover(obj.signature, hash(obj)) === persona;
         }
+    },
+
+    parseID(id: string) {
+        const splited = id.split('-');
+        return {
+            persona: splited[0],
+            type: splited[1] || 'index',
+            index: splited[2] !== undefined ? parseInt(splited[2]) : Infinity,
+        };
     },
 };
