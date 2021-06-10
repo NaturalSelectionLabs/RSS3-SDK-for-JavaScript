@@ -2,9 +2,7 @@
 
 JavaScript SDK for [RSS3-Hub](https://github.com/NaturalSelectionLabs/RSS3-Hub)
 
-## Quick Start
-
-### Install
+## Install
 
 ```bash
 npm install rss3 --save
@@ -16,169 +14,151 @@ or
 yarn add rss3
 ```
 
-### Demo
-
-```ts
-import RSS3 from 'rss3';
-
-const rss3 = new RSS3({
-    endpoint: 'https://rss3-hub-playground-6raed.ondigitalocean.app',
-    privateKey: '0x47e18d6c386898b424025cd9db446f779ef24ad33a26c499c87bb3d9372540ba',
-});
-
-await rss3.profilePatch({
-    name: 'RSS3',
-    avatar: 'https://cloudflare-ipfs.com/ipfs/QmZWWSspbyFtWpLZtoAK35AjEYK75woNawqLgKC4DRpqxu',
-    bio: 'RSS3 is an open protocol designed for content and social networks in the Web 3.0 era.',
-});
-await rss3.itemPost({
-    title: 'Hello RSS3',
-    summary: 'RSS3 is an open protocol designed for content and social networks in the Web 3.0 era.',
-});
-await rss3.itemPatch({
-    id: rss3.address + '-item-0',
-    title: 'Hi RSS3',
-});
-
-await rss3.syncFile();
-```
-
 ## API
 
 ### Initialization
 
 ```ts
-const persona = new RSS3({
-    endpoint: 'https://rss3-hub.example',
-    privateKey: '0x.....',
+new RSS3(config: {
+    endpoint: string; // RSS3 Hub Address
+    privateKey?: string; // Persona's private key, a new persona will be created if it is empty
+    callback?: (persona: RSS3Index) => void; // Initialization callback
+})
+```
+
+Example:
+
+```ts
+const rss3 = new RSS3({
+    endpoint: 'https://rss3-hub-playground-6raed.ondigitalocean.app',
+    privateKey: '0x47e18d6c386898b424025cd9db446f779ef24ad33a26c499c87bb3d9372540ba',
     callback: (persona) => {
         console.log(persona);
     },
 });
 ```
 
-Options:
+### Persona
+
+**persona.id**
 
 ```ts
-config: {
-    endpoint: string; // RSS3 Hub Address
-    privateKey?: string; // Persona's private key, a new persona will be created if it is empty
-    callback?: (persona) => void; // Initialization callback
-}
+persona.id: string
 ```
 
-### ProfilePatch
+Example:
 
 ```ts
-await rss3.profilePatch({
+const id = rss3.persona.id;
+```
+
+**persona.sync()**
+
+Please note that changes will only be synced to the node after `persona.sync()` is successfully executed
+
+```ts
+persona.sync(): string[]
+```
+
+Example:
+
+```ts
+const changedFiles = rss3.persona.sync();
+```
+
+### Profile
+
+**profile.get()**
+
+```ts
+profile.get(personaID?: string): Promise<RSS3Profile>
+```
+
+`personaID`: optional, default to `persona.id`
+
+Example:
+
+```ts
+const profile = rss3.profile.get();
+```
+
+**profile.patch()**
+
+```ts
+profile.patch(profile: RSS3Profile): Promise<RSS3Profile>
+```
+
+Example:
+
+```ts
+const newProfile = await rss3.profile.patch({
     name: 'RSS3',
     avatar: 'https://cloudflare-ipfs.com/ipfs/QmZWWSspbyFtWpLZtoAK35AjEYK75woNawqLgKC4DRpqxu',
     bio: 'RSS3 is an open protocol designed for content and social networks in the Web 3.0 era.',
 });
 ```
 
-Options:
+### Items
+
+**items.get()**
 
 ```ts
-profile: {
-    name?: string;
-    avatar?: ThirdPartyAddress;
-    bio?: string;
-    tags?: string[];
-}
+items.get(fileID?: string): Promise<{
+    items: RSS3Item[],
+    items_next?: string,
+}>
 ```
 
-### ItemPost
+`fileID`: optional, default to `persona.id`
+
+Example:
 
 ```ts
-await rss3.itemPost({
+const list1 = await rss3.items.get();
+const items1 = list1.items;
+const list2 = await rss3.items.get(list1.items_next);
+const items2 = list2.items;
+```
+
+### Item
+
+**item.get**
+
+```ts
+item.get(itemID: string): Promise<RSS3Item>
+```
+
+Example:
+
+```ts
+const item = await rss3.item.get('0x47e18d6c386898b424025cd9db446f779ef24ad33a26c499c87bb3d9372540ba-item-0');
+```
+
+**item.post**
+
+```ts
+item.post(item: RSS3ItemInput): Promise<RSS3ItemInput>
+```
+
+Example:
+
+```ts
+const item = await rss3.item.post({
     title: 'Hello RSS3',
     summary: 'RSS3 is an open protocol designed for content and social networks in the Web 3.0 era.',
 });
 ```
 
-Options:
+**item.patch**
 
 ```ts
-item: {
-    authors?: RSS3ID[];
-    title?: string;
-    summary?: string;
-    tags?: string[];
-
-    type?: string;
-    upstream?: RSS3ItemID;
-
-    contents?: {
-        address: ThirdPartyAddress;
-        mime_type: string;
-        name?: string;
-        tags?: string[];
-        size_in_bytes?: string;
-        duration_in_seconds?: string;
-    }[];
-}
+item.patch(item: RSS3ItemInput): Promise<RSS3ItemInput>
 ```
 
-### ItemPatch
+Example:
 
 ```ts
-await rss3.itemPatch({
-    id: rss3.address + '-item-0',
+const newItem = await rss3.item.patch({
     title: 'Hi RSS3',
 });
-```
-
-Options:
-
-```ts
-item: {
-    id: string;
-    authors?: RSS3ID[];
-    title?: string;
-    summary?: string;
-    tags?: string[];
-
-    type?: string;
-    upstream?: RSS3ItemID;
-
-    contents?: {
-        address: ThirdPartyAddress;
-        mime_type: string;
-        name?: string;
-        tags?: string[];
-        size_in_bytes?: string;
-        duration_in_seconds?: string;
-    }[];
-}
-```
-
-### SyncFile
-
-```ts
-await rss3.syncFile();
-```
-
-### GetFile
-
-```ts
-await rss3.getFile(rss3.address.items_next);
-```
-
-Options:
-
-```ts
-fileID: string;
-```
-
-### DeleteFile
-
-```ts
-await rss3.deleteFile(rss3.address);
-```
-
-Options:
-
-```ts
-personaID: string;
 ```
