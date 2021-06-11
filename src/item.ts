@@ -2,26 +2,7 @@ import Main from './index';
 import { equals } from 'typescript-is';
 import utils from './utils';
 import config from './config';
-
-interface IItemIn {
-    id?: string;
-    authors?: RSS3ID[];
-    title?: string;
-    summary?: string;
-    tags?: string[];
-
-    type?: string;
-    upstream?: RSS3ItemID;
-
-    contents?: {
-        address: ThirdPartyAddress;
-        mime_type: string;
-        name?: string;
-        tags?: string[];
-        size_in_bytes?: string;
-        duration_in_seconds?: string;
-    }[];
-}
+import type { RSS3Index, RSS3ItemInput, RSS3Item } from '../types/rss3';
 
 class Item {
     private main: Main;
@@ -56,8 +37,8 @@ class Item {
         }
     }
 
-    async post(itemIn: IItemIn) {
-        if (utils.check.valueLength(itemIn) && equals<IItemIn>(itemIn)) {
+    async post(itemIn: RSS3ItemInput) {
+        if (utils.check.valueLength(itemIn) && equals<RSS3ItemInput>(itemIn)) {
             const file = <RSS3Index>await this.main.file.get(this.main.persona.id);
             if (!file.items) {
                 file.items = [];
@@ -106,8 +87,8 @@ class Item {
         }
     }
 
-    async patch(itemIn: IItemIn) {
-        if (utils.check.valueLength(itemIn) && itemIn.id && equals<IItemIn>(itemIn)) {
+    async patch(itemIn: RSS3ItemInput) {
+        if (utils.check.valueLength(itemIn) && itemIn.id && equals<RSS3ItemInput>(itemIn)) {
             const position = await this.getPosition(itemIn.id);
 
             if (position.index !== -1) {

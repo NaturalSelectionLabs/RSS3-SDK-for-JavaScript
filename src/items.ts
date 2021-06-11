@@ -1,4 +1,5 @@
 import Main from './index';
+import type { RSS3Index } from '../types/rss3';
 
 class Items {
     private main: Main;

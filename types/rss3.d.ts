@@ -60,14 +60,12 @@ interface RSS3List extends RSS3Base {
     list_next?: RSS3ListID;
 }
 
-interface RSS3Item {
-    id: RSS3ItemID;
+export interface RSS3ItemInput {
+    id?: string;
     authors?: RSS3ID[];
     title?: string;
     summary?: string;
     tags?: string[];
-    date_published?: string;
-    date_modified?: string;
 
     type?: string;
     upstream?: RSS3ItemID;
@@ -80,6 +78,12 @@ interface RSS3Item {
         size_in_bytes?: string;
         duration_in_seconds?: string;
     }[];
+}
+
+export interface RSS3Item extends RSS3ItemInput {
+    id: RSS3ItemID;
+    date_published?: string;
+    date_modified?: string;
 
     '@contexts'?: {
         type?: string;
@@ -89,10 +93,13 @@ interface RSS3Item {
     signature: string;
 }
 
-interface RSS3Profile {
+export interface RSS3ProfileInput {
     name?: string;
     avatar?: ThirdPartyAddress;
     bio?: string;
     tags?: string[];
+}
+
+export interface RSS3Profile extends RSS3ProfileInput {
     signature: string;
 }

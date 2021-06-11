@@ -3,6 +3,7 @@ import utils from './utils';
 import axois from 'axios';
 import { equals } from 'typescript-is';
 import config from './config';
+import type { RSS3IContent } from '../types/rss3';
 
 class File {
     private main: Main;
@@ -32,11 +33,11 @@ class File {
 
     get(fileID: string): Promise<RSS3IContent> {
         if (this.list[fileID]) {
-            return new Promise((resolve) => {
+            return new Promise<RSS3IContent>((resolve) => {
                 resolve(this.list[fileID]);
             });
         } else {
-            return new Promise(async (resolve, reject) => {
+            return new Promise<RSS3IContent>(async (resolve, reject) => {
                 try {
                     const data = await axois({
                         method: 'get',
