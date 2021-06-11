@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 const path = require('path');
 const typescriptIsTransformer = require('typescript-is/lib/transform-inline/transformer').default;
+const TerserPlugin = require('terser-webpack-plugin');
 
 const config = {
     entry: {
@@ -37,7 +38,7 @@ const config = {
     },
     resolve: {
         extensions: ['.tsx', '.ts', '.js'],
-        // hack for eth-crypto
+        // hack for web3-eth-accounts
         fallback: {
             crypto: require.resolve('crypto-browserify'),
             stream: require.resolve('stream-browserify'),
@@ -57,6 +58,13 @@ const config = {
     devServer: {
         compress: true,
         static: './',
+    },
+    optimization: {
+        minimizer: [
+            new TerserPlugin({
+                extractComments: false,
+            }),
+        ],
     },
 };
 
