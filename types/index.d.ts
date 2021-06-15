@@ -1,4 +1,4 @@
-import type { RSS3Profile, RSS3Item, RSS3ItemInput } from './rss3';
+import type { RSS3Profile, RSS3Item, RSS3ItemInput, RSS3ProfileInput } from './rss3';
 
 declare module 'rss3' {
     class RSS3 {
@@ -10,7 +10,7 @@ declare module 'rss3' {
         };
         readonly profile: {
             get(personaID?: string): Promise<RSS3Profile>;
-            patch(profile: RSS3Profile): Promise<RSS3Profile>;
+            patch(profile: RSS3ProfileInput): Promise<RSS3Profile>;
         };
         readonly item: {
             get(itemID: string): Promise<RSS3Item>;
