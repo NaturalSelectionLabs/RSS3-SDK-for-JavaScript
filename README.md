@@ -74,6 +74,18 @@ Example:
 const changedFiles = rss3.persona.sync();
 ```
 
+**persona.raw()**
+
+```ts
+persona.raw(fileID: string = persona.id): Promise<RSS3IContent>x
+```
+
+Example:
+
+```ts
+const file = await rss3.persona.raw();
+```
+
 ### Profile
 
 **profile.get()**

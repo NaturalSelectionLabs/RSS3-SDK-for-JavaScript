@@ -22,7 +22,11 @@ class Persona {
     }
 
     sync() {
-        this.main.file.sync();
+        return this.main.file.sync();
+    }
+
+    raw(fileID: string = this.id) {
+        return this.main.file.get(fileID);
     }
 }
 

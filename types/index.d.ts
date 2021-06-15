@@ -6,6 +6,7 @@ declare module 'rss3' {
             privateKey: string;
             id: string;
             sync(): string[];
+            raw(fileID?: string): string;
         };
         readonly profile: {
             get(personaID?: string): Promise<RSS3Profile>;
