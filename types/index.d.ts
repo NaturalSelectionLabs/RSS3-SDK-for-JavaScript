@@ -1,12 +1,12 @@
-import type { RSS3Profile, RSS3Item, RSS3ItemInput, RSS3ProfileInput } from './rss3';
+import type { RSS3Profile, RSS3Item, RSS3ItemInput, RSS3ProfileInput, RSS3IContent } from './rss3';
 
 declare module 'rss3' {
     class RSS3 {
         readonly persona: {
             privateKey: string;
             id: string;
-            sync(): string[];
-            raw(fileID?: string): string;
+            sync(): Promise<void>;
+            raw(fileID?: string): Promise<RSS3IContent>;
         };
         readonly profile: {
             get(personaID?: string): Promise<RSS3Profile>;
