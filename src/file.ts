@@ -56,7 +56,7 @@ class File {
                         reject('Incorrectly formatted content.');
                     }
                 } catch (error) {
-                    if (error.response.status === 404) {
+                    if (error.response?.data?.code === 5001) {
                         const nowDate = new Date().toISOString();
                         this.list[fileID] = {
                             id: fileID,
