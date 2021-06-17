@@ -63,6 +63,11 @@ const config = {
         minimizer: [
             new TerserPlugin({
                 extractComments: false,
+                terserOptions: {
+                    output: {
+                        ascii_only: true,
+                    },
+                },
             }),
         ],
     },
