@@ -15,7 +15,7 @@ class Persona {
             this.id = utils.accounts.privateKeyToAddress(main.options.privateKey);
         } else {
             const keys = utils.accounts.create();
-            this.privateKey = keys.privateKey;
+            this.privateKey = keys.privateKey.slice(2);
             this.id = keys.address;
             this.main.file.new(this.id);
         }
