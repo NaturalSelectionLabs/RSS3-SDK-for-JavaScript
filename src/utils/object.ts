@@ -19,7 +19,7 @@ function removeEmpty(
             delete obj[key];
         }
     }
-    if (Object.keys(obj).length === 0) {
+    if (Object.keys(obj).length === 0 && father) {
         delete father.obj[father.key];
     }
 }
