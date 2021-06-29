@@ -14,6 +14,16 @@ or
 yarn add rss3
 ```
 
+```js
+import RSS3 from 'rss3';
+```
+
+or
+
+```js
+const RSS3 = require('rss3').default;
+```
+
 ## API
 
 ### Initialization

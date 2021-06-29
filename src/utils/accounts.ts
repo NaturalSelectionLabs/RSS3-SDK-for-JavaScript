@@ -1,4 +1,4 @@
-import Accounts from 'web3-eth-accounts';
+const Accounts = require('web3-eth-accounts');
 import type { AnyObject } from '../../types/extend';
 
 function removeNotSignProperties(obj: AnyObject) {

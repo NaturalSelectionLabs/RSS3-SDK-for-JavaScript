@@ -8,7 +8,7 @@ const config = {
         RSS3: './src/index.ts',
     },
     output: {
-        path: path.resolve(__dirname, 'dist'),
+        path: path.resolve(__dirname, 'dist', 'browser'),
         filename: '[name].js',
         library: {
             name: '[name]',

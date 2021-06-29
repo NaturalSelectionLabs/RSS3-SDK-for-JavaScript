@@ -2,7 +2,9 @@
     "name": "rss3",
     "version": "0.3.9",
     "description": "",
-    "main": "dist/RSS3.js",
+    "main": "dist/module/index.js",
+    "module": "dist/module/index.js",
+    "browser": "dist/browser/RSS3.js",
     "types": "types/index.d.ts",
     "files": [
         "src",
@@ -11,7 +13,7 @@
     ],
     "scripts": {
         "dev": "webpack serve --mode development",
-        "build": "webpack --mode production",
+        "build": "webpack --mode production && tsc",
         "prepare": "husky install"
     },
     "lint-staged": {
