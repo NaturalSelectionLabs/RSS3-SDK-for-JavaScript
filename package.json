@@ -8,8 +8,8 @@
     "types": "types/index.d.ts",
     "files": [
         "src",
-        "dist/*.js",
-        "types/*.d.ts"
+        "dist",
+        "types"
     ],
     "scripts": {
         "dev": "webpack serve --mode development",
