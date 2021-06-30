@@ -8,7 +8,12 @@
         "moduleResolution": "node",
         "sourceMap": false,
         "outDir": "dist/module",
-        "baseUrl": "."
+        "baseUrl": ".",
+        "plugins": [
+            {
+                "transform": "typescript-is/lib/transform-inline/transformer"
+            }
+        ]
     },
     "include": ["src/**/*"]
 }
