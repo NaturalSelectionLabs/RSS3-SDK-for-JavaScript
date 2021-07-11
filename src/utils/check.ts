@@ -1,5 +1,4 @@
 import config from '../config';
-import utilsId from './id';
 import type { AnyObject } from '../../types/extend';
 
 function valueLength(obj: AnyObject) {

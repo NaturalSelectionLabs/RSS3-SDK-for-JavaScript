@@ -25,12 +25,7 @@ interface RSS3Index extends RSS3Base {
     items?: RSS3Item[];
     items_next?: RSS3ItemsID;
 
-    links?: {
-        type: string;
-        tags?: string[];
-        list: RSS3ID[];
-        signature: string;
-    }[];
+    links?: RSS3Links[];
     '@backlinks'?: {
         type: string;
         list: RSS3ListID;
@@ -101,5 +96,15 @@ export interface RSS3ProfileInput {
 }
 
 export interface RSS3Profile extends RSS3ProfileInput {
+    signature: string;
+}
+
+export interface RSS3LinksInput {
+    type: string;
+    tags?: string[];
+    list?: RSS3ID[];
+}
+
+export interface RSS3Links extends RSS3LinksInput {
     signature: string;
 }

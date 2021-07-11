@@ -4,6 +4,7 @@ import Profile from './profile';
 import Items from './items';
 import Item from './item';
 import Links from './links';
+import Link from './link';
 
 interface IOptions {
     endpoint: string;
@@ -18,6 +19,7 @@ class RSS3 {
     items: Items;
     item: Item;
     links: Links;
+    link: Link;
 
     constructor(options: IOptions) {
         this.options = options;
@@ -28,6 +30,7 @@ class RSS3 {
         this.items = new Items(this);
         this.item = new Item(this);
         this.links = new Links(this);
+        this.link = new Link(this);
     }
 }
 
