@@ -10,7 +10,7 @@ type RSS3Content = RSS3IContent | RSS3List;
 // Common attributes for each files
 interface RSS3Base {
     id: RSS3ID | RSS3ItemsID | RSS3ListID;
-    '@version': 'rss3.io/version/v0.1.0';
+    '@version': string;
     date_created: string;
     date_updated: string;
 }
