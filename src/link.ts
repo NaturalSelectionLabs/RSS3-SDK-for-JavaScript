@@ -19,6 +19,7 @@ class Link {
                 throw Error('Link already exist');
             }
             await this.main.file.set(file);
+            return lks;
         } else {
             await this.main.links.post({
                 type: type,
@@ -41,6 +42,7 @@ class Link {
                 throw Error('Link does not exist');
             }
             await this.main.file.set(file);
+            return lks;
         } else {
             throw Error('Link type does not exist');
         }

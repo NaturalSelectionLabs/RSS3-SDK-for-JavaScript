@@ -33,6 +33,7 @@ class Links {
                 throw Error('Link type already exists');
             }
             this.main.file.set(file);
+            return <RSS3Links>links;
         } else {
             throw Error('Parameter error');
         }
@@ -42,11 +43,13 @@ class Links {
         const file = <RSS3Index>await this.main.file.get(this.main.persona.id);
         const index = (file.links || []).findIndex((lks) => lks.type === type);
         if (index > -1) {
+            const links = file.links[index];
             file.links.splice(index, 1);
             if (file.links.length === 0) {
                 delete file.links;
             }
             this.main.file.set(file);
+            return links;
         } else {
             throw Error('Link type does not exist');
         }
@@ -60,6 +63,7 @@ class Links {
                 linksList[index] = Object.assign(linksList[index], links);
                 utils.object.removeEmpty(links);
                 utils.accounts.sign(links, this.main.persona.privateKey);
+                return linksList[index];
             } else {
                 throw Error('Link type does not exist');
             }
