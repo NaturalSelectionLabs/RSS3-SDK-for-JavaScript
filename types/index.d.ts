@@ -1,4 +1,12 @@
-import type { RSS3Profile, RSS3Item, RSS3ItemInput, RSS3ProfileInput, RSS3IContent } from './rss3';
+import type {
+    RSS3Profile,
+    RSS3Item,
+    RSS3ItemInput,
+    RSS3ProfileInput,
+    RSS3IContent,
+    RSS3Links,
+    RSS3LinksInput,
+} from './rss3';
 
 declare module 'rss3' {
     class RSS3 {
@@ -22,6 +30,16 @@ declare module 'rss3' {
                 items: RSS3Item[];
                 items_next?: string;
             }>;
+        };
+        readonly link: {
+            post(type: string, personaID: string): Promise<RSS3Links>;
+            delete(type: string, personaID: string): Promise<RSS3Links>;
+        };
+        readonly links: {
+            get(fileID: string, type?: string): Promise<RSS3Links | RSS3Links[]>;
+            post(links: RSS3LinksInput): Promise<RSS3Links>;
+            delete(type: string): Promise<RSS3Links>;
+            patch(links: RSS3LinksInput): Promise<RSS3Links>;
         };
 
         constructor(options: { endpoint: string; privateKey?: string });
