@@ -87,7 +87,7 @@ const changedFiles = rss3.persona.sync();
 **persona.raw()**
 
 ```ts
-persona.raw(fileID: string = persona.id): Promise<RSS3IContent>x
+persona.raw(fileID: string = persona.id): Promise<RSS3IContent>
 ```
 
 Example:
@@ -187,4 +187,87 @@ Example:
 const newItem = await rss3.item.patch({
     title: 'Hi RSS3',
 });
+```
+
+### Links
+
+**links.get**
+
+```ts
+links.get(fileID: string = this.main.persona.id, type?: string): Promise<RSS3Links | RSS3Links[]>
+```
+
+Example:
+
+```ts
+const following = await rss3.links.get(rss3.persona.id, 'following');
+```
+
+**links.post**
+
+```ts
+links.post(links: RSS3LinksInput): Promise<RSS3Links>
+```
+
+Example:
+
+```ts
+const following = await rss3.links.post({
+    type: 'following',
+    list: ['0xd0B85A7bB6B602f63B020256654cBE73A753DFC4'],
+});
+```
+
+**links.delete**
+
+```ts
+links.delete(type: string): Promise<RSS3Links>
+```
+
+Example:
+
+```ts
+const following = await rss3.links.delete('following');
+```
+
+**links.patch**
+
+```ts
+links.patch(links: RSS3LinksInput): Promise<RSS3Links>
+```
+
+Example:
+
+```ts
+const following = await rss3.links.patch({
+    type: 'following',
+    tags: ['test'],
+    list: ['0xd0B85A7bB6B602f63B020256654cBE73A753DFC4', '0xC8b960D09C0078c18Dcbe7eB9AB9d816BcCa8944'],
+});
+```
+
+### Link
+
+**link.post**
+
+```ts
+link.post(type: string, personaID: string): Promise<RSS3Links>
+```
+
+Example:
+
+```ts
+const following = await rss3.link.post('following', '0xd0B85A7bB6B602f63B020256654cBE73A753DFC4');
+```
+
+**link.delete**
+
+```ts
+link.delete(type: string, personaID: string): Promise<RSS3Links>
+```
+
+Example:
+
+```ts
+const following = await rss3.link.delete('following', '0xd0B85A7bB6B602f63B020256654cBE73A753DFC4');
 ```
