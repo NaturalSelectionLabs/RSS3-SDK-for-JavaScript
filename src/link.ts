@@ -12,6 +12,9 @@ class Link {
         const file = <RSS3Index>await this.main.file.get(this.main.persona.id);
         const lks = (file.links || []).find((links) => links.type === type);
         if (lks) {
+            if (!lks.list) {
+                lks.list = [];
+            }
             const index = lks.list.indexOf(personaID);
             if (index === -1) {
                 lks.list.push(personaID);
@@ -32,6 +35,9 @@ class Link {
         const file = <RSS3Index>await this.main.file.get(this.main.persona.id);
         const lks = (file.links || []).find((links) => links.type === type);
         if (lks) {
+            if (!lks.list) {
+                lks.list = [];
+            }
             const index = lks.list.indexOf(personaID);
             if (index !== -1) {
                 lks.list.splice(index, 1);
