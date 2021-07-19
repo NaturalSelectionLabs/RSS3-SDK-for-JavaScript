@@ -36,7 +36,8 @@ declare module 'rss3' {
             delete(type: string, personaID: string): Promise<RSS3Links>;
         };
         readonly links: {
-            get(fileID: string, type?: string): Promise<RSS3Links | RSS3Links[]>;
+            get(fileID: string): Promise<RSS3Links[]>;
+            get(fileID: string, type: string): Promise<RSS3Links>;
             post(links: RSS3LinksInput): Promise<RSS3Links>;
             delete(type: string): Promise<RSS3Links>;
             patch(links: RSS3LinksInput): Promise<RSS3Links>;
