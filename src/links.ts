@@ -57,12 +57,14 @@ class Links {
 
     async patch(links: RSS3LinksInput) {
         if (utils.check.valueLength(links) && equals<RSS3LinksInput>(links)) {
-            const linksList = (<RSS3Index>await this.main.file.get(this.main.persona.id)).links;
+            const file = <RSS3Index>await this.main.file.get(this.main.persona.id);
+            const linksList = file.links;
             const index = (linksList || []).findIndex((lks) => lks.type === links.type);
             if (index > -1) {
                 linksList[index] = Object.assign(linksList[index], links);
                 utils.object.removeEmpty(links);
                 utils.accounts.sign(links, this.main.persona.privateKey);
+                this.main.file.set(file);
                 return linksList[index];
             } else {
                 throw Error('Link type does not exist');
