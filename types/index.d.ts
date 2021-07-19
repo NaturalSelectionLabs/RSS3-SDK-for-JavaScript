@@ -6,6 +6,7 @@ import type {
     RSS3IContent,
     RSS3Links,
     RSS3LinksInput,
+    RSS3Backlink,
 } from './rss3';
 
 declare module 'rss3' {
@@ -41,6 +42,10 @@ declare module 'rss3' {
             post(links: RSS3LinksInput): Promise<RSS3Links>;
             delete(type: string): Promise<RSS3Links>;
             patch(links: RSS3LinksInput): Promise<RSS3Links>;
+        };
+        readonly backlinks: {
+            get(personaID?: string): Promise<RSS3Backlink[]>;
+            get(personaID: string, type: string): Promise<string[]>;
         };
 
         constructor(options: { endpoint: string; privateKey?: string });

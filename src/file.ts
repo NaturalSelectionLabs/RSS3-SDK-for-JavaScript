@@ -3,12 +3,12 @@ import utils from './utils';
 import axois from 'axios';
 import { equals } from 'typescript-is';
 import config from './config';
-import type { RSS3IContent } from '../types/rss3';
+import type { RSS3IContent, RSS3Content, RSS3List } from '../types/rss3';
 
 class File {
     private main: Main;
     private list: {
-        [key: string]: RSS3IContent;
+        [key: string]: RSS3Content;
     } = {};
     private dirtyList: {
         [key: string]: number;
@@ -31,13 +31,13 @@ class File {
         return this.list[fileID];
     }
 
-    get(fileID: string): Promise<RSS3IContent> {
+    get(fileID: string): Promise<RSS3Content> {
         if (this.list[fileID]) {
-            return new Promise<RSS3IContent>((resolve) => {
+            return new Promise<RSS3Content>((resolve) => {
                 resolve(this.list[fileID]);
             });
         } else {
-            return new Promise<RSS3IContent>(async (resolve, reject) => {
+            return new Promise<RSS3Content>(async (resolve, reject) => {
                 try {
                     const data = await axois({
                         method: 'get',
@@ -52,6 +52,9 @@ class File {
                         } else {
                             reject('The signature does not match.');
                         }
+                    } else if (equals<RSS3List>(content)) {
+                        this.list[fileID] = content;
+                        resolve(this.list[fileID]);
                     } else {
                         reject('Incorrectly formatted content.');
                     }

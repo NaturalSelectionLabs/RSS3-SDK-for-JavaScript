@@ -2,7 +2,7 @@ import Main from './index';
 import { equals } from 'typescript-is';
 import utils from './utils';
 import config from './config';
-import type { RSS3Index, RSS3ItemInput, RSS3Item } from '../types/rss3';
+import type { RSS3IContent, RSS3Index, RSS3ItemInput, RSS3Item } from '../types/rss3';
 
 class Item {
     private main: Main;
@@ -14,12 +14,12 @@ class Item {
     private async getPosition(itemID: string) {
         // try index file first
         let fileID = this.main.persona.id;
-        let file = await this.main.file.get(fileID);
+        let file = <RSS3IContent>await this.main.file.get(fileID);
         let index = file.items.findIndex((item) => item.id === itemID);
         if (index === -1) {
             const parsed = utils.id.parse(itemID);
             let fileID = this.main.persona.id + '-items-' + Math.ceil(parsed.index / config.itemPageSize);
-            file = await this.main.file.get(fileID);
+            file = <RSS3IContent>await this.main.file.get(fileID);
             index = file.items.findIndex((item) => item.id === itemID);
         }
         return {
@@ -70,7 +70,7 @@ class Item {
                     this.main.persona.id +
                     '-items-' +
                     (file.items_next ? utils.id.parse(file.items_next).index + 1 : 0);
-                const newFile = this.main.file.new(newID);
+                const newFile = <RSS3IContent>this.main.file.new(newID);
                 newFile.items = newList;
                 newFile.items_next = file.items_next;
                 this.main.file.set(newFile);

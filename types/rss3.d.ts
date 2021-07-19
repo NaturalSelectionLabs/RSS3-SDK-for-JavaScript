@@ -26,16 +26,18 @@ interface RSS3Index extends RSS3Base {
     items_next?: RSS3ItemsID;
 
     links?: RSS3Links[];
-    '@backlinks'?: {
-        type: string;
-        list: RSS3ListID;
-    }[];
+    '@backlinks'?: RSS3Backlink[];
 
     assets?: {
         type: string;
         tags?: string[];
         content: string;
     }[];
+}
+
+interface RSS3Backlink {
+    type: string;
+    list: RSS3ListID;
 }
 
 // RSS3Items file

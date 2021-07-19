@@ -194,7 +194,8 @@ const newItem = await rss3.item.patch({
 **links.get**
 
 ```ts
-links.get(fileID: string = this.main.persona.id, type?: string): Promise<RSS3Links | RSS3Links[]>
+links.get(fileID: string): Promise<RSS3Links[]>;
+links.get(fileID: string, type: string): Promise<RSS3Links>;
 ```
 
 Example:
@@ -270,4 +271,19 @@ Example:
 
 ```ts
 const following = await rss3.link.delete('following', '0xd0B85A7bB6B602f63B020256654cBE73A753DFC4');
+```
+
+### Backlinks
+
+**backlinks.get**
+
+```ts
+backlinks.get(personaID?: string): Promise<RSS3Backlink[]>
+backlinks.get(personaID: string, type: string): Promise<string[]>
+```
+
+Example:
+
+```ts
+const followers = await rss3.backlinks.get(rss3.persona.id, 'following');
 ```
