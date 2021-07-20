@@ -85,13 +85,15 @@ class File {
         this.dirtyList[content.id] = 1;
     }
 
-    sync() {
+    async sync() {
         const fileIDs = Object.keys(this.dirtyList);
-        const contents = fileIDs.map((fileID) => {
-            const content = this.list[fileID];
-            utils.accounts.sign(content, this.main.persona.privateKey);
-            return content;
-        });
+        const contents = await Promise.all(
+            fileIDs.map(async (fileID) => {
+                const content = this.list[fileID];
+                await utils.accounts.sign(content, this.main.persona);
+                return content;
+            }),
+        );
         return axois({
             method: 'put',
             url: this.main.options.endpoint,

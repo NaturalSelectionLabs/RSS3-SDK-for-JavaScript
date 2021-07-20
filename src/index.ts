@@ -10,6 +10,7 @@ import Backlinks from './backlinks';
 interface IOptions {
     endpoint: string;
     privateKey?: string;
+    provider?: 'MetaMask';
 }
 
 class RSS3 {

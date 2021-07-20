@@ -60,7 +60,7 @@ class Item {
                 },
             );
             utils.object.removeEmpty(item);
-            utils.accounts.sign(item, this.main.persona.privateKey);
+            await utils.accounts.sign(item, this.main.persona);
 
             file.items.unshift(item);
 
@@ -97,7 +97,7 @@ class Item {
                     date_modified: nowDate,
                 });
                 utils.object.removeEmpty(position.file.items[position.index]);
-                utils.accounts.sign(position.file.items[position.index], this.main.persona.privateKey);
+                await utils.accounts.sign(position.file.items[position.index], this.main.persona);
 
                 this.main.file.set(position.file);
                 return position.file.items[position.index];

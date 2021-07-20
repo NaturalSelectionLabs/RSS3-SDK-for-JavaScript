@@ -24,7 +24,7 @@ class Profile {
                 key: 'profile',
             });
             if (file.profile) {
-                utils.accounts.sign(file.profile, this.main.persona.privateKey);
+                await utils.accounts.sign(file.profile, this.main.persona);
             }
             this.main.file.set(file);
             return file.profile;

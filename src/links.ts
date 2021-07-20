@@ -27,7 +27,7 @@ class Links {
             }
             if (!file.links.find((lks) => lks.type === links.type)) {
                 utils.object.removeEmpty(links);
-                utils.accounts.sign(links, this.main.persona.privateKey);
+                await utils.accounts.sign(links, this.main.persona);
                 file.links.push(<RSS3Links>links);
             } else {
                 throw Error('Link type already exists');
@@ -63,7 +63,7 @@ class Links {
             if (index > -1) {
                 linksList[index] = Object.assign(linksList[index], links);
                 utils.object.removeEmpty(links);
-                utils.accounts.sign(links, this.main.persona.privateKey);
+                await utils.accounts.sign(links, this.main.persona);
                 this.main.file.set(file);
                 return linksList[index];
             } else {

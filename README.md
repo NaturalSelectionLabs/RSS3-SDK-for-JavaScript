@@ -32,15 +32,27 @@ const RSS3 = require('rss3').default;
 new RSS3(options: {
     endpoint: string; // RSS3 Hub Address
     privateKey?: string; // Persona's private key, a new persona will be created if it is empty
+    provider?: string, // Signature provider, currently only MetaMask is supported
 })
 ```
 
 Example:
 
+**privateKey**
+
 ```ts
 const rss3 = new RSS3({
     endpoint: 'https://rss3-hub-playground-6raed.ondigitalocean.app',
     privateKey: '0x47e18d6c386898b424025cd9db446f779ef24ad33a26c499c87bb3d9372540ba',
+});
+```
+
+**MetaMask**
+
+```ts
+const rss3 = new RSS3({
+    endpoint: 'https://rss3-hub-playground-6raed.ondigitalocean.app',
+    provider: 'MetaMask',
 });
 ```
 
