@@ -1,8 +1,5 @@
 import Main from './index';
 import utils from './utils';
-import Web3 from 'web3';
-import type { Eth } from 'web3-eth';
-import type { Personal } from 'web3-eth-personal';
 import type { IOptionsPrivateKey, IOptionsSign } from './index';
 
 declare global {
@@ -11,27 +8,11 @@ declare global {
     }
 }
 
-interface MetaMaskPersonal extends Personal {
-    sign(
-        dataToSign: string,
-        address: string,
-        password?: string,
-        callback?: (error: Error, signature: string) => void,
-    ): Promise<string>;
-}
-interface MetaMaskEth extends Eth {
-    personal: MetaMaskPersonal;
-}
-interface MetaMaskWeb3 extends Web3 {
-    eth: MetaMaskEth;
-}
-
 class Persona {
     private main: Main;
 
     privateKey: string;
     id: string;
-    metaMaskWeb3: MetaMaskWeb3;
 
     constructor(main: Main) {
         this.main = main;
