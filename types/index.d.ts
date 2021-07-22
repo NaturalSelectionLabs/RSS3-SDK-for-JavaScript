@@ -48,7 +48,18 @@ declare module 'rss3' {
             get(personaID: string, type: string): Promise<string[]>;
         };
 
-        constructor(options: { endpoint: string; privateKey?: string });
+        constructor(
+            options:
+                | {
+                      endpoint: string;
+                      privateKey?: string;
+                  }
+                | {
+                      endpoint: string;
+                      id: string;
+                      sign: (data: string) => Promise<string>;
+                  },
+        );
     }
 
     export default RSS3;
