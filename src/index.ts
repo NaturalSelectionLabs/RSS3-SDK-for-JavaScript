@@ -6,7 +6,6 @@ import Item from './item';
 import Links from './links';
 import Link from './link';
 import Backlinks from './backlinks';
-import utils from './utils';
 
 export interface IOptionsPrivateKey {
     endpoint: string;

@@ -21,13 +21,20 @@ const config = {
         rules: [
             {
                 test: /\.ts(x)?$/,
-                loader: 'ts-loader',
+                use: [
+                    {
+                        loader: 'babel-loader',
+                    },
+                    {
+                        loader: 'ts-loader',
+                        options: {
+                            getCustomTransformers: (program) => ({
+                                before: [typescriptIsTransformer(program)],
+                            }),
+                        },
+                    },
+                ],
                 exclude: /node_modules/,
-                options: {
-                    getCustomTransformers: (program) => ({
-                        before: [typescriptIsTransformer(program)],
-                    }),
-                },
             },
             {
                 test: /\.js$/,
