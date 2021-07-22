@@ -7,12 +7,29 @@
     </head>
     <body>
         <script src="../RSS3.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/web3@1.4.0/dist/web3.min.js"></script>
         <script>
             console.log(RSS3);
-            const rss3 = new RSS3({
+            window.rss3_1 = new RSS3({
                 endpoint: 'http://localhost:3000',
-                provider: 'MetaMask',
             });
+            const metaMaskWeb3 = new Web3(window.ethereum);
+            try {
+                window.ethereum
+                    .request({
+                        method: 'eth_requestAccounts',
+                    })
+                    .then((accounts) => {
+                        const id = metaMaskWeb3.utils.toChecksumAddress(accounts[0]);
+                        window.rss3_2 = new RSS3({
+                            endpoint: 'http://localhost:3000',
+                            id,
+                            sign: async (data) => await metaMaskWeb3.eth.personal.sign(data, id),
+                        });
+                    });
+            } catch (e) {
+                console.error(e);
+            }
         </script>
     </body>
 </html>

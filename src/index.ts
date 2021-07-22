@@ -6,15 +6,21 @@ import Item from './item';
 import Links from './links';
 import Link from './link';
 import Backlinks from './backlinks';
+import utils from './utils';
 
-interface IOptions {
+export interface IOptionsPrivateKey {
     endpoint: string;
     privateKey?: string;
-    provider?: 'MetaMask';
+}
+
+export interface IOptionsSign {
+    endpoint: string;
+    id: string;
+    sign: (data: string) => Promise<string>;
 }
 
 class RSS3 {
-    options: IOptions;
+    options: IOptionsPrivateKey | IOptionsSign;
     persona: Persona;
     file: File;
     profile: Profile;
@@ -24,7 +30,7 @@ class RSS3 {
     link: Link;
     backlinks: Backlinks;
 
-    constructor(options: IOptions) {
+    constructor(options: IOptionsPrivateKey | IOptionsSign) {
         this.options = options;
 
         this.file = new File(this);

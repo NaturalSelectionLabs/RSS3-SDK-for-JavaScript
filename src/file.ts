@@ -90,7 +90,7 @@ class File {
         const contents = await Promise.all(
             fileIDs.map(async (fileID) => {
                 const content = this.list[fileID];
-                await utils.accounts.sign(content, this.main.persona);
+                await utils.accounts.sign(content, this.main.options);
                 return content;
             }),
         );

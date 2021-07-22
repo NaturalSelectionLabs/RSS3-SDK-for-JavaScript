@@ -3,6 +3,7 @@ import utils from './utils';
 import Web3 from 'web3';
 import type { Eth } from 'web3-eth';
 import type { Personal } from 'web3-eth-personal';
+import type { IOptionsPrivateKey, IOptionsSign } from './index';
 
 declare global {
     interface Window {
@@ -35,22 +36,11 @@ class Persona {
     constructor(main: Main) {
         this.main = main;
 
-        if (main.options.privateKey) {
-            this.privateKey = main.options.privateKey;
-            this.id = utils.accounts.privateKeyToAddress(main.options.privateKey);
-        } else if (main.options.provider === 'MetaMask') {
-            this.metaMaskWeb3 = new Web3((<any>window).ethereum);
-            try {
-                window.ethereum
-                    .request({
-                        method: 'eth_requestAccounts',
-                    })
-                    .then((accounts: string) => {
-                        this.id = this.metaMaskWeb3.utils.toChecksumAddress(accounts[0]);
-                    });
-            } catch (e) {
-                console.error(e);
-            }
+        if ((<IOptionsPrivateKey>main.options).privateKey) {
+            this.privateKey = (<IOptionsPrivateKey>main.options).privateKey;
+            this.id = utils.accounts.privateKeyToAddress((<IOptionsPrivateKey>main.options).privateKey);
+        } else if ((<IOptionsSign>main.options).id && (<IOptionsSign>main.options).sign) {
+            this.id = (<IOptionsSign>main.options).id;
         } else {
             const keys = utils.accounts.create();
             this.privateKey = keys.privateKey.slice(2);

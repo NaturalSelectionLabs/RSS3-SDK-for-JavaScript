@@ -1,7 +1,7 @@
 const Accounts = require('web3-eth-accounts');
 import type { AnyObject } from '../../types/extend';
 import compatibility from './compatibility';
-import type Persona from '../persona';
+import type { IOptionsPrivateKey, IOptionsSign } from '../index';
 
 function removeNotSignProperties(obj: AnyObject) {
     obj = JSON.parse(JSON.stringify(obj));
@@ -37,12 +37,12 @@ function stringify(obj: AnyObject) {
 const accounts = new Accounts();
 
 export default {
-    async sign(obj: AnyObject, persona: Persona) {
+    async sign(obj: AnyObject, options: IOptionsPrivateKey | IOptionsSign) {
         let signature;
-        if (persona.privateKey) {
-            signature = accounts.sign(stringify(obj), persona.privateKey).signature;
-        } else if (persona.id && persona.metaMaskWeb3) {
-            signature = await persona.metaMaskWeb3.eth.personal.sign(stringify(obj), persona.id);
+        if ((<IOptionsPrivateKey>options).privateKey) {
+            signature = accounts.sign(stringify(obj), (<IOptionsPrivateKey>options).privateKey).signature;
+        } else if ((<IOptionsSign>options).id && (<IOptionsSign>options).sign) {
+            signature = await (<IOptionsSign>options).sign(stringify(obj));
         }
         obj.signature = signature;
     },
