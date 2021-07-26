@@ -50,11 +50,11 @@ class Item {
             const item: RSS3Item = Object.assign(
                 {
                     authors: [this.main.account.address],
+                    date_published: nowDate,
                 },
                 itemIn,
                 {
                     id: `${this.main.account.address}-item-${id}`,
-                    date_published: nowDate,
                     date_modified: nowDate,
                     signature: '',
                 },

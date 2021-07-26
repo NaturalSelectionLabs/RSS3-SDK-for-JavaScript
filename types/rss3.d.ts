@@ -59,6 +59,7 @@ interface RSS3List extends RSS3Base {
 
 export interface RSS3ItemInput {
     id?: string;
+    date_published?: string;
     authors?: RSS3ID[];
     title?: string;
     summary?: string;
@@ -79,7 +80,6 @@ export interface RSS3ItemInput {
 
 export interface RSS3Item extends RSS3ItemInput {
     id: RSS3ItemID;
-    date_published?: string;
     date_modified?: string;
 
     '@contexts'?: {
