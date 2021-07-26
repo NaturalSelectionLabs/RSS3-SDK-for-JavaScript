@@ -13,12 +13,12 @@ class Item {
 
     private async getPosition(itemID: string) {
         // try index file first
-        let fileID = this.main.persona.id;
+        let fileID = this.main.account.address;
         let file = <RSS3IContent>await this.main.file.get(fileID);
         let index = file.items.findIndex((item) => item.id === itemID);
         if (index === -1) {
             const parsed = utils.id.parse(itemID);
-            let fileID = this.main.persona.id + '-items-' + Math.ceil(parsed.index / config.itemPageSize);
+            let fileID = this.main.account.address + '-items-' + Math.ceil(parsed.index / config.itemPageSize);
             file = <RSS3IContent>await this.main.file.get(fileID);
             index = file.items.findIndex((item) => item.id === itemID);
         }
@@ -39,7 +39,7 @@ class Item {
 
     async post(itemIn: RSS3ItemInput) {
         if (utils.check.valueLength(itemIn) && equals<RSS3ItemInput>(itemIn)) {
-            const file = <RSS3Index>await this.main.file.get(this.main.persona.id);
+            const file = <RSS3Index>await this.main.file.get(this.main.account.address);
             if (!file.items) {
                 file.items = [];
             }
@@ -49,25 +49,25 @@ class Item {
             const nowDate = new Date().toISOString();
             const item: RSS3Item = Object.assign(
                 {
-                    authors: [this.main.persona.id],
+                    authors: [this.main.account.address],
                 },
                 itemIn,
                 {
-                    id: `${this.main.persona.id}-item-${id}`,
+                    id: `${this.main.account.address}-item-${id}`,
                     date_published: nowDate,
                     date_modified: nowDate,
                     signature: '',
                 },
             );
             utils.object.removeEmpty(item);
-            await utils.accounts.sign(item, this.main.options);
+            await this.main.account.sign(item);
 
             file.items.unshift(item);
 
             if (file.items.length > config.itemPageSize) {
                 const newList = file.items.slice(1);
                 const newID =
-                    this.main.persona.id +
+                    this.main.account.address +
                     '-items-' +
                     (file.items_next ? utils.id.parse(file.items_next).index + 1 : 0);
                 const newFile = <RSS3IContent>this.main.file.new(newID);
@@ -97,7 +97,7 @@ class Item {
                     date_modified: nowDate,
                 });
                 utils.object.removeEmpty(position.file.items[position.index]);
-                await utils.accounts.sign(position.file.items[position.index], this.main.options);
+                await this.main.account.sign(position.file.items[position.index]);
 
                 this.main.file.set(position.file);
                 return position.file.items[position.index];

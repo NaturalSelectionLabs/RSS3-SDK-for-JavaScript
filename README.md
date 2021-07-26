@@ -30,16 +30,36 @@ const RSS3 = require('rss3').default;
 
 ```ts
 new RSS3(options: {
+    endpoint: string;
+    mnemonic?: string;
+    mnemonicPath?: string;
+} | {
     endpoint: string; // RSS3 Hub address
-    privateKey?: string; // Persona's private key, a new persona will be created if it is empty
+    privateKey: string; // Persona's private key, a new persona will be created if it is empty
 } | {
     endpoint: string;
-    id: string; // RSS3 persona id/address
+    address: string; // RSS3 persona id/address
     sign: (data: string) => Promise<string>; // custom signature function
 })
 ```
 
 Example:
+
+**New**
+
+```ts
+const rss3 = new RSS3({
+    endpoint: 'https://rss3-hub-playground-6raed.ondigitalocean.app',
+});
+```
+
+**Mnemonic**
+
+```ts
+const rss3 = new RSS3({
+    endpoint: 'https://rss3-hub-playground-6raed.ondigitalocean.app',
+});
+```
 
 **PrivateKey**
 
@@ -59,40 +79,40 @@ window.ethereum
         method: 'eth_requestAccounts',
     })
     .then((accounts) => {
-        const id = metaMaskWeb3.utils.toChecksumAddress(accounts[0]);
+        const address = metaMaskWeb3.utils.toChecksumAddress(accounts[0]);
         const rss3 = new RSS3({
             endpoint: 'https://rss3-hub-playground-6raed.ondigitalocean.app',
-            id,
-            sign: async (data) => await metaMaskWeb3.eth.personal.sign(data, id),
+            address,
+            sign: async (data) => await metaMaskWeb3.eth.personal.sign(data, address),
         });
     });
 ```
 
+### Account
+
+**account.mnemonic**
+
+If initialized with privateKey or custom sign function, then this value is undefined
+
+```ts
+account.mnemonic: string | undefined
+```
+
+**account.privateKey**
+
+If initialized with custom sign function, then this value is undefined
+
+```ts
+account.privateKey: string | undefined
+```
+
+**account.address**
+
+```ts
+account.address: string
+```
+
 ### Persona
-
-**persona.privateKey**
-
-```ts
-persona.privateKey: string
-```
-
-Example:
-
-```ts
-const privateKey = rss3.persona.privateKey;
-```
-
-**persona.id**
-
-```ts
-persona.id: string
-```
-
-Example:
-
-```ts
-const id = rss3.persona.id;
-```
 
 **persona.sync()**
 
@@ -111,7 +131,7 @@ const changedFiles = rss3.persona.sync();
 **persona.raw()**
 
 ```ts
-persona.raw(fileID: string = persona.id): Promise<RSS3IContent>
+persona.raw(fileID: string = account.address): Promise<RSS3IContent>
 ```
 
 Example:
@@ -125,7 +145,7 @@ const file = await rss3.persona.raw();
 **profile.get()**
 
 ```ts
-profile.get(personaID: string = persona.id): Promise<RSS3Profile>
+profile.get(personaID: string = account.address): Promise<RSS3Profile>
 ```
 
 Example:
@@ -155,7 +175,7 @@ const newProfile = await rss3.profile.patch({
 **items.get()**
 
 ```ts
-items.get(fileID: string = persona.id): Promise<{
+items.get(fileID: string = account.address): Promise<{
     items: RSS3Item[],
     items_next?: string,
 }>
@@ -225,7 +245,7 @@ links.get(fileID: string, type: string): Promise<RSS3Links>;
 Example:
 
 ```ts
-const following = await rss3.links.get(rss3.persona.id, 'following');
+const following = await rss3.links.get(rss3.account.address, 'following');
 ```
 
 **links.post**
@@ -309,5 +329,5 @@ backlinks.get(personaID: string, type: string): Promise<string[]>
 Example:
 
 ```ts
-const followers = await rss3.backlinks.get(rss3.persona.id, 'following');
+const followers = await rss3.backlinks.get(rss3.account.address, 'following');
 ```

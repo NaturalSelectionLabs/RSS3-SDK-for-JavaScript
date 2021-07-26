@@ -1,3 +1,4 @@
+import Account from './account';
 import Persona from './persona';
 import File from './file';
 import Profile from './profile';
@@ -7,19 +8,26 @@ import Links from './links';
 import Link from './link';
 import Backlinks from './backlinks';
 
+export interface IOptionsMnemonic {
+    endpoint: string;
+    mnemonic?: string;
+    mnemonicPath?: string;
+}
+
 export interface IOptionsPrivateKey {
     endpoint: string;
-    privateKey?: string;
+    privateKey: string;
 }
 
 export interface IOptionsSign {
     endpoint: string;
-    id: string;
+    address: string;
     sign: (data: string) => Promise<string>;
 }
 
 class RSS3 {
-    options: IOptionsPrivateKey | IOptionsSign;
+    options: IOptionsMnemonic | IOptionsPrivateKey | IOptionsSign;
+    account: Account;
     persona: Persona;
     file: File;
     profile: Profile;
@@ -29,10 +37,11 @@ class RSS3 {
     link: Link;
     backlinks: Backlinks;
 
-    constructor(options: IOptionsPrivateKey | IOptionsSign) {
+    constructor(options: IOptionsMnemonic | IOptionsPrivateKey | IOptionsSign) {
         this.options = options;
 
         this.file = new File(this);
+        this.account = new Account(this);
         this.persona = new Persona(this);
         this.profile = new Profile(this);
         this.items = new Items(this);

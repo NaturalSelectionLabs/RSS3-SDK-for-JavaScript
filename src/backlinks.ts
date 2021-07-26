@@ -8,7 +8,7 @@ class Backlinks {
         this.main = main;
     }
 
-    async get(personaID: string = this.main.persona.id, type?: string) {
+    async get(personaID: string = this.main.account.address, type?: string) {
         const backlinksList = (<RSS3Index>await this.main.file.get(personaID))['@backlinks'] || [];
         if (type) {
             const backlink = backlinksList.find((backlink) => backlink.type === type);

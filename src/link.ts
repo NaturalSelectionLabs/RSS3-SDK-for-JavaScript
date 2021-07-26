@@ -9,7 +9,7 @@ class Link {
     }
 
     async post(type: string, personaID: string) {
-        const file = <RSS3Index>await this.main.file.get(this.main.persona.id);
+        const file = <RSS3Index>await this.main.file.get(this.main.account.address);
         const lks = (file.links || []).find((links) => links.type === type);
         if (lks) {
             if (!lks.list) {
@@ -32,7 +32,7 @@ class Link {
     }
 
     async delete(type: string, personaID: string) {
-        const file = <RSS3Index>await this.main.file.get(this.main.persona.id);
+        const file = <RSS3Index>await this.main.file.get(this.main.account.address);
         const lks = (file.links || []).find((links) => links.type === type);
         if (lks) {
             if (!lks.list) {

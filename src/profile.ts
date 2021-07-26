@@ -10,21 +10,21 @@ class Profile {
         this.main = main;
     }
 
-    async get(personaID: string = this.main.persona.id) {
+    async get(personaID: string = this.main.account.address) {
         const file = <RSS3Index>await this.main.file.get(personaID);
         return file.profile;
     }
 
     async patch(profile: RSS3ProfileInput) {
         if (utils.check.valueLength(profile) && equals<RSS3ProfileInput>(profile)) {
-            const file = <RSS3Index>await this.main.file.get(this.main.persona.id);
+            const file = <RSS3Index>await this.main.file.get(this.main.account.address);
             file.profile = Object.assign({}, file.profile, profile);
             utils.object.removeEmpty(file.profile, {
                 obj: file,
                 key: 'profile',
             });
             if (file.profile) {
-                await utils.accounts.sign(file.profile, this.main.options);
+                await this.main.account.sign(file.profile);
             }
             this.main.file.set(file);
             return file.profile;

@@ -8,7 +8,7 @@ class Items {
         this.main = main;
     }
 
-    async get(fileID: string = this.main.persona.id) {
+    async get(fileID: string = this.main.account.address) {
         const file = <RSS3Index>await this.main.file.get(fileID);
         return {
             items: file.items,

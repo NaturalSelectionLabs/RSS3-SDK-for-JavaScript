@@ -10,7 +10,7 @@ class Links {
         this.main = main;
     }
 
-    async get(fileID: string = this.main.persona.id, type?: string) {
+    async get(fileID: string = this.main.account.address, type?: string) {
         const linksList = (<RSS3Index>await this.main.file.get(fileID)).links || [];
         if (type) {
             return linksList.find((links) => links.type === type);
@@ -21,13 +21,13 @@ class Links {
 
     async post(links: RSS3LinksInput) {
         if (utils.check.valueLength(links) && equals<RSS3LinksInput>(links)) {
-            const file = <RSS3Index>await this.main.file.get(this.main.persona.id);
+            const file = <RSS3Index>await this.main.file.get(this.main.account.address);
             if (!file.links) {
                 file.links = [];
             }
             if (!file.links.find((lks) => lks.type === links.type)) {
                 utils.object.removeEmpty(links);
-                await utils.accounts.sign(links, this.main.options);
+                await this.main.account.sign(links);
                 file.links.push(<RSS3Links>links);
             } else {
                 throw Error('Link type already exists');
@@ -40,7 +40,7 @@ class Links {
     }
 
     async delete(type: string) {
-        const file = <RSS3Index>await this.main.file.get(this.main.persona.id);
+        const file = <RSS3Index>await this.main.file.get(this.main.account.address);
         const index = (file.links || []).findIndex((lks) => lks.type === type);
         if (index > -1) {
             const links = file.links[index];
@@ -57,13 +57,13 @@ class Links {
 
     async patch(links: RSS3LinksInput) {
         if (utils.check.valueLength(links) && equals<RSS3LinksInput>(links)) {
-            const file = <RSS3Index>await this.main.file.get(this.main.persona.id);
+            const file = <RSS3Index>await this.main.file.get(this.main.account.address);
             const linksList = file.links;
             const index = (linksList || []).findIndex((lks) => lks.type === links.type);
             if (index > -1) {
                 linksList[index] = Object.assign(linksList[index], links);
                 utils.object.removeEmpty(links);
-                await utils.accounts.sign(links, this.main.options);
+                await this.main.account.sign(links);
                 this.main.file.set(file);
                 return linksList[index];
             } else {

@@ -61,6 +61,7 @@ const config = {
             process: 'process/browser',
             Buffer: ['buffer', 'Buffer'],
         }),
+        new webpack.IgnorePlugin(/^\.\/wordlists\/(?!english)/, /bip39\/src$/),
     ],
     devServer: {
         compress: true,

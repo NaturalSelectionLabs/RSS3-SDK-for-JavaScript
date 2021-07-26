@@ -45,7 +45,7 @@ class File {
                     });
                     const content = data.data;
                     if (equals<RSS3IContent>(content)) {
-                        const check = utils.accounts.check(content, utils.id.parse(fileID).persona);
+                        const check = this.main.account.check(content, utils.id.parse(fileID).persona);
                         if (check) {
                             this.list[fileID] = content;
                             resolve(this.list[fileID]);
@@ -90,7 +90,7 @@ class File {
         const contents = await Promise.all(
             fileIDs.map(async (fileID) => {
                 const content = this.list[fileID];
-                await utils.accounts.sign(content, this.main.options);
+                await this.main.account.sign(content);
                 return content;
             }),
         );
