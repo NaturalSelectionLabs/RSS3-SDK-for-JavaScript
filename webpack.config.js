@@ -1,7 +1,6 @@
 const webpack = require('webpack');
 const path = require('path');
 const typescriptIsTransformer = require('typescript-is/lib/transform-inline/transformer').default;
-const TerserPlugin = require('terser-webpack-plugin');
 
 const config = {
     entry: {
@@ -45,39 +44,14 @@ const config = {
     },
     resolve: {
         extensions: ['.tsx', '.ts', '.js'],
-        // hack for web3-eth-accounts
         fallback: {
-            crypto: require.resolve('crypto-browserify'),
-            stream: require.resolve('stream-browserify'),
-            buffer: require.resolve('buffer/'),
-            assert: require.resolve('assert/'),
-            https: require.resolve('https-browserify'),
-            http: require.resolve('stream-http'),
-            os: require.resolve('os-browserify/browser'),
+            // for typescript-is
+            util: require.resolve('util/'),
         },
     },
-    plugins: [
-        new webpack.ProvidePlugin({
-            process: 'process/browser',
-            Buffer: ['buffer', 'Buffer'],
-        }),
-        new webpack.IgnorePlugin(/^\.\/wordlists\/(?!english)/, /bip39\/src$/),
-    ],
     devServer: {
         compress: true,
         static: './',
-    },
-    optimization: {
-        minimizer: [
-            new TerserPlugin({
-                extractComments: false,
-                terserOptions: {
-                    output: {
-                        ascii_only: true,
-                    },
-                },
-            }),
-        ],
     },
 };
 
