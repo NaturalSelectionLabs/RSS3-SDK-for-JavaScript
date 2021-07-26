@@ -9,7 +9,7 @@ class Backlinks {
     }
 
     async get(personaID: string = this.main.account.address, type?: string) {
-        const backlinksList = (<RSS3Index>await this.main.file.get(personaID))['@backlinks'] || [];
+        const backlinksList = (<RSS3Index>await this.main.files.get(personaID))['@backlinks'] || [];
         if (type) {
             const backlink = backlinksList.find((backlink) => backlink.type === type);
             if (!backlink) {
@@ -18,7 +18,7 @@ class Backlinks {
             let fileID = backlink.list;
             let list: string[] = [];
             do {
-                const currentList = <RSS3List>await this.main.file.get(fileID);
+                const currentList = <RSS3List>await this.main.files.get(fileID);
                 list = list.concat(currentList.list);
                 fileID = currentList.list_next;
             } while (fileID);

@@ -9,7 +9,7 @@ class Link {
     }
 
     async post(type: string, personaID: string) {
-        const file = <RSS3Index>await this.main.file.get(this.main.account.address);
+        const file = <RSS3Index>await this.main.files.get(this.main.account.address);
         const lks = (file.links || []).find((links) => links.type === type);
         if (lks) {
             if (!lks.list) {
@@ -21,7 +21,7 @@ class Link {
             } else {
                 throw Error('Link already exist');
             }
-            await this.main.file.set(file);
+            await this.main.files.set(file);
             return lks;
         } else {
             await this.main.links.post({
@@ -32,7 +32,7 @@ class Link {
     }
 
     async delete(type: string, personaID: string) {
-        const file = <RSS3Index>await this.main.file.get(this.main.account.address);
+        const file = <RSS3Index>await this.main.files.get(this.main.account.address);
         const lks = (file.links || []).find((links) => links.type === type);
         if (lks) {
             if (!lks.list) {
@@ -47,7 +47,7 @@ class Link {
             } else {
                 throw Error('Link does not exist');
             }
-            await this.main.file.set(file);
+            await this.main.files.set(file);
             return lks;
         } else {
             throw Error('Link type does not exist');

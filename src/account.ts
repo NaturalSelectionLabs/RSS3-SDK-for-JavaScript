@@ -26,7 +26,7 @@ class Account {
             this.signer = ethers.Wallet.createRandom({
                 path: (<IOptionsMnemonic>main.options).mnemonicPath,
             });
-            this.main.file.new(this.signer.address);
+            this.main.files.new(this.signer.address);
         }
         if (this.signer) {
             this.mnemonic = this.signer.mnemonic.phrase;

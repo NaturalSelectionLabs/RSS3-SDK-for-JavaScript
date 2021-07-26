@@ -1,6 +1,5 @@
 import Account from './account';
-import Persona from './persona';
-import File from './file';
+import Files from './files';
 import Profile from './profile';
 import Items from './items';
 import Item from './item';
@@ -28,8 +27,7 @@ export interface IOptionsSign {
 class RSS3 {
     options: IOptionsMnemonic | IOptionsPrivateKey | IOptionsSign;
     account: Account;
-    persona: Persona;
-    file: File;
+    files: Files;
     profile: Profile;
     items: Items;
     item: Item;
@@ -40,9 +38,8 @@ class RSS3 {
     constructor(options: IOptionsMnemonic | IOptionsPrivateKey | IOptionsSign) {
         this.options = options;
 
-        this.file = new File(this);
+        this.files = new Files(this);
         this.account = new Account(this);
-        this.persona = new Persona(this);
         this.profile = new Profile(this);
         this.items = new Items(this);
         this.item = new Item(this);

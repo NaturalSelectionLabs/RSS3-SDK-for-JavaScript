@@ -11,7 +11,7 @@ class Links {
     }
 
     async get(fileID: string = this.main.account.address, type?: string) {
-        const linksList = (<RSS3Index>await this.main.file.get(fileID)).links || [];
+        const linksList = (<RSS3Index>await this.main.files.get(fileID)).links || [];
         if (type) {
             return linksList.find((links) => links.type === type);
         } else {
@@ -21,7 +21,7 @@ class Links {
 
     async post(links: RSS3LinksInput) {
         if (utils.check.valueLength(links) && equals<RSS3LinksInput>(links)) {
-            const file = <RSS3Index>await this.main.file.get(this.main.account.address);
+            const file = <RSS3Index>await this.main.files.get(this.main.account.address);
             if (!file.links) {
                 file.links = [];
             }
@@ -32,7 +32,7 @@ class Links {
             } else {
                 throw Error('Link type already exists');
             }
-            this.main.file.set(file);
+            this.main.files.set(file);
             return <RSS3Links>links;
         } else {
             throw Error('Parameter error');
@@ -40,7 +40,7 @@ class Links {
     }
 
     async delete(type: string) {
-        const file = <RSS3Index>await this.main.file.get(this.main.account.address);
+        const file = <RSS3Index>await this.main.files.get(this.main.account.address);
         const index = (file.links || []).findIndex((lks) => lks.type === type);
         if (index > -1) {
             const links = file.links[index];
@@ -48,7 +48,7 @@ class Links {
             if (file.links.length === 0) {
                 delete file.links;
             }
-            this.main.file.set(file);
+            this.main.files.set(file);
             return links;
         } else {
             throw Error('Link type does not exist');
@@ -57,14 +57,14 @@ class Links {
 
     async patch(links: RSS3LinksInput) {
         if (utils.check.valueLength(links) && equals<RSS3LinksInput>(links)) {
-            const file = <RSS3Index>await this.main.file.get(this.main.account.address);
+            const file = <RSS3Index>await this.main.files.get(this.main.account.address);
             const linksList = file.links;
             const index = (linksList || []).findIndex((lks) => lks.type === links.type);
             if (index > -1) {
                 linksList[index] = Object.assign(linksList[index], links);
                 utils.object.removeEmpty(links);
                 await this.main.account.sign(links);
-                this.main.file.set(file);
+                this.main.files.set(file);
                 return linksList[index];
             } else {
                 throw Error('Link type does not exist');

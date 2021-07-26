@@ -112,32 +112,32 @@ account.privateKey: string | undefined
 account.address: string
 ```
 
-### Persona
+### Files
 
-**persona.sync()**
+**files.sync()**
 
-Please note that changes will only be synced to the node after `persona.sync()` is successfully executed
+Please note that changes will only be synced to the node after `files.sync()` is successfully executed
 
 ```ts
-persona.sync(): string[]
+files.sync(): string[]
 ```
 
 Example:
 
 ```ts
-const changedFiles = rss3.persona.sync();
+const changedFiles = rss3.files.sync();
 ```
 
-**persona.raw()**
+**files.get()**
 
 ```ts
-persona.raw(fileID: string = account.address): Promise<RSS3IContent>
+files.get(fileID: string): Promise<RSS3IContent>
 ```
 
 Example:
 
 ```ts
-const file = await rss3.persona.raw();
+const file = await rss3.files.get(rss3.account.address);
 ```
 
 ### Profile

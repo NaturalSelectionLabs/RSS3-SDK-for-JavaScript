@@ -14,12 +14,12 @@ class Item {
     private async getPosition(itemID: string) {
         // try index file first
         let fileID = this.main.account.address;
-        let file = <RSS3IContent>await this.main.file.get(fileID);
+        let file = <RSS3IContent>await this.main.files.get(fileID);
         let index = file.items.findIndex((item) => item.id === itemID);
         if (index === -1) {
             const parsed = utils.id.parse(itemID);
             let fileID = this.main.account.address + '-items-' + Math.ceil(parsed.index / config.itemPageSize);
-            file = <RSS3IContent>await this.main.file.get(fileID);
+            file = <RSS3IContent>await this.main.files.get(fileID);
             index = file.items.findIndex((item) => item.id === itemID);
         }
         return {
@@ -39,7 +39,7 @@ class Item {
 
     async post(itemIn: RSS3ItemInput) {
         if (utils.check.valueLength(itemIn) && equals<RSS3ItemInput>(itemIn)) {
-            const file = <RSS3Index>await this.main.file.get(this.main.account.address);
+            const file = <RSS3Index>await this.main.files.get(this.main.account.address);
             if (!file.items) {
                 file.items = [];
             }
@@ -70,16 +70,16 @@ class Item {
                     this.main.account.address +
                     '-items-' +
                     (file.items_next ? utils.id.parse(file.items_next).index + 1 : 0);
-                const newFile = <RSS3IContent>this.main.file.new(newID);
+                const newFile = <RSS3IContent>this.main.files.new(newID);
                 newFile.items = newList;
                 newFile.items_next = file.items_next;
-                this.main.file.set(newFile);
+                this.main.files.set(newFile);
 
                 file.items = file.items.slice(0, 1);
                 file.items_next = newID;
             }
 
-            this.main.file.set(file);
+            this.main.files.set(file);
 
             return item;
         } else {
@@ -99,7 +99,7 @@ class Item {
                 utils.object.removeEmpty(position.file.items[position.index]);
                 await this.main.account.sign(position.file.items[position.index]);
 
-                this.main.file.set(position.file);
+                this.main.files.set(position.file);
                 return position.file.items[position.index];
             } else {
                 return null;
