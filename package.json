@@ -1,6 +1,6 @@
 {
-    "name": "rss3",
-    "version": "0.5.0",
+    "name": "rss3-next",
+    "version": "0.6.0",
     "description": "",
     "main": "dist/module/index.js",
     "module": "dist/module/index.js",
