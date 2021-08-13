@@ -334,16 +334,16 @@ const followers = await rss3.backlinks.get(rss3.account.address, 'following');
 
 ### Accounts
 
-**accounts.put**
+**accounts.post**
 
 ```ts
-accounts.put(account: RSS3Account): Promise<RSS3Account>
+accounts.post(account: RSS3Account): Promise<RSS3Account>
 ```
 
 Example:
 
 ```ts
-const account = await rss3.accounts.put(account);
+const account = await rss3.accounts.post(account);
 ```
 
 **accounts.delete**
@@ -361,9 +361,21 @@ Example:
 const account = await rss3.accounts.delete(account);
 ```
 
+**accounts.getSigMessage**
+
+```ts
+accounts.getSigMessage(account): string;
+```
+
+Example:
+
+```ts
+const sigMessage = await rss3.accounts.getSigMessage(account);
+```
+
 ### Assets
 
-**assets.put**
+**assets.patchTags**
 
 ```ts
 assets.patchTags(asset: RSS3Asset, tags: string[]): Promise<RSS3Asset>

@@ -56,7 +56,7 @@ class Account {
         }
     }
 
-    private stringifyObj(obj: AnyObject) {
+    stringifyObj(obj: AnyObject) {
         const removeNotSignProperties = (obj: AnyObject) => {
             obj = JSON.parse(JSON.stringify(obj));
             for (let key in obj) {

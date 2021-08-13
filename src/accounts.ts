@@ -1,5 +1,5 @@
 import Main from './index';
-import type { RSS3Index, RSS3Account } from '../types/rss3';
+import type { RSS3Index, RSS3Account, RSS3AccountInput } from '../types/rss3';
 import utils from './utils';
 import { equals } from 'typescript-is';
 
@@ -10,7 +10,14 @@ class Accounts {
         this.main = main;
     }
 
-    async put(account: RSS3Account) {
+    getSigMessage(account: RSS3AccountInput) {
+        const signAccountObj = JSON.parse(JSON.stringify(account));
+        if (!signAccountObj.tags) signAccountObj.tags = [];
+        signAccountObj.tags.push(this.main.account.address);
+        return this.main.account.stringifyObj(signAccountObj);
+    }
+
+    async post(account: RSS3Account) {
         if (utils.check.valueLength(account) && equals<RSS3Account>(account)) {
             this.identityFormat(account);
             const file = <RSS3Index>await this.main.files.get(this.main.account.address);
