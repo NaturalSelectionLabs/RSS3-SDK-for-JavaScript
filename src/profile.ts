@@ -23,9 +23,6 @@ class Profile {
                 obj: file,
                 key: 'profile',
             });
-            if (file.profile) {
-                await this.main.account.sign(file.profile);
-            }
             this.main.files.set(file);
             return file.profile;
         } else {

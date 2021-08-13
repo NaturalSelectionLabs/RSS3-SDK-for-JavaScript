@@ -27,7 +27,6 @@ class Links {
             }
             if (!file.links.find((lks) => lks.type === links.type)) {
                 utils.object.removeEmpty(links);
-                await this.main.account.sign(links);
                 file.links.push(links);
             } else {
                 throw Error('Link type already exists');
@@ -63,7 +62,6 @@ class Links {
             if (index > -1) {
                 linksList[index] = Object.assign(linksList[index], links);
                 utils.object.removeEmpty(links);
-                await this.main.account.sign(links);
                 this.main.files.set(file);
                 return linksList[index];
             } else {

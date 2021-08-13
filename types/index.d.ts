@@ -47,7 +47,7 @@ declare module 'rss3' {
                   }
                 | {
                       endpoint: string;
-                      id: string;
+                      address: string;
                       sign: (data: string) => Promise<string>;
                   },
         );

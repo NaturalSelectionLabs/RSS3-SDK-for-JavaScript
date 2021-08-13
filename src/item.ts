@@ -59,7 +59,6 @@ class Item {
                 },
             );
             utils.object.removeEmpty(item);
-            await this.main.account.sign(item);
 
             file.items.unshift(item);
 
@@ -96,7 +95,6 @@ class Item {
                     date_modified: nowDate,
                 });
                 utils.object.removeEmpty(position.file.items[position.index]);
-                await this.main.account.sign(position.file.items[position.index]);
 
                 this.main.files.set(position.file);
                 return position.file.items[position.index];
