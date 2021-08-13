@@ -1,5 +1,5 @@
 import Main from './index';
-import type { RSS3Index, RSS3LinksInput, RSS3Links } from '../types/rss3';
+import type { RSS3Index, RSS3Links } from '../types/rss3';
 import utils from './utils';
 import { equals } from 'typescript-is';
 
@@ -19,8 +19,8 @@ class Links {
         }
     }
 
-    async post(links: RSS3LinksInput) {
-        if (utils.check.valueLength(links) && equals<RSS3LinksInput>(links)) {
+    async post(links: RSS3Links) {
+        if (utils.check.valueLength(links) && equals<RSS3Links>(links)) {
             const file = <RSS3Index>await this.main.files.get(this.main.account.address);
             if (!file.links) {
                 file.links = [];
@@ -28,12 +28,12 @@ class Links {
             if (!file.links.find((lks) => lks.type === links.type)) {
                 utils.object.removeEmpty(links);
                 await this.main.account.sign(links);
-                file.links.push(<RSS3Links>links);
+                file.links.push(links);
             } else {
                 throw Error('Link type already exists');
             }
             this.main.files.set(file);
-            return <RSS3Links>links;
+            return links;
         } else {
             throw Error('Parameter error');
         }
@@ -55,8 +55,8 @@ class Links {
         }
     }
 
-    async patch(links: RSS3LinksInput) {
-        if (utils.check.valueLength(links) && equals<RSS3LinksInput>(links)) {
+    async patch(links: RSS3Links) {
+        if (utils.check.valueLength(links) && equals<RSS3Links>(links)) {
             const file = <RSS3Index>await this.main.files.get(this.main.account.address);
             const linksList = file.links;
             const index = (linksList || []).findIndex((lks) => lks.type === links.type);

@@ -20,6 +20,8 @@ interface RSS3Index extends RSS3Base {
     id: RSS3ID;
     signature: string;
 
+    owers?: RSS3ID[];
+
     profile?: RSS3Profile;
 
     items?: RSS3Item[];
@@ -28,11 +30,9 @@ interface RSS3Index extends RSS3Base {
     links?: RSS3Links[];
     '@backlinks'?: RSS3Backlink[];
 
-    assets?: {
-        type: string;
-        tags?: string[];
-        content: string;
-    }[];
+    accounts?: RSS3Account[];
+
+    assets?: RSS3Asset[];
 }
 
 interface RSS3Backlink {
@@ -43,7 +43,6 @@ interface RSS3Backlink {
 // RSS3Items file
 interface RSS3Items extends RSS3Base {
     id: RSS3ItemsID;
-    signature: string;
 
     items: RSS3Item[];
     items_next?: RSS3ItemsID;
@@ -86,27 +85,31 @@ export interface RSS3Item extends RSS3ItemInput {
         type?: string;
         list: RSS3ListID;
     }[];
-
-    signature: string;
 }
 
-export interface RSS3ProfileInput {
+export interface RSS3Profile {
     name?: string;
     avatar?: ThirdPartyAddress;
     bio?: string;
     tags?: string[];
 }
 
-export interface RSS3Profile extends RSS3ProfileInput {
-    signature: string;
-}
-
-export interface RSS3LinksInput {
+export interface RSS3Links {
     type: string;
     tags?: string[];
     list?: RSS3ID[];
 }
 
-export interface RSS3Links extends RSS3LinksInput {
-    signature: string;
+export interface RSS3Account {
+    tags?: string[];
+    platform: string;
+    identity: string;
+    account_signature: string;
+}
+
+export interface RSS3Asset {
+    tags?: string[];
+    platform: string;
+    identity: string;
+    id: string;
 }

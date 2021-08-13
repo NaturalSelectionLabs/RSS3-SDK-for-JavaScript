@@ -56,7 +56,6 @@ class Item {
                 {
                     id: `${this.main.account.address}-item-${id}`,
                     date_modified: nowDate,
-                    signature: '',
                 },
             );
             utils.object.removeEmpty(item);

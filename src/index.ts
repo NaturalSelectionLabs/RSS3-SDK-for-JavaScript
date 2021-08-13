@@ -6,6 +6,8 @@ import Item from './item';
 import Links from './links';
 import Link from './link';
 import Backlinks from './backlinks';
+import Accounts from './accounts';
+import Assets from './assets';
 
 export interface IOptionsMnemonic {
     endpoint: string;
@@ -34,6 +36,8 @@ class RSS3 {
     links: Links;
     link: Link;
     backlinks: Backlinks;
+    accounts: Accounts;
+    assets: Assets;
 
     constructor(options: IOptionsMnemonic | IOptionsPrivateKey | IOptionsSign) {
         this.options = options;
@@ -46,6 +50,8 @@ class RSS3 {
         this.links = new Links(this);
         this.link = new Link(this);
         this.backlinks = new Backlinks(this);
+        this.accounts = new Accounts(this);
+        this.assets = new Assets(this);
     }
 }
 

@@ -45,7 +45,8 @@ class File {
                     });
                     const content = data.data;
                     if (equals<RSS3IContent>(content)) {
-                        const check = this.main.account.check(content, utils.id.parse(fileID).persona);
+                        // const check = this.main.account.check(content, utils.id.parse(fileID).persona);
+                        const check = true;
                         if (check) {
                             this.list[fileID] = content;
                             resolve(this.list[fileID]);

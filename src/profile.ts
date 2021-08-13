@@ -1,7 +1,7 @@
 import Main from './index';
 import { equals } from 'typescript-is';
 import utils from './utils';
-import type { RSS3Index, RSS3ProfileInput } from '../types/rss3';
+import type { RSS3Index, RSS3Profile } from '../types/rss3';
 
 class Profile {
     private main: Main;
@@ -15,8 +15,8 @@ class Profile {
         return file.profile;
     }
 
-    async patch(profile: RSS3ProfileInput) {
-        if (utils.check.valueLength(profile) && equals<RSS3ProfileInput>(profile)) {
+    async patch(profile: RSS3Profile) {
+        if (utils.check.valueLength(profile) && equals<RSS3Profile>(profile)) {
             const file = <RSS3Index>await this.main.files.get(this.main.account.address);
             file.profile = Object.assign({}, file.profile, profile);
             utils.object.removeEmpty(file.profile, {
