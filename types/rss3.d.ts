@@ -20,6 +20,9 @@ interface RSS3Index extends RSS3Base {
     id: RSS3ID;
     signature: string;
 
+    agent_id?: string;
+    agent_signature?: string;
+
     owers?: RSS3ID[];
 
     profile?: RSS3Profile;

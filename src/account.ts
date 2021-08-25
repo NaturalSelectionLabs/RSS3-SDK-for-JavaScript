@@ -1,10 +1,12 @@
 import type { AnyObject } from '../types/extend';
 import Main, { IOptionsMnemonic, IOptionsPrivateKey, IOptionsSign } from './index';
 import { ethers } from 'ethers';
+import utils from './utils';
 
 class Account {
     private main: Main;
     private signer: ethers.Wallet;
+    private agentSigner: ethers.Wallet;
     mnemonic: string | undefined;
     privateKey: string | undefined;
     address: string;
@@ -33,16 +35,33 @@ class Account {
             this.privateKey = this.signer.privateKey.slice(2);
             this.address = this.signer.address;
         }
+
+        utils.indexeddb
+            .get(this.address)
+            .then((db: any) => {
+                if (db.address && db.privateKey) {
+                    this.agentSigner = new ethers.Wallet(db.privateKey);
+                }
+            })
+            .catch(() => {
+                this.agentSigner = ethers.Wallet.createRandom();
+                utils.indexeddb.set(this.address, {
+                    privateKey: this.agentSigner.privateKey.slice(2),
+                });
+            });
     }
 
     async sign(obj: AnyObject) {
-        let signature;
-        if (this.signer) {
-            signature = await this.signer.signMessage(this.stringifyObj(obj));
-        } else if ((<IOptionsSign>this.main.options).sign) {
-            signature = await (<IOptionsSign>this.main.options).sign(this.stringifyObj(obj));
+        obj.agent_id = this.agentSigner.address;
+        const agentMessage = `Hi, RSS3. I'm your agent ${obj.agent_id}`;
+        if (!obj.agent_signature || ethers.utils.verifyMessage(agentMessage, obj.signature) !== obj.id) {
+            if (this.signer) {
+                obj.signature = await this.signer.signMessage(agentMessage);
+            } else if ((<IOptionsSign>this.main.options).sign) {
+                obj.signature = await (<IOptionsSign>this.main.options).sign(agentMessage);
+            }
         }
-        obj.signature = signature;
+        obj.agent_signature = await this.agentSigner.signMessage(this.stringifyObj(obj));
     }
 
     check(obj: AnyObject, address = this.address) {
@@ -52,7 +71,14 @@ class Account {
         if (!obj.signature) {
             return false;
         } else {
-            return ethers.utils.verifyMessage(this.stringifyObj(obj), obj.signature) === address;
+            if (obj.agent_signature && obj.agent_id) {
+                return (
+                    ethers.utils.verifyMessage(`Hi, RSS3. I'm your agent ${obj.agent_id}`, obj.signature) === obj.id &&
+                    ethers.utils.verifyMessage(this.stringifyObj(obj), obj.agent_signature) === obj.agent_id
+                );
+            } else {
+                return ethers.utils.verifyMessage(this.stringifyObj(obj), obj.signature) === address;
+            }
         }
     }
 
@@ -60,7 +86,7 @@ class Account {
         const removeNotSignProperties = (obj: AnyObject) => {
             obj = JSON.parse(JSON.stringify(obj));
             for (let key in obj) {
-                if (key[0] === '@' || key === 'signature') {
+                if (key[0] === '@' || key === 'signature' || key === 'agent_signature') {
                     delete obj[key];
                 } else if (typeof obj[key] === 'object') {
                     obj[key] = removeNotSignProperties(obj[key]);
