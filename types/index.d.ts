@@ -1,12 +1,27 @@
-import type { RSS3Profile, RSS3Item, RSS3ItemInput, RSS3IContent, RSS3Links, RSS3Backlink } from './rss3';
+import type {
+    RSS3Profile,
+    RSS3Item,
+    RSS3ItemInput,
+    RSS3IContent,
+    RSS3Links,
+    RSS3Backlink,
+    RSS3AccountInput,
+    RSS3Account,
+    RSS3Content,
+} from './rss3';
 
-declare module 'rss3' {
+declare module 'rss3-next' {
     class RSS3 {
-        readonly persona: {
-            privateKey: string;
-            id: string;
+        readonly files: {
+            new (fileID: string): RSS3Content;
+            get(fileID: string): Promise<RSS3Content>;
+            set(content: RSS3IContent): void;
             sync(): Promise<void>;
-            raw(fileID?: string): Promise<RSS3IContent>;
+        };
+        readonly account: {
+            mnemonic: string | undefined;
+            privateKey: string | undefined;
+            address: string;
         };
         readonly profile: {
             get(personaID?: string): Promise<RSS3Profile>;
@@ -37,6 +52,14 @@ declare module 'rss3' {
         readonly backlinks: {
             get(personaID?: string): Promise<RSS3Backlink[]>;
             get(personaID: string, type: string): Promise<string[]>;
+        };
+        readonly accounts: {
+            getSigMessage(account: RSS3AccountInput): string;
+            post(account: RSS3Account): Promise<RSS3Account>;
+            delete(account: { platform: string; identity: string }): Promise<{
+                platform: string;
+                identity: string;
+            }>;
         };
 
         constructor(
