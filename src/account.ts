@@ -2,11 +2,14 @@ import type { AnyObject } from '../types/extend';
 import Main, { IOptionsMnemonic, IOptionsPrivateKey, IOptionsSign } from './index';
 import { ethers } from 'ethers';
 import utils from './utils';
+import nacl from 'tweetnacl';
+import naclUtil from 'tweetnacl-util';
 
 class Account {
     private main: Main;
     private signer: ethers.Wallet;
-    private agentSigner: ethers.Wallet;
+    private agentPrivateKey: Uint8Array;
+    private agentPublickKey: Uint8Array;
     mnemonic: string | undefined;
     privateKey: string | undefined;
     address: string;
@@ -39,20 +42,24 @@ class Account {
         utils.indexeddb
             .get(this.address)
             .then((db: any) => {
-                if (db.address && db.privateKey) {
-                    this.agentSigner = new ethers.Wallet(db.privateKey);
+                if (db.publicKey && db.privateKey) {
+                    this.agentPrivateKey = db.privateKey;
+                    this.agentPublickKey = db.publicKey;
                 }
             })
             .catch(() => {
-                this.agentSigner = ethers.Wallet.createRandom();
+                const pair = nacl.sign.keyPair();
+                this.agentPrivateKey = pair.secretKey;
+                this.agentPublickKey = pair.publicKey;
                 utils.indexeddb.set(this.address, {
-                    privateKey: this.agentSigner.privateKey.slice(2),
+                    publicKey: this.agentPublickKey,
+                    privateKey: this.agentPrivateKey,
                 });
             });
     }
 
     async sign(obj: AnyObject) {
-        obj.agent_id = this.agentSigner.address;
+        obj.agent_id = naclUtil.encodeBase64(this.agentPublickKey);
         const agentMessage = `Hi, RSS3. I'm your agent ${obj.agent_id}`;
         if (!obj.agent_signature || ethers.utils.verifyMessage(agentMessage, obj.signature) !== obj.id) {
             if (this.signer) {
@@ -61,7 +68,8 @@ class Account {
                 obj.signature = await (<IOptionsSign>this.main.options).sign(agentMessage);
             }
         }
-        obj.agent_signature = await this.agentSigner.signMessage(this.stringifyObj(obj));
+        const signature = nacl.sign.detached(new TextEncoder().encode(this.stringifyObj(obj)), this.agentPrivateKey);
+        obj.agent_signature = naclUtil.encodeBase64(signature);
     }
 
     check(obj: AnyObject, address = this.address) {
@@ -74,7 +82,11 @@ class Account {
             if (obj.agent_signature && obj.agent_id) {
                 return (
                     ethers.utils.verifyMessage(`Hi, RSS3. I'm your agent ${obj.agent_id}`, obj.signature) === obj.id &&
-                    ethers.utils.verifyMessage(this.stringifyObj(obj), obj.agent_signature) === obj.agent_id
+                    nacl.sign.detached.verify(
+                        new TextEncoder().encode(this.stringifyObj(obj)),
+                        naclUtil.decodeBase64(obj.agent_signature),
+                        naclUtil.decodeBase64(obj.agent_id),
+                    )
                 );
             } else {
                 return ethers.utils.verifyMessage(this.stringifyObj(obj), obj.signature) === address;

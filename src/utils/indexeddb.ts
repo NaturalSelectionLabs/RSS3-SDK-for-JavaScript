@@ -9,6 +9,9 @@ export default {
                 objectStore.createIndex('privateKey', 'privateKey', {
                     unique: true,
                 });
+                objectStore.createIndex('publicKey', 'publicKey', {
+                    unique: true,
+                });
             };
             dbRequest.onsuccess = () => {
                 const db = dbRequest.result;
@@ -45,6 +48,9 @@ export default {
                 keyPath: 'address',
             });
             objectStore.createIndex('privateKey', 'privateKey', {
+                unique: true,
+            });
+            objectStore.createIndex('publicKey', 'publicKey', {
                 unique: true,
             });
         };
