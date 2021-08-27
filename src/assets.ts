@@ -27,6 +27,11 @@ class Assets {
             throw Error('Parameter error');
         }
     }
+
+    async get(fileID: string = this.main.account.address) {
+        const file = <RSS3Index>await this.main.files.get(fileID);
+        return file.assets;
+    }
 }
 
 export default Assets;

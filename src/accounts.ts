@@ -11,10 +11,11 @@ class Accounts {
     }
 
     getSigMessage(account: RSS3AccountInput) {
-        const signAccountObj = JSON.parse(JSON.stringify(account));
-        if (!signAccountObj.tags) signAccountObj.tags = [];
-        signAccountObj.tags.push(this.main.account.address);
-        return this.main.account.stringifyObj(signAccountObj);
+        return this.main.account.stringifyObj({
+            platform: account.platform,
+            identity: account.identity,
+            address: this.main.account.address,
+        });
     }
 
     async post(account: RSS3Account) {
@@ -35,6 +36,30 @@ class Accounts {
         } else {
             throw Error('Parameter error');
         }
+    }
+
+    async patchTags(account: RSS3AccountInput, tags: string[]) {
+        if (utils.check.valueLength(tags)) {
+            const file = <RSS3Index>await this.main.files.get(this.main.account.address);
+            const index = file.accounts.findIndex(
+                (ac) => ac.platform === account.platform && ac.identity === account.identity,
+            );
+
+            if (index !== -1) {
+                file.accounts[index].tags = tags;
+                this.main.files.set(file);
+                return file.accounts[index];
+            } else {
+                return null;
+            }
+        } else {
+            throw Error('Parameter error');
+        }
+    }
+
+    async get(fileID: string = this.main.account.address) {
+        const file = <RSS3Index>await this.main.files.get(fileID);
+        return file.accounts;
     }
 
     async delete(account: { platform: string; identity: string }) {

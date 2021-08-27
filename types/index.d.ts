@@ -8,13 +8,14 @@ import type {
     RSS3AccountInput,
     RSS3Account,
     RSS3Content,
+    RSS3Asset,
 } from './rss3';
 
 declare module 'rss3-next' {
     class RSS3 {
         readonly files: {
             new (fileID: string): RSS3Content;
-            get(fileID: string): Promise<RSS3Content>;
+            get(fileID: string, force?: boolean): Promise<RSS3Content>;
             set(content: RSS3IContent): void;
             sync(): Promise<void>;
         };
@@ -54,12 +55,18 @@ declare module 'rss3-next' {
             get(personaID: string, type: string): Promise<string[]>;
         };
         readonly accounts: {
+            get(fileID?: string): Promise<RSS3Account[]>;
             getSigMessage(account: RSS3AccountInput): string;
             post(account: RSS3Account): Promise<RSS3Account>;
             delete(account: { platform: string; identity: string }): Promise<{
                 platform: string;
                 identity: string;
             }>;
+            patchTags(account: RSS3AccountInput, tags: string[]): Promise<RSS3Account>;
+        };
+        readonly assets: {
+            get(fileID?: string): Promise<RSS3Asset[]>;
+            patchTags(asset: RSS3Asset, tags: string[]): Promise<RSS3Asset>;
         };
 
         constructor(

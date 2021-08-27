@@ -31,8 +31,8 @@ class File {
         return this.list[fileID];
     }
 
-    get(fileID: string): Promise<RSS3Content> {
-        if (this.list[fileID]) {
+    get(fileID: string = this.main.account.address, force?: boolean): Promise<RSS3Content> {
+        if (this.list[fileID] && !force) {
             return new Promise<RSS3Content>((resolve) => {
                 resolve(this.list[fileID]);
             });
