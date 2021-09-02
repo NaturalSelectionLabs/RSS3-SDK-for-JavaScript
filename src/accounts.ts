@@ -41,7 +41,7 @@ class Accounts {
     async patchTags(account: RSS3AccountInput, tags: string[]) {
         if (utils.check.valueLength(tags)) {
             const file = <RSS3Index>await this.main.files.get(this.main.account.address);
-            const index = file.accounts.findIndex(
+            const index = (file.accounts || []).findIndex(
                 (ac) => ac.platform === account.platform && ac.identity === account.identity,
             );
 
