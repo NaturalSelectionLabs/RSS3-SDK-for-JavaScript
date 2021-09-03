@@ -1,3 +1,14 @@
+// https://bugs.webkit.org/show_bug.cgi?id=226547#c40
+function fixSafariIndexedDB() {
+    if (!window.indexedDB) {
+        return;
+    }
+    const dummyDbName = 'safariIdbFix';
+    window.indexedDB.open(dummyDbName);
+    window.indexedDB.deleteDatabase(dummyDbName);
+}
+fixSafariIndexedDB();
+
 export default {
     get: (address: string) => {
         return new Promise((resolve, reject) => {
