@@ -9,6 +9,7 @@ import type {
     RSS3Content,
     RSS3Asset,
 } from './rss3';
+import type { IOptionsMnemonic, IOptionsPrivateKey, IOptionsSign } from '../src/index';
 
 declare module 'rss3-next' {
     class RSS3 {
@@ -68,18 +69,7 @@ declare module 'rss3-next' {
             patchTags(asset: RSS3Asset, tags: string[]): Promise<RSS3Asset>;
         };
 
-        constructor(
-            options:
-                | {
-                      endpoint: string;
-                      privateKey?: string;
-                  }
-                | {
-                      endpoint: string;
-                      address: string;
-                      sign: (data: string) => Promise<string>;
-                  },
-        );
+        constructor(options: IOptionsMnemonic | IOptionsPrivateKey | IOptionsSign);
     }
 
     export default RSS3;
