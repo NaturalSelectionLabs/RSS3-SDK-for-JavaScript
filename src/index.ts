@@ -9,19 +9,20 @@ import Backlinks from './backlinks';
 import Accounts from './accounts';
 import Assets from './assets';
 
-export interface IOptionsMnemonic {
+interface IOptions {
     endpoint: string;
+}
+
+export interface IOptionsMnemonic extends IOptions {
     mnemonic?: string;
     mnemonicPath?: string;
 }
 
-export interface IOptionsPrivateKey {
-    endpoint: string;
+export interface IOptionsPrivateKey extends IOptions {
     privateKey: string;
 }
 
-export interface IOptionsSign {
-    endpoint: string;
+export interface IOptionsSign extends IOptions {
     address: string;
     sign: (data: string) => Promise<string>;
 }

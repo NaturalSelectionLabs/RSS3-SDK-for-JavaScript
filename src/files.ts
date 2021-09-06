@@ -79,7 +79,7 @@ class File {
         }
     }
 
-    set(content: RSS3IContent) {
+    set(content: RSS3Content) {
         content.date_updated = new Date().toISOString();
         content['@version'] = config.version;
         this.list[content.id] = content;

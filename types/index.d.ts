@@ -2,7 +2,6 @@ import type {
     RSS3Profile,
     RSS3Item,
     RSS3ItemInput,
-    RSS3IContent,
     RSS3Links,
     RSS3Backlink,
     RSS3AccountInput,
@@ -16,7 +15,7 @@ declare module 'rss3-next' {
         readonly files: {
             new (fileID: string): RSS3Content;
             get(fileID: string, force?: boolean): Promise<RSS3Content>;
-            set(content: RSS3IContent): void;
+            set(content: RSS3Content): void;
             sync(): Promise<void>;
         };
         readonly account: {

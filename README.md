@@ -131,7 +131,7 @@ const changedFiles = rss3.files.sync();
 **files.get()**
 
 ```ts
-files.get(fileID: string): Promise<RSS3IContent>
+files.get(fileID: string): Promise<RSS3Content>
 ```
 
 Example:
