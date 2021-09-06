@@ -11,6 +11,7 @@ import Assets from './assets';
 
 interface IOptions {
     endpoint: string;
+    callback?: () => void;
 }
 
 export interface IOptionsMnemonic extends IOptions {

@@ -29,6 +29,10 @@
                             endpoint: 'http://localhost:3000',
                             address,
                             sign: async (data) => await metaMaskWeb3.eth.personal.sign(data, address),
+                            callback: async () => {
+                                window.rss3_3.files.set(await window.rss3_3.files.get(address));
+                                await window.rss3_3.files.sync();
+                            },
                         });
                     });
             } catch (e) {

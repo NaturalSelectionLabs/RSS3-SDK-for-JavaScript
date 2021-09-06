@@ -29,18 +29,26 @@ const RSS3 = require('rss3').default;
 ### Initialization
 
 ```ts
-new RSS3(options: {
+interface IOptions {
     endpoint: string;
+    callback?: () => void;
+}
+
+interface IOptionsMnemonic extends IOptions {
     mnemonic?: string;
     mnemonicPath?: string;
-} | {
-    endpoint: string; // RSS3 Hub address
-    privateKey: string; // Persona's private key, a new persona will be created if it is empty
-} | {
-    endpoint: string;
-    address: string; // RSS3 persona id/address
-    sign: (data: string) => Promise<string>; // custom signature function
-})
+}
+
+interface IOptionsPrivateKey extends IOptions {
+    privateKey: string;
+}
+
+interface IOptionsSign extends IOptions {
+    address: string;
+    sign: (data: string) => Promise<string>;
+}
+
+new RSS3(options: IOptionsMnemonic | IOptionsPrivateKey | IOptionsSign);
 ```
 
 Example:
@@ -84,6 +92,10 @@ window.ethereum
             endpoint: 'https://rss3-hub-playground-6raed.ondigitalocean.app',
             address,
             sign: async (data) => await metaMaskWeb3.eth.personal.sign(data, address),
+            callback: async () => {
+                rss3.files.set(await rss3.files.get(address));
+                await rss3.files.sync();
+            },
         });
     });
 ```

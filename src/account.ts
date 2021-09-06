@@ -55,6 +55,9 @@ class Account {
                     publicKey: this.agentPublickKey,
                     privateKey: this.agentPrivateKey,
                 });
+            })
+            .finally(() => {
+                this.main.options.callback?.();
             });
     }
 
