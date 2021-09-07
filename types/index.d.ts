@@ -9,7 +9,25 @@ import type {
     RSS3Content,
     RSS3Asset,
 } from './rss3';
-import type { IOptionsMnemonic, IOptionsPrivateKey, IOptionsSign } from '../src/index';
+
+interface IOptions {
+    endpoint: string;
+    callback?: () => void;
+}
+
+export interface IOptionsMnemonic extends IOptions {
+    mnemonic?: string;
+    mnemonicPath?: string;
+}
+
+export interface IOptionsPrivateKey extends IOptions {
+    privateKey: string;
+}
+
+export interface IOptionsSign extends IOptions {
+    address: string;
+    sign: (data: string) => Promise<string>;
+}
 
 declare module 'rss3-next' {
     class RSS3 {

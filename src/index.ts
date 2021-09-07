@@ -8,25 +8,7 @@ import Link from './link';
 import Backlinks from './backlinks';
 import Accounts from './accounts';
 import Assets from './assets';
-
-interface IOptions {
-    endpoint: string;
-    callback?: () => void;
-}
-
-export interface IOptionsMnemonic extends IOptions {
-    mnemonic?: string;
-    mnemonicPath?: string;
-}
-
-export interface IOptionsPrivateKey extends IOptions {
-    privateKey: string;
-}
-
-export interface IOptionsSign extends IOptions {
-    address: string;
-    sign: (data: string) => Promise<string>;
-}
+import { IOptionsMnemonic, IOptionsPrivateKey, IOptionsSign } from '../types';
 
 class RSS3 {
     options: IOptionsMnemonic | IOptionsPrivateKey | IOptionsSign;
