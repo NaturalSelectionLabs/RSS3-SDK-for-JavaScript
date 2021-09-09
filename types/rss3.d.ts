@@ -118,4 +118,5 @@ export interface RSS3Asset {
     platform: string;
     identity: string;
     id: string;
+    type?: string;
 }
