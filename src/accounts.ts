@@ -59,7 +59,7 @@ class Accounts {
 
     async get(fileID: string = this.main.account.address) {
         const file = <RSS3Index>await this.main.files.get(fileID);
-        return file.accounts;
+        return file.accounts || [];
     }
 
     async delete(account: { platform: string; identity: string }) {

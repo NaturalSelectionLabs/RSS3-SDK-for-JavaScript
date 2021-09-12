@@ -12,7 +12,7 @@ class Profile {
 
     async get(personaID: string = this.main.account.address) {
         const file = <RSS3Index>await this.main.files.get(personaID);
-        return file.profile;
+        return file.profile || {};
     }
 
     async patch(profile: RSS3Profile) {
