@@ -1,25 +1,32 @@
 import Cookies from 'js-cookie';
-
-const prefix = 'RSS3';
+import md5 from 'crypto-js/md5';
 
 interface IStorageData {
     privateKey: string;
     publicKey: string;
 }
 
+function getKey(address: string) {
+    return 'RSS3' + md5(address);
+}
+
 export default {
     get: (address: string) => {
-        const data = Cookies.get(prefix + address);
-        return data ? <IStorageData>JSON.parse(data) : null;
+        try {
+            const data = Cookies.get(getKey(address));
+            return data ? <IStorageData>JSON.parse(window.atob(data)) : null;
+        } catch (e) {
+            return null;
+        }
     },
     set: (address: string, value: IStorageData) => {
-        Cookies.set(prefix + address, JSON.stringify(value), {
+        Cookies.set(getKey(address), window.btoa(JSON.stringify(value)), {
             domain: window.location.hostname,
             secure: true,
             sameSite: 'strict',
         });
     },
     remove: (address: string) => {
-        Cookies.remove(prefix + address);
+        Cookies.remove(getKey(address));
     },
 };

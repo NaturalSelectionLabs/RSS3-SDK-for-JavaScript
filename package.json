@@ -33,6 +33,7 @@
     "homepage": "https://github.com/NaturalSelectionLabs/RSS3-SDK#readme",
     "dependencies": {
         "axios": "0.21.1",
+        "crypto-js": "4.1.1",
         "ethers": "5.4.1",
         "js-cookie": "3.0.1",
         "tweetnacl": "1.0.3",
@@ -45,6 +46,7 @@
         "@babel/plugin-proposal-optional-chaining": "7.14.5",
         "@babel/preset-env": "7.14.2",
         "@babel/preset-typescript": "7.14.5",
+        "@types/crypto-js": "4.0.2",
         "@types/js-cookie": "2.2.7",
         "babel-loader": "8.2.2",
         "husky": "6.0.0",
