@@ -23,17 +23,16 @@
                     .request({
                         method: 'eth_requestAccounts',
                     })
-                    .then((accounts) => {
+                    .then(async (accounts) => {
                         const address = metaMaskWeb3.utils.toChecksumAddress(accounts[0]);
                         window.rss3_3 = new RSS3({
                             endpoint: 'http://localhost:3000',
                             address,
                             sign: async (data) => await metaMaskWeb3.eth.personal.sign(data, address),
-                            callback: async () => {
-                                window.rss3_3.files.set(await window.rss3_3.files.get(address));
-                                await window.rss3_3.files.sync();
-                            },
+                            agentSign: true,
                         });
+                        window.rss3_3.files.set(await window.rss3_3.files.get(address));
+                        await window.rss3_3.files.sync();
                     });
             } catch (e) {
                 console.error(e);

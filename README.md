@@ -31,7 +31,7 @@ const RSS3 = require('rss3').default;
 ```ts
 interface IOptions {
     endpoint: string;
-    callback?: () => void;
+    agentSign?: boolean;
 }
 
 interface IOptionsMnemonic extends IOptions {
@@ -86,17 +86,15 @@ window.ethereum
     .request({
         method: 'eth_requestAccounts',
     })
-    .then((accounts) => {
+    .then(async (accounts) => {
         const address = metaMaskWeb3.utils.toChecksumAddress(accounts[0]);
         const rss3 = new RSS3({
             endpoint: 'https://rss3-hub-playground-6raed.ondigitalocean.app',
             address,
             sign: async (data) => await metaMaskWeb3.eth.personal.sign(data, address),
-            callback: async () => {
-                rss3.files.set(await rss3.files.get(address));
-                await rss3.files.sync();
-            },
         });
+        rss3.files.set(await rss3.files.get(address));
+        await rss3.files.sync();
     });
 ```
 

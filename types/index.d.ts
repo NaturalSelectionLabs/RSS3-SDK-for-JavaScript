@@ -12,7 +12,7 @@ import type {
 
 interface IOptions {
     endpoint: string;
-    callback?: () => void;
+    agentSign?: boolean;
 }
 
 export interface IOptionsMnemonic extends IOptions {

@@ -1,11 +1,11 @@
 import check from './check';
 import id from './id';
 import object from './object';
-import indexeddb from './indexeddb';
+import storage from './storage';
 
 export default {
     check,
     id,
     object,
-    indexeddb,
+    storage,
 };
