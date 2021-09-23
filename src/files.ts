@@ -86,6 +86,10 @@ class File {
         this.dirtyList[content.id] = 1;
     }
 
+    clearCache(key: string) {
+        delete this.list[key];
+    }
+
     async sync() {
         const fileIDs = Object.keys(this.dirtyList);
         const contents = await Promise.all(

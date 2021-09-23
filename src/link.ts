@@ -17,6 +17,7 @@ class Link {
             }
             const index = lks.list.indexOf(personaID);
             if (index === -1) {
+                this.main.files.clearCache(`${personaID}-backlink@${type}`);
                 lks.list.push(personaID);
             } else {
                 throw Error('Link already exist');
@@ -40,6 +41,7 @@ class Link {
             }
             const index = lks.list.indexOf(personaID);
             if (index !== -1) {
+                this.main.files.clearCache(`${personaID}-backlink@${type}`);
                 lks.list.splice(index, 1);
                 if (lks.list.length === 0) {
                     delete lks.list;

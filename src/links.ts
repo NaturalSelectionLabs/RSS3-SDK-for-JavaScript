@@ -26,6 +26,9 @@ class Links {
                 file.links = [];
             }
             if (!file.links.find((lks) => lks.type === links.type)) {
+                links.list?.forEach((link) => {
+                    this.main.files.clearCache(`${link}-backlink@${links.type}`);
+                });
                 utils.object.removeEmpty(links);
                 file.links.push(links);
             } else {
@@ -43,6 +46,9 @@ class Links {
         const index = (file.links || []).findIndex((lks) => lks.type === type);
         if (index > -1) {
             const links = file.links[index];
+            links.list?.forEach((link) => {
+                this.main.files.clearCache(`${link}-backlink@${links.type}`);
+            });
             file.links.splice(index, 1);
             if (file.links.length === 0) {
                 delete file.links;
@@ -60,6 +66,9 @@ class Links {
             const linksList = file.links;
             const index = (linksList || []).findIndex((lks) => lks.type === links.type);
             if (index > -1) {
+                links.list?.forEach((link) => {
+                    this.main.files.clearCache(`${link}-backlink@${links.type}`);
+                });
                 linksList[index] = Object.assign(linksList[index], links);
                 utils.object.removeEmpty(links);
                 this.main.files.set(file);
