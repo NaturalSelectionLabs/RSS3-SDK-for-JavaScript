@@ -35,7 +35,7 @@ class Account {
             this.main.files.new(this.signer.address);
         }
         if (this.signer) {
-            this.mnemonic = this.signer.mnemonic.phrase;
+            this.mnemonic = this.signer.mnemonic?.phrase;
             this.privateKey = this.signer.privateKey.slice(2);
             this.address = this.signer.address;
         }
