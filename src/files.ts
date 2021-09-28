@@ -44,7 +44,7 @@ class File {
                         url: `${this.main.options.endpoint}/${fileID}`,
                     });
                     const content = data.data;
-                    if (equals<RSS3IContent>(content)) {
+                    if (equals<RSS3IContent>(utils.check.removeCustomProperties(content))) {
                         // const check = this.main.account.check(content, utils.id.parse(fileID).persona);
                         const check = true;
                         if (check) {
@@ -82,8 +82,12 @@ class File {
     set(content: RSS3Content) {
         content.date_updated = new Date().toISOString();
         content['@version'] = config.version;
-        this.list[content.id] = content;
-        this.dirtyList[content.id] = 1;
+        if (utils.check.fileSize(content)) {
+            this.list[content.id] = content;
+            this.dirtyList[content.id] = 1;
+        } else {
+            throw new Error('File size is too large.');
+        }
     }
 
     clearCache(key: string) {

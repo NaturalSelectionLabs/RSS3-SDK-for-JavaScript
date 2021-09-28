@@ -1,5 +1,6 @@
 import config from '../config';
 import type { AnyObject } from '../../types/extend';
+import { Buffer } from 'buffer';
 
 function valueLength(obj: AnyObject) {
     let result = true;
@@ -15,6 +16,28 @@ function valueLength(obj: AnyObject) {
     return result;
 }
 
+function removeCustomProperties(obj: AnyObject) {
+    const result = JSON.parse(JSON.stringify(obj));
+    for (let key in result) {
+        if (key[0] === '_') {
+            delete result[key];
+        } else if (typeof result[key] === 'object') {
+            result[key] = removeCustomProperties(result[key]);
+        }
+    }
+    return result;
+}
+
 export default {
     valueLength,
+
+    removeCustomProperties,
+
+    fileSize(obj: AnyObject) {
+        if (Buffer.byteLength(JSON.stringify(obj)) > config.maxFileLength) {
+            return false;
+        } else {
+            return true;
+        }
+    },
 };
