@@ -103,14 +103,11 @@ export interface RSS3Links {
     list?: RSS3ID[];
 }
 
-export interface RSS3AccountInput {
+export interface RSS3Account {
     tags?: string[];
     platform: string;
     identity: string;
-}
-
-export interface RSS3Account extends RSS3AccountInput {
-    signature: string;
+    signature?: string;
 }
 
 export interface RSS3Asset {

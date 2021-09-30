@@ -1,5 +1,5 @@
 import Main from './index';
-import type { RSS3Index, RSS3Account, RSS3AccountInput } from '../types/rss3';
+import type { RSS3Index, RSS3Account } from '../types/rss3';
 import utils from './utils';
 import { equals } from 'typescript-is';
 
@@ -10,7 +10,7 @@ class Accounts {
         this.main = main;
     }
 
-    getSigMessage(account: RSS3AccountInput) {
+    getSigMessage(account: RSS3Account) {
         return this.main.account.stringifyObj({
             platform: account.platform,
             identity: account.identity,
@@ -38,7 +38,7 @@ class Accounts {
         }
     }
 
-    async patchTags(account: RSS3AccountInput, tags: string[]) {
+    async patchTags(account: RSS3Account, tags: string[]) {
         if (utils.check.valueLength(tags)) {
             const file = <RSS3Index>await this.main.files.get(this.main.account.address);
             const index = (file.accounts || []).findIndex(

@@ -4,7 +4,6 @@ import type {
     RSS3ItemInput,
     RSS3Links,
     RSS3Backlink,
-    RSS3AccountInput,
     RSS3Account,
     RSS3Content,
     RSS3Asset,
@@ -74,13 +73,13 @@ declare module 'rss3-next' {
         };
         readonly accounts: {
             get(fileID?: string): Promise<RSS3Account[]>;
-            getSigMessage(account: RSS3AccountInput): string;
+            getSigMessage(account: RSS3Account): string;
             post(account: RSS3Account): Promise<RSS3Account>;
             delete(account: { platform: string; identity: string }): Promise<{
                 platform: string;
                 identity: string;
             }>;
-            patchTags(account: RSS3AccountInput, tags: string[]): Promise<RSS3Account>;
+            patchTags(account: RSS3Account, tags: string[]): Promise<RSS3Account>;
         };
         readonly assets: {
             get(fileID?: string): Promise<RSS3Asset[]>;
