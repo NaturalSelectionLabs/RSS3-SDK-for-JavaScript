@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 const path = require('path');
 const typescriptIsTransformer = require('typescript-is/lib/transform-inline/transformer').default;
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const config = {
     entry: {
@@ -49,6 +50,7 @@ const config = {
             util: require.resolve('util/'),
         },
     },
+    plugins: [new BundleAnalyzerPlugin()],
     devServer: {
         compress: true,
         static: './',

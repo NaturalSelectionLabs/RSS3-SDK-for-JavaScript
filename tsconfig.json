@@ -7,7 +7,7 @@
         "noImplicitAny": true,
         "moduleResolution": "node",
         "sourceMap": false,
-        "outDir": "dist/module",
+        "outDir": "dist",
         "baseUrl": ".",
         "plugins": [
             {
