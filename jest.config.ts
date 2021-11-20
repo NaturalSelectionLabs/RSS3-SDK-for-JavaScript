@@ -6,4 +6,5 @@ export default {
     transform: {
         '^.+\\.(ts|tsx)?$': 'ts-jest',
     },
+    collectCoverageFrom: ['src/**/*.ts'],
 };
