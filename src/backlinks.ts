@@ -14,7 +14,7 @@ class Backlinks {
         return {
             file,
             index,
-            id: index !== -1 ? file.backlinks[index].list : null,
+            id: index !== -1 ? file.backlinks![index].list : null,
         };
     }
 
@@ -22,7 +22,10 @@ class Backlinks {
         if (index < 0) {
             const indexFile = <RSS3Index>await this.main.files.get(persona);
             if (indexFile.backlinks) {
-                const linksId = indexFile.backlinks.find((links) => links.type === type).list;
+                const linksId = indexFile.backlinks.find((links) => links.type === type)?.list;
+                if (!linksId) {
+                    throw new Error('Backlink type does not exist');
+                }
                 const parsed = utils.id.parse(linksId);
                 index = parsed.index + index + 1;
                 const file = <RSS3List>await this.main.files.get(utils.id.getBacklinks(persona, type, index));
@@ -42,10 +45,12 @@ class Backlinks {
         }
     }
 
-    async getAllList(persona: string, type: string, breakpoint?: (file: RSS3LinksList) => boolean) {
+    async getAllList(persona: string, type: string, breakpoint?: (file: RSS3BacklinksList) => boolean) {
         const { id } = await this.getPosition(persona, type);
         if (id) {
-            return <RSS3ID[]>await this.main.files.getAll(id, breakpoint);
+            return <RSS3ID[]>await this.main.files.getAll(id, (file) => {
+                return breakpoint?.(<RSS3BacklinksList>file) || false;
+            });
         } else {
             return [];
         }

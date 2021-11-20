@@ -20,7 +20,7 @@ class Account {
 
         if ((<IOptionsMnemonic>main.options).mnemonic) {
             // mnemonic
-            this.signer = ethers.Wallet.fromMnemonic((<IOptionsMnemonic>main.options).mnemonic);
+            this.signer = ethers.Wallet.fromMnemonic((<IOptionsMnemonic>main.options).mnemonic!);
         } else if ((<IOptionsPrivateKey>main.options).privateKey) {
             // privateKey
             this.signer = new ethers.Wallet((<IOptionsPrivateKey>main.options).privateKey);

@@ -28,7 +28,9 @@ class Assets {
     async getAllList(persona: string, breakpoint?: (file: RSS3AssetsList) => boolean) {
         const indexFile = <RSS3Index>await this.main.files.get(persona);
         if (indexFile.assets) {
-            return <RSS3Asset[]>await this.main.files.getAll(indexFile.assets, breakpoint);
+            return <RSS3Asset[]>await this.main.files.getAll(indexFile.assets, (file) => {
+                return breakpoint?.(<RSS3AssetsList>file) || false;
+            });
         } else {
             return [];
         }
@@ -45,13 +47,16 @@ class Assets {
 
     private async getPosition(asset: RSS3Asset) {
         let result: {
-            file: RSS3AssetsList;
+            file: RSS3AssetsList | null;
             index: number;
         } = {
             file: null,
             index: -1,
         };
         this.getAllList(this.main.account.address, (file) => {
+            if (!file.list) {
+                return false;
+            }
             const index = file.list.findIndex((as) => this.assetsEquals(as, asset));
             if (index !== -1) {
                 result = {
@@ -70,7 +75,7 @@ class Assets {
         if (utils.check.valueLength(asset) && equals<RSS3UserAsset>(asset)) {
             const list = await this.getAllList(
                 this.main.account.address,
-                (file) => file.list.findIndex((as) => this.assetsEquals(as, asset)) > -1,
+                (file) => !!file.list && file.list.findIndex((as) => this.assetsEquals(as, asset)) > -1,
             );
             const index = list.findIndex((as) => this.assetsEquals(as, asset));
             if (index === -1) {
@@ -78,6 +83,8 @@ class Assets {
                 if (!file) {
                     const newID = utils.id.getAssets(this.main.account.address, 0);
                     file = <RSS3AssetsList>this.main.files.new(newID);
+                }
+                if (!file.list) {
                     file.list = [];
                 }
                 if (
@@ -112,10 +119,10 @@ class Assets {
             const position = await this.getPosition(asset);
 
             if (position.index !== -1) {
-                position.file.list[position.index] = Object.assign(position.file.list[position.index], asset);
+                position.file!.list![position.index] = Object.assign(position.file!.list![position.index], asset);
 
-                this.main.files.set(position.file);
-                return position.file.list[position.index];
+                this.main.files.set(position.file!);
+                return position.file!.list![position.index];
             } else {
                 return null;
             }

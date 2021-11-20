@@ -59,9 +59,9 @@ class Accounts {
             const { file, index } = await this.getPosition(this.main.account.address, account);
 
             if (index !== -1) {
-                file.profile.accounts[index].tags = tags;
+                file.profile!.accounts![index].tags = tags;
                 this.main.files.set(file);
-                return file.profile.accounts[index];
+                return file.profile!.accounts![index];
             } else {
                 throw Error('Account does not exist');
             }
@@ -79,7 +79,7 @@ class Accounts {
         this.identityFormat(account);
         const { file, index } = await this.getPosition(this.main.account.address, account);
         if (index !== -1) {
-            file.profile.accounts.splice(index, 1);
+            file.profile!.accounts!.splice(index, 1);
             await this.main.files.set(file);
             return account;
         } else {

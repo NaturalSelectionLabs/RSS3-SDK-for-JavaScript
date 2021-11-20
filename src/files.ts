@@ -58,7 +58,7 @@ class File {
                     } else {
                         reject('Incorrectly formatted content.');
                     }
-                } catch (error) {
+                } catch (error: any) {
                     if (error.response?.data?.code === 5001) {
                         const nowDate = new Date().toISOString();
                         this.list[fileID] = {
@@ -80,13 +80,14 @@ class File {
 
     async getAll(fileID: RSS3ListID, breakpoint?: (file: RSS3List) => boolean) {
         let list: (RSS3ID | RSS3ItemID | RSS3Asset | RSS3Item)[] = [];
+        let id: string | undefined = fileID;
         do {
             const listFile = <RSS3List>await this.main.files.get(fileID);
             if (breakpoint && breakpoint(listFile)) {
                 break;
             }
             list = list.concat(listFile.list || []);
-            fileID = listFile.list_next;
+            id = listFile.list_next;
         } while (fileID);
         return list;
     }

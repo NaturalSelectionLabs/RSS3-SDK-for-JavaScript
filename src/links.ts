@@ -22,7 +22,7 @@ class Links {
         return {
             file,
             index,
-            id: index !== -1 ? file.links[index].list : null,
+            id: index !== -1 ? file.links![index].list : null,
         };
     }
 
@@ -30,7 +30,10 @@ class Links {
         if (index < 0) {
             const indexFile = <RSS3Index>await this.main.files.get(persona);
             if (indexFile.links) {
-                const linksId = indexFile.links.find((links) => links.type === type).list;
+                const linksId = indexFile.links.find((links) => links.type === type)?.list;
+                if (!linksId) {
+                    throw new Error('Link type does not exist');
+                }
                 const parsed = utils.id.parse(linksId);
                 index = parsed.index + index + 1;
                 const file = <RSS3List>await this.main.files.get(utils.id.getLinks(persona, type, index));
@@ -53,7 +56,9 @@ class Links {
     async getAllList(persona: string, type: string, breakpoint?: (file: RSS3LinksList) => boolean) {
         const { id } = await this.getPosition(persona, type);
         if (id) {
-            return <RSS3ID[]>await this.main.files.getAll(id, breakpoint);
+            return <RSS3ID[]>await this.main.files.getAll(id, (file) => {
+                return breakpoint?.(<RSS3LinksList>file) || false;
+            });
         } else {
             return [];
         }
@@ -95,14 +100,14 @@ class Links {
     async deleteList(type: string) {
         const { index, file } = await this.getPosition(this.main.account.address, type);
         if (index > -1) {
-            const links = file.links[index];
+            const links = file.links![index];
             if (links.list) {
                 const listFile = <RSS3LinksList>await this.main.files.get(links.list);
                 listFile.list?.forEach((link) => {
                     this.main.files.clearCache(utils.id.getBacklinks(link, links.type, ''), true);
                 });
             }
-            file.links.splice(index, 1);
+            file.links!.splice(index, 1);
             this.main.files.set(file);
             return links;
         }
@@ -111,11 +116,10 @@ class Links {
     async patchListTags(type: string, tags: string[]) {
         if (utils.check.valueLength(tags) && equals<string[]>(tags)) {
             const { index, file } = await this.getPosition(this.main.account.address, type);
-            const linksList = file.links;
             if (index > -1) {
-                file.links[index].tags = tags;
+                file.links![index].tags = tags;
                 this.main.files.set(file);
-                return linksList[index];
+                return file.links![index];
             } else {
                 throw Error('Link type does not exist');
             }
@@ -130,7 +134,7 @@ class Links {
             const list = await this.getAllList(
                 this.main.account.address,
                 type,
-                (file) => file.list.indexOf(personaID) > -1,
+                (file) => !!file.list && file.list.indexOf(personaID) > -1,
             );
             const index = list.indexOf(personaID);
             if (index === -1) {
@@ -150,7 +154,7 @@ class Links {
                     newFile.list_next = file.id;
                     this.main.files.set(newFile);
 
-                    indexFile.links[index].list = newID;
+                    indexFile.links![index].list = newID;
                     this.main.files.set(indexFile);
                 } else {
                     file.list.unshift(personaID);
@@ -175,6 +179,9 @@ class Links {
         let result = null;
         if (id) {
             await this.getAllList(this.main.account.address, type, (file) => {
+                if (!file.list) {
+                    return false;
+                }
                 const index = file.list.indexOf(personaID);
                 if (index > -1) {
                     this.main.files.clearCache(utils.id.getBacklinks(personaID, type, ''), true);
@@ -183,6 +190,7 @@ class Links {
                     this.main.files.set(file);
                     return true;
                 }
+                return false;
             });
         }
         return result;

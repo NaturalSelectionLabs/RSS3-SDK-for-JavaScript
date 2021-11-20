@@ -53,7 +53,9 @@ class Items {
     async getAllList(persona: string, breakpoint?: (file: RSS3ItemsList) => boolean) {
         const indexFile = <RSS3Index>await this.main.files.get(persona);
         if (indexFile.items) {
-            return <RSS3Item[]>await this.main.files.getAll(indexFile.items, breakpoint);
+            return <RSS3Item[]>await this.main.files.getAll(indexFile.items, (file) => {
+                return breakpoint?.(<RSS3ItemsList>file) || false;
+            });
         } else {
             return [];
         }
@@ -61,13 +63,16 @@ class Items {
 
     private async getPosition(itemID: string) {
         let result: {
-            file: RSS3ItemsList;
+            file: RSS3ItemsList | null;
             index: number;
         } = {
             file: null,
             index: -1,
         };
         this.getAllList(this.main.account.address, (file) => {
+            if (!file.list) {
+                return false;
+            }
             const index = file.list.findIndex((item) => item.id === itemID);
             if (index !== -1) {
                 result = {
@@ -85,7 +90,7 @@ class Items {
     async get(itemID: string) {
         const position = await this.getPosition(itemID);
         if (position.index !== -1) {
-            return position.file.list[position.index];
+            return position.file!.list![position.index];
         } else {
             return null;
         }
@@ -97,6 +102,8 @@ class Items {
             if (!file) {
                 const newID = utils.id.getItems(this.main.account.address, 0);
                 file = <RSS3ItemsList>this.main.files.new(newID);
+            }
+            if (!file.list) {
                 file.list = [];
             }
 
@@ -143,10 +150,10 @@ class Items {
             const position = await this.getPosition(itemIn.id);
 
             if (position.index !== -1) {
-                position.file.list[position.index] = Object.assign(position.file.list[position.index], itemIn);
+                position.file!.list![position.index] = Object.assign(position.file!.list![position.index], itemIn);
 
-                this.main.files.set(position.file);
-                return position.file.list[position.index];
+                this.main.files.set(position.file!);
+                return position.file!.list![position.index];
             } else {
                 return null;
             }
