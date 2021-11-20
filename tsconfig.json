@@ -6,6 +6,7 @@
         "allowSyntheticDefaultImports": true,
         "strictPropertyInitialization": false,
         "target": "esnext",
+        "declaration": true,
         "noImplicitAny": true,
         "moduleResolution": "node",
         "sourceMap": false,

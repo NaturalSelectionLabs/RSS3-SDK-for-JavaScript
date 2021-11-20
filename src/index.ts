@@ -5,7 +5,25 @@ import Items from './items';
 import Links from './links';
 import Backlinks from './backlinks';
 import Assets from './assets';
-import { IOptionsMnemonic, IOptionsPrivateKey, IOptionsSign } from '../types';
+
+interface IOptions {
+    endpoint: string;
+    agentSign?: boolean;
+}
+
+export interface IOptionsMnemonic extends IOptions {
+    mnemonic?: string;
+    mnemonicPath?: string;
+}
+
+export interface IOptionsPrivateKey extends IOptions {
+    privateKey: string;
+}
+
+export interface IOptionsSign extends IOptions {
+    address: string;
+    sign: (data: string) => Promise<string>;
+}
 
 class RSS3 {
     options: IOptionsMnemonic | IOptionsPrivateKey | IOptionsSign;

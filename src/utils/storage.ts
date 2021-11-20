@@ -2,7 +2,7 @@ import Cookies from 'js-cookie';
 import md5 from 'crypto-js/md5';
 import config from '../config';
 
-interface IStorageData {
+export interface IStorageData {
     privateKey: string;
     publicKey: string;
 }

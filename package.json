@@ -1,9 +1,8 @@
 {
-    "name": "rss3-next",
+    "name": "rss3",
     "version": "0.7.0",
     "description": "",
     "main": "dist/index.js",
-    "types": "types/index.d.ts",
     "files": [
         "src",
         "dist",

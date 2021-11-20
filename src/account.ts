@@ -1,6 +1,6 @@
 import type { AnyObject } from '../types/extend';
 import Main from './index';
-import { IOptionsMnemonic, IOptionsPrivateKey, IOptionsSign } from '../types';
+import { IOptionsMnemonic, IOptionsPrivateKey, IOptionsSign } from './index';
 import { ethers } from 'ethers';
 import utils from './utils';
 import nacl from 'tweetnacl';
