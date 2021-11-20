@@ -34,7 +34,7 @@ export default {
     removeCustomProperties,
 
     fileSize(obj: AnyObject) {
-        if (Buffer.byteLength(JSON.stringify(obj)) > config.maxFileLength) {
+        if (Buffer.byteLength(JSON.stringify(obj)) > config.fileSizeLimit) {
             return false;
         } else {
             return true;

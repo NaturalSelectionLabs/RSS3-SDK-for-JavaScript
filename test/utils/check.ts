@@ -29,3 +29,26 @@ test('check.removeCustomProperties', () => {
         test2: {},
     });
 });
+
+test('check.fileSize', () => {
+    expect(
+        check.fileSize({
+            t: 'r'.repeat(config.fileSizeLimit - 8),
+        }),
+    ).toBe(true);
+    expect(
+        check.fileSize({
+            t: 'r'.repeat(config.fileSizeLimit - 8 + 1),
+        }),
+    ).toBe(false);
+    expect(
+        check.fileSize({
+            t: '我'.repeat((config.fileSizeLimit - 8) / 3),
+        }),
+    ).toBe(true);
+    expect(
+        check.fileSize({
+            t: '我'.repeat((config.fileSizeLimit - 8) / 3 + 1),
+        }),
+    ).toBe(false);
+});

@@ -87,10 +87,7 @@ class Assets {
                 if (!file.list) {
                     file.list = [];
                 }
-                if (
-                    new Blob([JSON.stringify(JSON.parse(JSON.stringify(file)).list.unshift(asset))]).size >
-                    config.fileSizeLimit
-                ) {
+                if (!utils.check.fileSize(JSON.parse(JSON.stringify(file)).list.unshift(asset))) {
                     const newID = utils.id.getAssets(this.main.account.address, utils.id.parse(file.id).index + 1);
                     const newFile = <RSS3AssetsList>this.main.files.new(newID);
                     newFile.list = [asset];

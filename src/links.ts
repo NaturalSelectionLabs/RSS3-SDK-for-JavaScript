@@ -82,7 +82,7 @@ class Links {
                     list: newID,
                 });
                 newFile.list = links.list;
-                if (new Blob([JSON.stringify(newFile)]).size > config.fileSizeLimit) {
+                if (!utils.check.fileSize(newFile)) {
                     this.main.files.clearCache(newID);
                     throw Error('Exceeding the file size limit');
                 }
@@ -144,10 +144,7 @@ class Links {
                     file.list = [];
                 }
 
-                if (
-                    new Blob([JSON.stringify(JSON.parse(JSON.stringify(file)).list.unshift(personaID))]).size >
-                    config.fileSizeLimit
-                ) {
+                if (!utils.check.fileSize(JSON.parse(JSON.stringify(file)).list.unshift(personaID))) {
                     const newID = utils.id.getLinks(this.main.account.address, type, utils.id.parse(file.id).index + 1);
                     const newFile = <RSS3LinksList>this.main.files.new(newID);
                     newFile.list = [personaID];

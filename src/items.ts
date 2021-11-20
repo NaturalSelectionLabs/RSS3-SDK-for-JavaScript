@@ -121,10 +121,7 @@ class Items {
                 },
             );
 
-            if (
-                new Blob([JSON.stringify(JSON.parse(JSON.stringify(file)).list.unshift(item))]).size >
-                config.fileSizeLimit
-            ) {
+            if (!utils.check.fileSize(JSON.parse(JSON.stringify(file)).list.unshift(item))) {
                 const newID = utils.id.getItems(this.main.account.address, utils.id.parse(file.id).index + 1);
                 const newFile = <RSS3ItemsList>this.main.files.new(newID);
                 newFile.list = [item];
