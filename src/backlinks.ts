@@ -1,5 +1,5 @@
 import Main from './index';
-import type { RSS3Index, RSS3List } from '../types/rss3';
+import utils from './utils';
 
 class Backlinks {
     private main: Main;
@@ -8,23 +8,46 @@ class Backlinks {
         this.main = main;
     }
 
-    async get(personaID: string = this.main.account.address, type?: string) {
-        const backlinksList = (<RSS3Index>await this.main.files.get(personaID))['@backlinks'] || [];
-        if (type) {
-            const backlink = backlinksList.find((backlink) => backlink.type === type);
-            if (!backlink) {
-                return [];
+    private async getPosition(persona: string, type: string) {
+        const file = <RSS3Index>await this.main.files.get(persona);
+        const index = (file.backlinks || []).findIndex((lks) => lks.type === type);
+        return {
+            file,
+            index,
+            id: index !== -1 ? file.backlinks[index].list : null,
+        };
+    }
+
+    async getList(persona: string, type: string, index = -1) {
+        if (index < 0) {
+            const indexFile = <RSS3Index>await this.main.files.get(persona);
+            if (indexFile.backlinks) {
+                const linksId = indexFile.backlinks.find((links) => links.type === type).list;
+                const parsed = utils.id.parse(linksId);
+                index = parsed.index + index + 1;
+                const file = <RSS3List>await this.main.files.get(utils.id.getBacklinks(persona, type, index));
+                return {
+                    list: file.list || [],
+                    list_next: file.list_next,
+                };
+            } else {
+                return null;
             }
-            let fileID = backlink.list;
-            let list: string[] = [];
-            do {
-                const currentList = <RSS3List>await this.main.files.get(fileID);
-                list = list.concat(currentList.list);
-                fileID = currentList.list_next;
-            } while (fileID);
-            return list;
         } else {
-            return backlinksList;
+            const file = <RSS3List>await this.main.files.get(utils.id.getBacklinks(persona, type, index));
+            return {
+                list: file.list || [],
+                list_next: file.list_next,
+            };
+        }
+    }
+
+    async getAllList(persona: string, type: string, breakpoint?: (file: RSS3LinksList) => boolean) {
+        const { id } = await this.getPosition(persona, type);
+        if (id) {
+            return <RSS3ID[]>await this.main.files.getAll(id, breakpoint);
+        } else {
+            return [];
         }
     }
 }

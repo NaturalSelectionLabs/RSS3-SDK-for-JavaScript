@@ -1,14 +1,3 @@
-import type {
-    RSS3Profile,
-    RSS3Item,
-    RSS3ItemInput,
-    RSS3Links,
-    RSS3Backlink,
-    RSS3Account,
-    RSS3Content,
-    RSS3Asset,
-} from './rss3';
-
 interface IOptions {
     endpoint: string;
     agentSign?: boolean;

@@ -3,7 +3,6 @@ import utils from './utils';
 import axois from 'axios';
 import { equals } from 'typescript-is';
 import config from './config';
-import type { RSS3IContent, RSS3Content, RSS3List } from '../types/rss3';
 
 class File {
     private main: Main;
@@ -22,7 +21,7 @@ class File {
         const nowDate = new Date().toISOString();
         this.set({
             id: fileID,
-            '@version': config.version,
+            version: config.version,
             date_created: nowDate,
             date_updated: nowDate,
             signature: '',
@@ -44,7 +43,7 @@ class File {
                         url: `${this.main.options.endpoint}/${fileID}`,
                     });
                     const content = data.data;
-                    if (equals<RSS3IContent>(utils.check.removeCustomProperties(content))) {
+                    if (equals<RSS3UserContent>(utils.check.removeCustomProperties(content))) {
                         // const check = this.main.account.check(content, utils.id.parse(fileID).persona);
                         const check = true;
                         if (check) {
@@ -53,7 +52,7 @@ class File {
                         } else {
                             reject('The signature does not match.');
                         }
-                    } else if (equals<RSS3List>(content)) {
+                    } else if (equals<RSS3NodeContent>(content)) {
                         this.list[fileID] = content;
                         resolve(this.list[fileID]);
                     } else {
@@ -64,7 +63,7 @@ class File {
                         const nowDate = new Date().toISOString();
                         this.list[fileID] = {
                             id: fileID,
-                            '@version': config.version,
+                            version: config.version,
                             date_created: nowDate,
                             date_updated: nowDate,
                             signature: '',
@@ -79,9 +78,23 @@ class File {
         }
     }
 
+    async getAll(fileID: RSS3ListID, breakpoint?: (file: RSS3List) => boolean) {
+        let list: (RSS3ID | RSS3ItemID | RSS3Asset | RSS3Item)[] = [];
+        do {
+            const listFile = <RSS3List>await this.main.files.get(fileID);
+            if (breakpoint && breakpoint(listFile)) {
+                break;
+            }
+            list = list.concat(listFile.list || []);
+            fileID = listFile.list_next;
+        } while (fileID);
+        return list;
+    }
+
     set(content: RSS3Content) {
+        utils.object.removeEmpty(content);
         content.date_updated = new Date().toISOString();
-        content['@version'] = config.version;
+        content.version = config.version;
         if (utils.check.fileSize(content)) {
             this.list[content.id] = content;
             this.dirtyList[content.id] = 1;
@@ -90,8 +103,16 @@ class File {
         }
     }
 
-    clearCache(key: string) {
-        delete this.list[key];
+    clearCache(key: string, wildcard?: boolean) {
+        if (wildcard) {
+            Object.keys(this.list).forEach((fileID) => {
+                if (fileID.includes(key)) {
+                    delete this.list[fileID];
+                }
+            });
+        } else {
+            delete this.list[key];
+        }
     }
 
     async sync() {

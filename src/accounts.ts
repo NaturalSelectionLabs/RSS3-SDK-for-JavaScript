@@ -1,5 +1,4 @@
 import Main from './index';
-import type { RSS3Index, RSS3Account } from '../types/rss3';
 import utils from './utils';
 import { equals } from 'typescript-is';
 
@@ -8,6 +7,17 @@ class Accounts {
 
     constructor(main: Main) {
         this.main = main;
+    }
+
+    private async getPosition(persona: string, account: RSS3Account) {
+        const file = <RSS3Index>await this.main.files.get(persona);
+        const index = (file.profile?.accounts || []).findIndex(
+            (ac) => ac.platform === account.platform && ac.identity === account.identity,
+        );
+        return {
+            file,
+            index,
+        };
     }
 
     getSigMessage(account: RSS3Account) {
@@ -22,17 +32,23 @@ class Accounts {
         if (utils.check.valueLength(account) && equals<RSS3Account>(account)) {
             this.identityFormat(account);
             const file = <RSS3Index>await this.main.files.get(this.main.account.address);
-            if (!file.accounts) {
-                file.accounts = [];
+            if (!file.profile) {
+                file.profile = {};
             }
-            if (!file.accounts.find((ac) => ac.platform === account.platform && ac.identity === account.identity)) {
-                utils.object.removeEmpty(account);
-                file.accounts.push(account);
+            if (!file.profile.accounts) {
+                file.profile.accounts = [];
+            }
+            if (
+                !file.profile.accounts.find(
+                    (ac) => ac.platform === account.platform && ac.identity === account.identity,
+                )
+            ) {
+                file.profile.accounts.push(account);
+                this.main.files.set(file);
+                return account;
             } else {
                 throw Error('Account already exists');
             }
-            this.main.files.set(file);
-            return account;
         } else {
             throw Error('Parameter error');
         }
@@ -40,39 +56,30 @@ class Accounts {
 
     async patchTags(account: RSS3Account, tags: string[]) {
         if (utils.check.valueLength(tags)) {
-            const file = <RSS3Index>await this.main.files.get(this.main.account.address);
-            const index = (file.accounts || []).findIndex(
-                (ac) => ac.platform === account.platform && ac.identity === account.identity,
-            );
+            const { file, index } = await this.getPosition(this.main.account.address, account);
 
             if (index !== -1) {
-                file.accounts[index].tags = tags;
+                file.profile.accounts[index].tags = tags;
                 this.main.files.set(file);
-                return file.accounts[index];
+                return file.profile.accounts[index];
             } else {
-                return null;
+                throw Error('Account does not exist');
             }
         } else {
             throw Error('Parameter error');
         }
     }
 
-    async get(fileID: string = this.main.account.address) {
+    async getList(fileID: string = this.main.account.address) {
         const file = <RSS3Index>await this.main.files.get(fileID);
-        return file.accounts || [];
+        return file.profile?.accounts || [];
     }
 
     async delete(account: { platform: string; identity: string }) {
         this.identityFormat(account);
-        const file = <RSS3Index>await this.main.files.get(this.main.account.address);
-        const acIndex = (file.accounts || []).findIndex(
-            (ac) => ac.platform === account.platform && ac.identity === account.identity,
-        );
-        if (acIndex !== -1) {
-            file.accounts.splice(acIndex, 1);
-            if (file.accounts.length === 0) {
-                delete file.accounts;
-            }
+        const { file, index } = await this.getPosition(this.main.account.address, account);
+        if (index !== -1) {
+            file.profile.accounts.splice(index, 1);
             await this.main.files.set(file);
             return account;
         } else {

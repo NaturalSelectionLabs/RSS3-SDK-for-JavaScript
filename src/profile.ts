@@ -1,13 +1,16 @@
 import Main from './index';
 import { equals } from 'typescript-is';
 import utils from './utils';
-import type { RSS3Index, RSS3Profile } from '../types/rss3';
+import Accounts from './accounts';
 
 class Profile {
     private main: Main;
 
+    accounts: Accounts;
+
     constructor(main: Main) {
         this.main = main;
+        this.accounts = new Accounts(this.main);
     }
 
     async get(personaID: string = this.main.account.address) {

@@ -1,7 +1,13 @@
 import Main from './index';
-import type { RSS3Index, RSS3Links } from '../types/rss3';
 import utils from './utils';
 import { equals } from 'typescript-is';
+import config from './config';
+
+interface LinksPost {
+    tags?: string[];
+    type: string;
+    list?: RSS3ID[];
+}
 
 class Links {
     private main: Main;
@@ -10,73 +16,176 @@ class Links {
         this.main = main;
     }
 
-    async get(fileID: string = this.main.account.address, type?: string) {
-        const linksList = (<RSS3Index>await this.main.files.get(fileID)).links || [];
-        if (type) {
-            return linksList.find((links) => links.type === type);
+    private async getPosition(persona: string, type: string) {
+        const file = <RSS3Index>await this.main.files.get(persona);
+        const index = (file.links || []).findIndex((lks) => lks.type === type);
+        return {
+            file,
+            index,
+            id: index !== -1 ? file.links[index].list : null,
+        };
+    }
+
+    async getList(persona: string, type: string, index = -1) {
+        if (index < 0) {
+            const indexFile = <RSS3Index>await this.main.files.get(persona);
+            if (indexFile.links) {
+                const linksId = indexFile.links.find((links) => links.type === type).list;
+                const parsed = utils.id.parse(linksId);
+                index = parsed.index + index + 1;
+                const file = <RSS3List>await this.main.files.get(utils.id.getLinks(persona, type, index));
+                return {
+                    list: file.list || [],
+                    list_next: file.list_next,
+                };
+            } else {
+                return null;
+            }
         } else {
-            return linksList;
+            const file = <RSS3List>await this.main.files.get(utils.id.getLinks(persona, type, index));
+            return {
+                list: file.list || [],
+                list_next: file.list_next,
+            };
         }
     }
 
-    async post(links: RSS3Links) {
-        if (utils.check.valueLength(links) && equals<RSS3Links>(links)) {
-            const file = <RSS3Index>await this.main.files.get(this.main.account.address);
-            if (!file.links) {
-                file.links = [];
-            }
-            if (!file.links.find((lks) => lks.type === links.type)) {
+    async getAllList(persona: string, type: string, breakpoint?: (file: RSS3LinksList) => boolean) {
+        const { id } = await this.getPosition(persona, type);
+        if (id) {
+            return <RSS3ID[]>await this.main.files.getAll(id, breakpoint);
+        } else {
+            return [];
+        }
+    }
+
+    async postList(links: LinksPost) {
+        if (utils.check.valueLength(links) && equals<LinksPost>(links)) {
+            const { index, file } = await this.getPosition(this.main.account.address, links.type);
+            if (index === -1) {
                 links.list?.forEach((link) => {
-                    this.main.files.clearCache(`${link}-backlink@${links.type}`);
+                    this.main.files.clearCache(utils.id.getLinks(link, links.type, ''), true);
                 });
-                utils.object.removeEmpty(links);
-                file.links.push(links);
+                const newID = utils.id.getLinks(this.main.account.address, links.type, 0);
+                const newFile = <RSS3List>this.main.files.new(newID);
+                if (!file.links) {
+                    file.links = [];
+                }
+                file.links.push({
+                    tags: links.tags,
+                    type: links.type,
+                    list: newID,
+                });
+                newFile.list = links.list;
+                if (new Blob([JSON.stringify(newFile)]).size > config.fileSizeLimit) {
+                    this.main.files.clearCache(newID);
+                    throw Error('Exceeding the file size limit');
+                }
+                this.main.files.set(file);
+                this.main.files.set(newFile);
             } else {
                 throw Error('Link type already exists');
             }
-            this.main.files.set(file);
             return links;
         } else {
             throw Error('Parameter error');
         }
     }
 
-    async delete(type: string) {
-        const file = <RSS3Index>await this.main.files.get(this.main.account.address);
-        const index = (file.links || []).findIndex((lks) => lks.type === type);
+    async deleteList(type: string) {
+        const { index, file } = await this.getPosition(this.main.account.address, type);
         if (index > -1) {
             const links = file.links[index];
-            links.list?.forEach((link) => {
-                this.main.files.clearCache(`${link}-backlink@${links.type}`);
-            });
-            file.links.splice(index, 1);
-            if (file.links.length === 0) {
-                delete file.links;
+            if (links.list) {
+                const listFile = <RSS3LinksList>await this.main.files.get(links.list);
+                listFile.list?.forEach((link) => {
+                    this.main.files.clearCache(utils.id.getBacklinks(link, links.type, ''), true);
+                });
             }
+            file.links.splice(index, 1);
             this.main.files.set(file);
             return links;
-        } else {
-            throw Error('Link type does not exist');
         }
     }
 
-    async patch(links: RSS3Links) {
-        if (utils.check.valueLength(links) && equals<RSS3Links>(links)) {
-            const file = <RSS3Index>await this.main.files.get(this.main.account.address);
+    async patchListTags(type: string, tags: string[]) {
+        if (utils.check.valueLength(tags) && equals<string[]>(tags)) {
+            const { index, file } = await this.getPosition(this.main.account.address, type);
             const linksList = file.links;
-            const index = (linksList || []).findIndex((lks) => lks.type === links.type);
             if (index > -1) {
-                links.list?.forEach((link) => {
-                    this.main.files.clearCache(`${link}-backlink@${links.type}`);
-                });
-                linksList[index] = Object.assign(linksList[index], links);
-                utils.object.removeEmpty(links);
+                file.links[index].tags = tags;
                 this.main.files.set(file);
                 return linksList[index];
             } else {
                 throw Error('Link type does not exist');
             }
+        } else {
+            throw Error('Parameter error');
         }
+    }
+
+    async post(type: string, personaID: string) {
+        const { file: indexFile, id } = await this.getPosition(this.main.account.address, type);
+        if (id) {
+            const list = await this.getAllList(
+                this.main.account.address,
+                type,
+                (file) => file.list.indexOf(personaID) > -1,
+            );
+            const index = list.indexOf(personaID);
+            if (index === -1) {
+                this.main.files.clearCache(utils.id.getBacklinks(personaID, type, ''), true);
+                const file = <RSS3LinksList>await this.main.files.get(id);
+                if (!file.list) {
+                    file.list = [];
+                }
+
+                if (
+                    new Blob([JSON.stringify(JSON.parse(JSON.stringify(file)).list.unshift(personaID))]).size >
+                    config.fileSizeLimit
+                ) {
+                    const newID = utils.id.getLinks(this.main.account.address, type, utils.id.parse(file.id).index + 1);
+                    const newFile = <RSS3LinksList>this.main.files.new(newID);
+                    newFile.list = [personaID];
+                    newFile.list_next = file.id;
+                    this.main.files.set(newFile);
+
+                    indexFile.links[index].list = newID;
+                    this.main.files.set(indexFile);
+                } else {
+                    file.list.unshift(personaID);
+                    this.main.files.set(file);
+                }
+
+                await this.main.files.set(file);
+                return file;
+            } else {
+                throw Error('Link already exist');
+            }
+        } else {
+            await this.postList({
+                type: type,
+                list: [personaID],
+            });
+        }
+    }
+
+    async delete(type: string, personaID: string) {
+        const { id } = await this.getPosition(this.main.account.address, type);
+        let result = null;
+        if (id) {
+            await this.getAllList(this.main.account.address, type, (file) => {
+                const index = file.list.indexOf(personaID);
+                if (index > -1) {
+                    this.main.files.clearCache(utils.id.getBacklinks(personaID, type, ''), true);
+                    file.list.splice(index, 1);
+                    result = file.list;
+                    this.main.files.set(file);
+                    return true;
+                }
+            });
+        }
+        return result;
     }
 }
 
