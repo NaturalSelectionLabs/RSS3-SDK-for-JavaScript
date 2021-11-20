@@ -1,24 +1,27 @@
-# RSS3 SDK JavaScript
+<p align="center">
+<img src="https://rss3.mypinata.cloud/ipfs/QmUG6H3Z7D5P511shn7sB4CPmpjH5uZWu4m5mWX7U3Gqbu" alt="RSS3" width="300">
+</p>
+<h1 align="center">RSS3 SDK for JavaScript</h1>
 
 JavaScript SDK for [RSS3-Hub](https://github.com/NaturalSelectionLabs/RSS3-Hub)
 
 ## Install
 
+Install Dependency
+
 ```bash
 npm install rss3 --save
 ```
-
-or
 
 ```bash
 yarn add rss3
 ```
 
+Import Dependency
+
 ```js
 import RSS3 from 'rss3';
 ```
-
-or
 
 ```js
 const RSS3 = require('rss3').default;
@@ -396,3 +399,12 @@ Example:
 ```ts
 const account = await rss3.ssets.patchTags(asset, tags);
 ```
+
+## Development
+
+```bash
+yarn
+yarn dev
+```
+
+Open http://localhost:8080/demo/
