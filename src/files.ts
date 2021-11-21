@@ -117,6 +117,10 @@ class File {
             fileIDs.map(async (fileID) => {
                 const content = this.list[fileID];
                 await this.main.account.sign(content);
+                if ('auto' in content) {
+                    // @ts-ignore
+                    delete content.auto;
+                }
                 return content;
             }),
         );
