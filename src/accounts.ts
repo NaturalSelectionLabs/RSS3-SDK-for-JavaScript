@@ -21,7 +21,7 @@ class Accounts {
     }
 
     getSigMessage(account: RSS3Account) {
-        return this.main.account.stringifyObj({
+        return utils.object.stringifyObj({
             platform: account.platform,
             identity: account.identity,
             address: this.main.account.address,

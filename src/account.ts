@@ -69,7 +69,7 @@ class Account {
                 }
             }
             const signature = nacl.sign.detached(
-                new TextEncoder().encode(this.stringifyObj(obj)),
+                new TextEncoder().encode(utils.object.stringifyObj(obj)),
                 this.agentPrivateKey,
             );
             obj.agent_signature = naclUtil.encodeBase64(signature);
@@ -77,9 +77,9 @@ class Account {
             delete obj.agent_signature;
             delete obj.agent_id;
             if (this.signer) {
-                obj.signature = await this.signer.signMessage(this.stringifyObj(obj));
+                obj.signature = await this.signer.signMessage(utils.object.stringifyObj(obj));
             } else if ((<IOptionsSign>this.main.options).sign) {
-                obj.signature = await (<IOptionsSign>this.main.options).sign(this.stringifyObj(obj));
+                obj.signature = await (<IOptionsSign>this.main.options).sign(utils.object.stringifyObj(obj));
             }
         }
     }
@@ -92,49 +92,15 @@ class Account {
                 return (
                     ethers.utils.verifyMessage(`Hi, RSS3. I'm your agent ${obj.agent_id}`, obj.signature) === obj.id &&
                     nacl.sign.detached.verify(
-                        new TextEncoder().encode(this.stringifyObj(obj)),
+                        new TextEncoder().encode(utils.object.stringifyObj(obj)),
                         naclUtil.decodeBase64(obj.agent_signature),
                         naclUtil.decodeBase64(obj.agent_id),
                     )
                 );
             } else {
-                return ethers.utils.verifyMessage(this.stringifyObj(obj), obj.signature) === address;
+                return ethers.utils.verifyMessage(utils.object.stringifyObj(obj), obj.signature) === address;
             }
         }
-    }
-
-    stringifyObj(obj: AnyObject) {
-        const removeNotSignProperties = (obj: AnyObject) => {
-            obj = JSON.parse(JSON.stringify(obj));
-            for (let key in obj) {
-                if (key === 'signature' || key === 'agent_signature') {
-                    delete obj[key];
-                } else if (typeof obj[key] === 'object') {
-                    if (obj[key].auto) {
-                        delete obj[key];
-                    } else {
-                        obj[key] = removeNotSignProperties(obj[key]);
-                    }
-                }
-            }
-            return obj;
-        };
-
-        type mulripleStringArray = (string | mulripleStringArray)[];
-        const obj2Array = (obj: AnyObject): mulripleStringArray[] => {
-            return Object.keys(obj)
-                .sort()
-                .map((key) => {
-                    if (typeof obj[key] === 'object') {
-                        return [key, obj2Array(obj[key])];
-                    } else {
-                        return [key, obj[key]];
-                    }
-                });
-        };
-
-        let message = obj2Array(removeNotSignProperties(obj));
-        return JSON.stringify(message);
     }
 }
 

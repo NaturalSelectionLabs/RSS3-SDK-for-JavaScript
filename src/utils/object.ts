@@ -1,3 +1,5 @@
+import type { AnyObject } from '../../types/extend';
+
 function removeEmpty(
     obj: any,
     father?: {
@@ -7,7 +9,7 @@ function removeEmpty(
 ) {
     for (let key in obj) {
         if (typeof obj[key] === 'object') {
-            if (Object.keys(obj[key]).length === 0) {
+            if (!obj[key] || Object.keys(obj[key]).length === 0) {
                 delete obj[key];
             } else {
                 removeEmpty(obj[key], {
@@ -26,4 +28,38 @@ function removeEmpty(
 
 export default {
     removeEmpty,
+
+    stringifyObj: (obj: AnyObject) => {
+        const removeNotSignProperties = (obj: AnyObject) => {
+            obj = JSON.parse(JSON.stringify(obj));
+            for (let key in obj) {
+                if (key === 'signature' || key === 'agent_signature') {
+                    delete obj[key];
+                } else if (typeof obj[key] === 'object') {
+                    if (obj[key].auto) {
+                        delete obj[key];
+                    } else {
+                        obj[key] = removeNotSignProperties(obj[key]);
+                    }
+                }
+            }
+            return obj;
+        };
+
+        type mulripleStringArray = (string | mulripleStringArray)[];
+        const obj2Array = (obj: AnyObject): mulripleStringArray[] => {
+            return Object.keys(obj)
+                .sort()
+                .map((key) => {
+                    if (typeof obj[key] === 'object') {
+                        return [key, obj2Array(obj[key])];
+                    } else {
+                        return [key, obj[key]];
+                    }
+                });
+        };
+
+        let message = obj2Array(removeNotSignProperties(obj));
+        return JSON.stringify(message);
+    },
 };
