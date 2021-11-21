@@ -7,7 +7,7 @@ import config from './config';
 class File {
     private main: Main;
     private list: {
-        [key: string]: RSS3Content;
+        [key: string]: RSS3File;
     } = {};
     private dirtyList: {
         [key: string]: number;
@@ -30,29 +30,24 @@ class File {
         return this.list[fileID];
     }
 
-    get(fileID: string = this.main.account.address, force?: boolean): Promise<RSS3Content> {
+    get(fileID: string = this.main.account.address, force?: boolean): Promise<RSS3File> {
         if (this.list[fileID] && !force) {
-            return new Promise<RSS3Content>((resolve) => {
+            return new Promise<RSS3File>((resolve) => {
                 resolve(this.list[fileID]);
             });
         } else {
-            return new Promise<RSS3Content>(async (resolve, reject) => {
+            return new Promise<RSS3File>(async (resolve, reject) => {
                 try {
                     const data = await axois({
                         method: 'get',
                         url: `${this.main.options.endpoint}/${fileID}`,
                     });
                     const content = data.data;
-                    if (equals<RSS3UserContent>(utils.check.removeCustomProperties(content))) {
+                    if (equals<RSS3File>(content)) {
                         // const check = this.main.account.check(content, utils.id.parse(fileID).persona);
-                        const check = true;
-                        if (check) {
-                            this.list[fileID] = content;
-                            resolve(this.list[fileID]);
-                        } else {
-                            reject('The signature does not match.');
-                        }
-                    } else if (equals<RSS3NodeContent>(content)) {
+                        // if (!check) {
+                        //     reject('The signature does not match.');
+                        // }
                         this.list[fileID] = content;
                         resolve(this.list[fileID]);
                     } else {
@@ -92,7 +87,7 @@ class File {
         return list;
     }
 
-    set(content: RSS3Content) {
+    set(content: RSS3File) {
         utils.object.removeEmpty(content);
         content.date_updated = new Date().toISOString();
         content.version = config.version;
