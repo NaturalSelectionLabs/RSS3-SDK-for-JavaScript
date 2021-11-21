@@ -73,7 +73,7 @@ interface RSS3Links {
     list?: RSS3LinksListID; // Personas who belong to this link
 }
 
-// RSS3List files, used for list of links, backlinks, contexts, items, assets
+// RSS3 list files, used for list of links, backlinks, contexts, items, assets
 type RSS3List = RSS3ItemsList | RSS3LinksList | RSS3AssetsList | RSS3BacklinksList | RSS3ItemBacklinksList;
 
 type RSS3ItemsList = (RSS3SignedBase | RSS3UnsignedBase) & {
@@ -116,13 +116,13 @@ interface RSS3AssetBase {
     type: string; // Asset type, for example: Ethereum-NFT xDai-POAP
 }
 
-interface RSS3NodeAsset extends RSS3AssetBase {
-    auto: true;
-}
-
 interface RSS3UserAsset extends RSS3AssetBase {
     tags?: string[];
     platform: 'custom'; // Corresponding to profile.accounts.platform
+}
+
+interface RSS3NodeAsset extends RSS3AssetBase {
+    auto: true;
 }
 
 // Item
