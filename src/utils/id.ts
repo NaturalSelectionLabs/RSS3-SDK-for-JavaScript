@@ -1,10 +1,20 @@
 function parse(id: string) {
     const splited = id.split('-');
-    return {
-        persona: splited[0],
-        type: splited[1] || 'index',
-        index: splited[2] !== undefined ? parseInt(splited[2]) : Infinity,
-    };
+    if (splited.length <= 3) {
+        return {
+            persona: splited[0],
+            type: splited[1] || 'index',
+            payload: null,
+            index: splited[2] ? parseInt(splited[2]) : Infinity,
+        };
+    } else {
+        return {
+            persona: splited[0],
+            type: splited[1] || 'index',
+            payload: splited[2],
+            index: parseInt(splited[3]),
+        };
+    }
 }
 
 function get(persona: string, type: string, index: number | string, payload?: string[]) {
