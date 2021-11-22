@@ -45,7 +45,7 @@ class Account {
     async sign(obj: AnyObject) {
         if (this.main.options.agentSign) {
             obj.agent_id = this.signAgent.address;
-            const agentMessage = this.signAgent.getMessage();
+            const agentMessage = this.signAgent.getMessage(obj.agent_id);
             if (!obj.agent_signature || ethers.utils.verifyMessage(agentMessage, obj.signature) !== obj.id) {
                 if (this.signer) {
                     obj.signature = await this.signer.signMessage(agentMessage);
@@ -71,7 +71,7 @@ class Account {
         } else {
             if (obj.agent_signature && obj.agent_id) {
                 return (
-                    ethers.utils.verifyMessage(`Hi, RSS3. I'm your agent ${obj.agent_id}`, obj.signature) === obj.id &&
+                    ethers.utils.verifyMessage(this.signAgent.getMessage(obj.agent_id), obj.signature) === obj.id &&
                     this.signAgent.check(obj)
                 );
             } else {

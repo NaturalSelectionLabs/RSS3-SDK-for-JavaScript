@@ -38,8 +38,8 @@ class SignAgent {
         this.address = naclUtil.encodeBase64(this.publickKey);
     }
 
-    getMessage() {
-        return `Hi, RSS3. I'm your agent ${this.address}`;
+    getMessage(address: string) {
+        return `Hi, RSS3. I'm your agent ${address}`;
     }
 
     async sign(obj: AnyObject) {
