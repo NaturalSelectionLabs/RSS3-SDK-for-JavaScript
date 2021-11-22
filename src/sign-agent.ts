@@ -82,11 +82,11 @@ class SignAgent {
         }
     }
 
-    private get() {
+    private async get() {
         try {
             let data;
             if (this.main.options.agentStorage) {
-                data = this.main.options.agentStorage?.get(this.getKey(this.main.account.address));
+                data = await this.main.options.agentStorage?.get(this.getKey(this.main.account.address));
             } else {
                 data = Cookies.get(this.getKey(this.main.account.address));
             }
