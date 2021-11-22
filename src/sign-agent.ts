@@ -68,17 +68,28 @@ class SignAgent {
             currentRootDomain = window.location.hostname;
         }
 
-        Cookies.set(this.getKey(this.main.account.address), window.btoa(JSON.stringify(value)), {
-            domain: '.' + currentRootDomain,
-            secure: true,
-            sameSite: 'Strict',
-            expires: config.storageExpires,
-        });
+        const key = this.getKey(this.main.account.address);
+        const va = window.btoa(JSON.stringify(value));
+        if (this.main.options.agentStorage) {
+            this.main.options.agentStorage.set(key, va);
+        } else {
+            Cookies.set(key, va, {
+                domain: '.' + currentRootDomain,
+                secure: true,
+                sameSite: 'Strict',
+                expires: config.storageExpires,
+            });
+        }
     }
 
     private get() {
         try {
-            const data = Cookies.get(this.getKey(this.main.account.address));
+            let data;
+            if (this.main.options.agentStorage) {
+                data = this.main.options.agentStorage?.get(this.getKey(this.main.account.address));
+            } else {
+                data = Cookies.get(this.getKey(this.main.account.address));
+            }
             if (data) {
                 const result = <IStorageData>JSON.parse(window.atob(data));
                 this.set(result);

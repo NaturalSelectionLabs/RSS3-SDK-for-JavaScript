@@ -9,6 +9,10 @@ import Assets from './assets';
 interface IOptions {
     endpoint: string;
     agentSign?: boolean;
+    agentStorage?: {
+        set: (key: string, value: string) => void;
+        get: (key: string) => string;
+    };
 }
 
 export interface IOptionsMnemonic extends IOptions {
