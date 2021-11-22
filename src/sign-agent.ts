@@ -6,6 +6,7 @@ import naclUtil from 'tweetnacl-util';
 import Cookies from 'js-cookie';
 import md5 from 'crypto-js/md5';
 import config from './config';
+import { Buffer } from 'buffer';
 
 interface IStorageData {
     privateKey: string;
@@ -45,9 +46,13 @@ class SignAgent {
     }
 
     async sign(obj: AnyObject) {
-        await this.initPromise;
-        const signature = nacl.sign.detached(new TextEncoder().encode(utils.object.stringifyObj(obj)), this.privateKey);
-        return naclUtil.encodeBase64(signature);
+        return this.initPromise.then(() => {
+            const signature = nacl.sign.detached(
+                new TextEncoder().encode(utils.object.stringifyObj(obj)),
+                this.privateKey,
+            );
+            return naclUtil.encodeBase64(signature);
+        });
     }
 
     check(obj: AnyObject) {
@@ -63,25 +68,26 @@ class SignAgent {
     }
 
     private set(value: IStorageData) {
-        let currentRootDomain;
-        const split = window.location.hostname.split('.');
-        if (split.length > 2) {
-            currentRootDomain = split[split.length - 2] + '.' + split[split.length - 1];
-        } else {
-            currentRootDomain = window.location.hostname;
-        }
-
         const key = this.getKey(this.main.account.address);
-        const va = window.btoa(JSON.stringify(value));
+        const va = Buffer.from(JSON.stringify(value), 'base64').toString();
         if (this.main.options.agentStorage) {
             this.main.options.agentStorage.set(key, va);
         } else {
-            Cookies.set(key, va, {
-                domain: '.' + currentRootDomain,
-                secure: true,
-                sameSite: 'Strict',
-                expires: config.storageExpires,
-            });
+            if (window) {
+                let currentRootDomain;
+                const split = window.location.hostname.split('.');
+                if (split.length > 2) {
+                    currentRootDomain = split[split.length - 2] + '.' + split[split.length - 1];
+                } else {
+                    currentRootDomain = window.location.hostname;
+                }
+                Cookies.set(key, va, {
+                    domain: '.' + currentRootDomain,
+                    secure: true,
+                    sameSite: 'Strict',
+                    expires: config.storageExpires,
+                });
+            }
         }
     }
 
@@ -94,7 +100,7 @@ class SignAgent {
                 data = Cookies.get(this.getKey(this.main.account.address));
             }
             if (data) {
-                const result = <IStorageData>JSON.parse(window.atob(data));
+                const result = <IStorageData>JSON.parse(Buffer.from(data).toString('base64'));
                 this.set(result);
                 return result;
             } else {
