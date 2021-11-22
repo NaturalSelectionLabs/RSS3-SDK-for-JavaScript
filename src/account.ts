@@ -53,7 +53,7 @@ class Account {
                     obj.signature = await (<IOptionsSign>this.main.options).sign(agentMessage);
                 }
             }
-            obj.agent_signature = this.signAgent.sign(obj);
+            obj.agent_signature = await this.signAgent.sign(obj);
         } else {
             delete obj.agent_signature;
             delete obj.agent_id;

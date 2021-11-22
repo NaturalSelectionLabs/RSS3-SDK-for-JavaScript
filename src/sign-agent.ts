@@ -16,26 +16,28 @@ class SignAgent {
     private main: Main;
     private privateKey: Uint8Array;
     private publickKey: Uint8Array;
+    private initPromise: Promise<void | IStorageData>;
 
     address: string;
 
     constructor(main: Main) {
         this.main = main;
 
-        const agent = this.get();
-        if (agent && agent.privateKey && agent.publicKey) {
-            this.privateKey = naclUtil.decodeBase64(agent.privateKey);
-            this.publickKey = naclUtil.decodeBase64(agent.publicKey);
-        } else {
-            const pair = nacl.sign.keyPair();
-            this.privateKey = pair.secretKey;
-            this.publickKey = pair.publicKey;
-            this.set({
-                publicKey: naclUtil.encodeBase64(this.publickKey),
-                privateKey: naclUtil.encodeBase64(this.privateKey),
-            });
-        }
-        this.address = naclUtil.encodeBase64(this.publickKey);
+        this.initPromise = this.get().then((agent) => {
+            if (agent && agent.privateKey && agent.publicKey) {
+                this.privateKey = naclUtil.decodeBase64(agent.privateKey);
+                this.publickKey = naclUtil.decodeBase64(agent.publicKey);
+            } else {
+                const pair = nacl.sign.keyPair();
+                this.privateKey = pair.secretKey;
+                this.publickKey = pair.publicKey;
+                this.set({
+                    publicKey: naclUtil.encodeBase64(this.publickKey),
+                    privateKey: naclUtil.encodeBase64(this.privateKey),
+                });
+            }
+            this.address = naclUtil.encodeBase64(this.publickKey);
+        });
     }
 
     getMessage(address: string) {
@@ -43,6 +45,7 @@ class SignAgent {
     }
 
     async sign(obj: AnyObject) {
+        await this.initPromise;
         const signature = nacl.sign.detached(new TextEncoder().encode(utils.object.stringifyObj(obj)), this.privateKey);
         return naclUtil.encodeBase64(signature);
     }
