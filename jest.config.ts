@@ -7,4 +7,10 @@ export default {
         '^.+\\.(ts|tsx)?$': 'ts-jest',
     },
     collectCoverageFrom: ['src/**/*.ts'],
+    globals: {
+        'ts-jest': {
+            compiler: 'ttypescript',
+        },
+    },
+    setupFiles: ['./jest.setup.ts'],
 };

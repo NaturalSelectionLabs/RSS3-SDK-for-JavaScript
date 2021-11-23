@@ -1,5 +1,6 @@
 import check from '../../src/utils/check';
 import config from '../../src/config';
+import { Buffer } from 'buffer';
 
 test('check.valueLength', () => {
     expect(
@@ -22,33 +23,59 @@ test('check.removeCustomProperties', () => {
         test2: {
             _test3: 'r',
         },
+        _test4: 'r',
     };
-    check.removeCustomProperties(obj);
-    expect(obj).toMatchObject({
+    expect(check.removeCustomProperties(obj)).toEqual({
         test1: 'r',
         test2: {},
     });
 });
 
 test('check.fileSize', () => {
+    const testObj = {
+        t: 'r',
+        signature: '0'.repeat(132),
+    };
+    const testObjLength = Buffer.byteLength(JSON.stringify(testObj));
     expect(
-        check.fileSize({
-            t: 'r'.repeat(config.fileSizeLimit - 8),
-        }),
+        check.fileSize(
+            Object.assign(testObj, {
+                t: 'r'.repeat(config.fileSizeLimit - testObjLength + 1),
+            }),
+        ),
     ).toBe(true);
     expect(
-        check.fileSize({
-            t: 'r'.repeat(config.fileSizeLimit - 8 + 1),
-        }),
+        check.fileSize(
+            Object.assign(testObj, {
+                t: 'r'.repeat(config.fileSizeLimit - testObjLength + 2),
+            }),
+        ),
     ).toBe(false);
+});
+
+test('check.fileSizeWithNew', () => {
+    const testObj = {
+        list: ['1'],
+        t: 'r',
+        signature: '0'.repeat(132),
+    };
+    const testObjLength = Buffer.byteLength(JSON.stringify(testObj));
     expect(
-        check.fileSize({
-            t: '我'.repeat((config.fileSizeLimit - 8) / 3),
-        }),
+        check.fileSizeWithNew(
+            Object.assign(testObj, {
+                list: ['1'],
+                t: 'r'.repeat(config.fileSizeLimit - testObjLength - 4 + 1),
+            }),
+            '2',
+        ),
     ).toBe(true);
     expect(
-        check.fileSize({
-            t: '我'.repeat((config.fileSizeLimit - 8) / 3 + 1),
-        }),
+        check.fileSizeWithNew(
+            Object.assign(testObj, {
+                list: ['1'],
+                t: 'r'.repeat(config.fileSizeLimit - testObjLength - 4 + 2),
+            }),
+            '2',
+        ),
     ).toBe(false);
 });

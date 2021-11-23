@@ -48,6 +48,7 @@
         "@types/crypto-js": "4.0.2",
         "@types/jest": "27.0.3",
         "@types/js-cookie": "2.2.7",
+        "axios-mock-adapter": "1.20.0",
         "babel-loader": "8.2.2",
         "husky": "6.0.0",
         "jest": "27.3.1",
