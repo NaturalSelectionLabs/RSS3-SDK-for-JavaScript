@@ -35,7 +35,7 @@ class Items {
         this.main = main;
     }
 
-    async getList(persona: string, index = -1) {
+    async getListFile(persona: string, index = -1) {
         if (index < 0) {
             const indexFile = <RSS3Index>await this.main.files.get(persona);
             if (indexFile.items) {
@@ -50,7 +50,7 @@ class Items {
         }
     }
 
-    async getAllList(persona: string, breakpoint?: (file: RSS3ItemsList) => boolean) {
+    async getList(persona: string, breakpoint?: (file: RSS3ItemsList) => boolean) {
         const indexFile = <RSS3Index>await this.main.files.get(persona);
         if (indexFile.items) {
             return <RSS3Item[]>await this.main.files.getAll(indexFile.items, (file) => {
@@ -69,7 +69,7 @@ class Items {
             file: null,
             index: -1,
         };
-        this.getAllList(this.main.account.address, (file) => {
+        this.getList(this.main.account.address, (file) => {
             if (!file.list) {
                 return false;
             }
@@ -98,7 +98,7 @@ class Items {
 
     async post(itemIn: ItemPost) {
         if (utils.check.valueLength(itemIn) && equals<ItemPost>(itemIn)) {
-            let file = await this.getList(this.main.account.address, -1);
+            let file = await this.getListFile(this.main.account.address, -1);
             if (!file) {
                 const newID = utils.id.getItems(this.main.account.address, 0);
                 file = <RSS3ItemsList>this.main.files.new(newID);
@@ -121,7 +121,7 @@ class Items {
                 },
             );
 
-            if (!utils.check.fileSize(JSON.parse(JSON.stringify(file)).list.unshift(item))) {
+            if (!utils.check.fileSizeWithNew(file, item)) {
                 const newID = utils.id.getItems(this.main.account.address, utils.id.parse(file.id).index + 1);
                 const newFile = <RSS3ItemsList>this.main.files.new(newID);
                 newFile.list = [item];

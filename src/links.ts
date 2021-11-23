@@ -26,7 +26,7 @@ class Links {
         };
     }
 
-    async getList(persona: string, type: string, index = -1) {
+    async getListFile(persona: string, type: string, index = -1) {
         if (index < 0) {
             const indexFile = <RSS3Index>await this.main.files.get(persona);
             if (indexFile.links) {
@@ -36,24 +36,16 @@ class Links {
                 }
                 const parsed = utils.id.parse(linksId);
                 index = parsed.index + index + 1;
-                const file = <RSS3List>await this.main.files.get(utils.id.getLinks(persona, type, index));
-                return {
-                    list: file.list || [],
-                    list_next: file.list_next,
-                };
+                return <RSS3List>await this.main.files.get(utils.id.getLinks(persona, type, index));
             } else {
                 return null;
             }
         } else {
-            const file = <RSS3List>await this.main.files.get(utils.id.getLinks(persona, type, index));
-            return {
-                list: file.list || [],
-                list_next: file.list_next,
-            };
+            return <RSS3List>await this.main.files.get(utils.id.getLinks(persona, type, index));
         }
     }
 
-    async getAllList(persona: string, type: string, breakpoint?: (file: RSS3LinksList) => boolean) {
+    async getList(persona: string, type: string, breakpoint?: (file: RSS3LinksList) => boolean) {
         const { id } = await this.getPosition(persona, type);
         if (id) {
             return <RSS3ID[]>await this.main.files.getAll(id, (file) => {
@@ -68,7 +60,7 @@ class Links {
         if (utils.check.valueLength(links) && equals<LinksPost>(links)) {
             const { index, file } = await this.getPosition(this.main.account.address, links.type);
             if (index === -1) {
-                links.list?.forEach((link) => {
+                links?.list?.forEach((link) => {
                     this.main.files.clearCache(utils.id.getLinks(link, links.type, ''), true);
                 });
                 const newID = utils.id.getLinks(this.main.account.address, links.type, 0);
@@ -129,9 +121,9 @@ class Links {
     }
 
     async post(type: string, personaID: string) {
-        const { file: indexFile, id } = await this.getPosition(this.main.account.address, type);
+        const { file: indexFile, id, index: linksIndex } = await this.getPosition(this.main.account.address, type);
         if (id) {
-            const list = await this.getAllList(
+            const list = await this.getList(
                 this.main.account.address,
                 type,
                 (file) => !!file.list && file.list.indexOf(personaID) > -1,
@@ -144,14 +136,14 @@ class Links {
                     file.list = [];
                 }
 
-                if (!utils.check.fileSize(JSON.parse(JSON.stringify(file)).list.unshift(personaID))) {
+                if (!utils.check.fileSizeWithNew(file, personaID)) {
                     const newID = utils.id.getLinks(this.main.account.address, type, utils.id.parse(file.id).index + 1);
                     const newFile = <RSS3LinksList>this.main.files.new(newID);
                     newFile.list = [personaID];
                     newFile.list_next = file.id;
                     this.main.files.set(newFile);
 
-                    indexFile.links![index].list = newID;
+                    indexFile.links![linksIndex].list = newID;
                     this.main.files.set(indexFile);
                 } else {
                     file.list.unshift(personaID);
@@ -175,7 +167,7 @@ class Links {
         const { id } = await this.getPosition(this.main.account.address, type);
         let result = null;
         if (id) {
-            await this.getAllList(this.main.account.address, type, (file) => {
+            await this.getList(this.main.account.address, type, (file) => {
                 if (!file.list) {
                     return false;
                 }

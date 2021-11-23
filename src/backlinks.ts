@@ -18,7 +18,7 @@ class Backlinks {
         };
     }
 
-    async getList(persona: string, type: string, index = -1) {
+    async getListFile(persona: string, type: string, index = -1) {
         if (index < 0) {
             const indexFile = <RSS3Index>await this.main.files.get(persona);
             if (indexFile.backlinks) {
@@ -28,24 +28,16 @@ class Backlinks {
                 }
                 const parsed = utils.id.parse(linksId);
                 index = parsed.index + index + 1;
-                const file = <RSS3List>await this.main.files.get(utils.id.getBacklinks(persona, type, index));
-                return {
-                    list: file.list || [],
-                    list_next: file.list_next,
-                };
+                return <RSS3List>await this.main.files.get(utils.id.getBacklinks(persona, type, index));
             } else {
                 return null;
             }
         } else {
-            const file = <RSS3List>await this.main.files.get(utils.id.getBacklinks(persona, type, index));
-            return {
-                list: file.list || [],
-                list_next: file.list_next,
-            };
+            return <RSS3List>await this.main.files.get(utils.id.getBacklinks(persona, type, index));
         }
     }
 
-    async getAllList(persona: string, type: string, breakpoint?: (file: RSS3BacklinksList) => boolean) {
+    async getList(persona: string, type: string, breakpoint?: (file: RSS3BacklinksList) => boolean) {
         const { id } = await this.getPosition(persona, type);
         if (id) {
             return <RSS3ID[]>await this.main.files.getAll(id, (file) => {

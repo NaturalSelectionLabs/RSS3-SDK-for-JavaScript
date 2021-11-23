@@ -66,7 +66,7 @@ class File {
                         this.dirtyList[fileID] = 1;
                         resolve(this.list[fileID]);
                     } else {
-                        reject('Server response error.');
+                        reject('Server response error. Error: ' + error.message);
                     }
                 }
             });
@@ -77,13 +77,13 @@ class File {
         let list: (RSS3ID | RSS3ItemID | RSS3Asset | RSS3Item)[] = [];
         let id: string | undefined = fileID;
         do {
-            const listFile = <RSS3List>await this.main.files.get(fileID);
+            const listFile = <RSS3List>await this.main.files.get(id);
             if (breakpoint && breakpoint(listFile)) {
                 break;
             }
             list = list.concat(listFile.list || []);
             id = listFile.list_next;
-        } while (fileID);
+        } while (id);
         return list;
     }
 
@@ -104,10 +104,12 @@ class File {
             Object.keys(this.list).forEach((fileID) => {
                 if (fileID.includes(key)) {
                     delete this.list[fileID];
+                    delete this.dirtyList[fileID];
                 }
             });
         } else {
             delete this.list[key];
+            delete this.dirtyList[key];
         }
     }
 

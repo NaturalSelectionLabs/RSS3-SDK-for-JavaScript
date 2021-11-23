@@ -10,7 +10,7 @@ class Assets {
         this.main = main;
     }
 
-    async getList(persona: string, index = -1) {
+    async getListFile(persona: string, index = -1) {
         if (index < 0) {
             const indexFile = <RSS3Index>await this.main.files.get(persona);
             if (indexFile.assets) {
@@ -25,7 +25,7 @@ class Assets {
         }
     }
 
-    async getAllList(persona: string, breakpoint?: (file: RSS3AssetsList) => boolean) {
+    async getList(persona: string, breakpoint?: (file: RSS3AssetsList) => boolean) {
         const indexFile = <RSS3Index>await this.main.files.get(persona);
         if (indexFile.assets) {
             return <RSS3Asset[]>await this.main.files.getAll(indexFile.assets, (file) => {
@@ -53,7 +53,8 @@ class Assets {
             file: null,
             index: -1,
         };
-        this.getAllList(this.main.account.address, (file) => {
+
+        await this.getList(this.main.account.address, (file) => {
             if (!file.list) {
                 return false;
             }
@@ -73,13 +74,13 @@ class Assets {
 
     async post(asset: RSS3UserAsset) {
         if (utils.check.valueLength(asset) && equals<RSS3UserAsset>(asset)) {
-            const list = await this.getAllList(
+            const list = await this.getList(
                 this.main.account.address,
                 (file) => !!file.list && file.list.findIndex((as) => this.assetsEquals(as, asset)) > -1,
             );
             const index = list.findIndex((as) => this.assetsEquals(as, asset));
             if (index === -1) {
-                let file = await this.getList(this.main.account.address, -1);
+                let file = await this.getListFile(this.main.account.address, -1);
                 if (!file) {
                     const newID = utils.id.getAssets(this.main.account.address, 0);
                     file = <RSS3AssetsList>this.main.files.new(newID);
@@ -87,7 +88,7 @@ class Assets {
                 if (!file.list) {
                     file.list = [];
                 }
-                if (!utils.check.fileSize(JSON.parse(JSON.stringify(file)).list.unshift(asset))) {
+                if (!utils.check.fileSizeWithNew(file, asset)) {
                     const newID = utils.id.getAssets(this.main.account.address, utils.id.parse(file.id).index + 1);
                     const newFile = <RSS3AssetsList>this.main.files.new(newID);
                     newFile.list = [asset];
@@ -111,15 +112,31 @@ class Assets {
         }
     }
 
-    async patch(asset: RSS3UserAsset) {
+    async delete(asset: RSS3UserAsset) {
+        const { file, index } = await this.getPosition(asset);
+        let result = null;
+        if (index !== -1) {
+            file!.list!.splice(index, 1);
+            result = file!.list;
+            this.main.files.set(file!);
+        } else {
+            throw Error('Asset not found');
+        }
+        return result;
+    }
+
+    async patchTags(asset: RSS3UserAsset, tags: string[]) {
         if (utils.check.valueLength(asset) && equals<RSS3UserAsset>(asset)) {
             const position = await this.getPosition(asset);
 
             if (position.index !== -1) {
-                position.file!.list![position.index] = Object.assign(position.file!.list![position.index], asset);
-
-                this.main.files.set(position.file!);
-                return position.file!.list![position.index];
+                if (!(<RSS3NodeAsset>position.file!.list![position.index]).auto) {
+                    (<RSS3UserAsset>position.file!.list![position.index]).tags = tags;
+                    this.main.files.set(position.file!);
+                    return position.file!.list![position.index];
+                } else {
+                    throw Error('Cannot add tags to node assets');
+                }
             } else {
                 return null;
             }

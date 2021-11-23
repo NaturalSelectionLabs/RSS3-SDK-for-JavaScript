@@ -41,6 +41,12 @@ class SignAgent {
         });
     }
 
+    getAddress() {
+        return this.initPromise.then(() => {
+            return this.address;
+        });
+    }
+
     getMessage(address: string) {
         return `Hi, RSS3. I'm your agent ${address}`;
     }

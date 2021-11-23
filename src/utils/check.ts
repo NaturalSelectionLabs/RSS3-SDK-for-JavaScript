@@ -1,6 +1,7 @@
 import config from '../config';
 import type { AnyObject } from '../../types/extend';
 import { Buffer } from 'buffer';
+import object from './object';
 
 function valueLength(obj: AnyObject) {
     let result = true;
@@ -28,16 +29,27 @@ function removeCustomProperties(obj: AnyObject) {
     return result;
 }
 
+function fileSize(obj: AnyObject) {
+    const toBeObj = JSON.parse(JSON.stringify(obj));
+    object.removeEmpty(toBeObj);
+    toBeObj.signature = '0'.repeat(132);
+    if (Buffer.byteLength(JSON.stringify(toBeObj)) > config.fileSizeLimit) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
 export default {
     valueLength,
 
     removeCustomProperties,
 
-    fileSize(obj: AnyObject) {
-        if (Buffer.byteLength(JSON.stringify(obj)) > config.fileSizeLimit) {
-            return false;
-        } else {
-            return true;
-        }
+    fileSize,
+
+    fileSizeWithNew(obj: AnyObject, newItem: AnyObject | string) {
+        const toBeObj = JSON.parse(JSON.stringify(obj));
+        toBeObj.list.unshift(newItem);
+        return fileSize(toBeObj);
     },
 };
