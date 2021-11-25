@@ -1,11 +1,11 @@
-import type { AnyObject } from '../types/extend';
-import Main from './index';
-import utils from './utils';
+import type { AnyObject } from '../../types/extend';
+import Main from '../index';
+import utils from '../utils';
 import nacl from 'tweetnacl';
 import naclUtil from 'tweetnacl-util';
 import Cookies from 'js-cookie';
 import md5 from 'crypto-js/md5';
-import config from './config';
+import config from '../config';
 import { Buffer } from 'buffer';
 
 interface IStorageData {

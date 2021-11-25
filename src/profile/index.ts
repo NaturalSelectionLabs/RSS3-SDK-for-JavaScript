@@ -1,6 +1,6 @@
-import Main from './index';
+import Main from '../index';
 import { equals } from 'typescript-is';
-import utils from './utils';
+import utils from '../utils';
 import Accounts from './accounts';
 
 class Profile {

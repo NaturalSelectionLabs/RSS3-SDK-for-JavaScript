@@ -1,5 +1,5 @@
-import Main from './index';
-import utils from './utils';
+import Main from '../index';
+import utils from '../utils';
 import { equals } from 'typescript-is';
 
 class Accounts {

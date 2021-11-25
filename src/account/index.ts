@@ -1,8 +1,8 @@
-import type { AnyObject } from '../types/extend';
-import Main from './index';
-import { IOptionsMnemonic, IOptionsPrivateKey, IOptionsSign } from './index';
+import type { AnyObject } from '../../types/extend';
+import Main from '../index';
+import { IOptionsMnemonic, IOptionsPrivateKey, IOptionsSign } from './../index';
 import { ethers } from 'ethers';
-import utils from './utils';
+import utils from './../utils';
 import SignAgent from './sign-agent';
 
 class Account {
