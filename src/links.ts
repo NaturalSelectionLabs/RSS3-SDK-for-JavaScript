@@ -27,22 +27,7 @@ class Links {
     }
 
     async getListFile(persona: string, type: string, index = -1) {
-        if (index < 0) {
-            const indexFile = <RSS3Index>await this.main.files.get(persona);
-            if (indexFile.links) {
-                const linksId = indexFile.links.find((links) => links.type === type)?.list;
-                if (!linksId) {
-                    throw new Error('Link type does not exist');
-                }
-                const parsed = utils.id.parse(linksId);
-                index = parsed.index + index + 1;
-                return <RSS3List>await this.main.files.get(utils.id.getLinks(persona, type, index));
-            } else {
-                return null;
-            }
-        } else {
-            return <RSS3List>await this.main.files.get(utils.id.getLinks(persona, type, index));
-        }
+        return <RSS3LinksList | null>await this.main.files.getList(persona, 'links', index, type);
     }
 
     async getList(persona: string, type: string, breakpoint?: (file: RSS3LinksList) => boolean) {

@@ -9,18 +9,7 @@ class AutoItems {
     }
 
     async getListFile(persona: string, index = -1) {
-        if (index < 0) {
-            const indexFile = <RSS3Index>await this.main.files.get(persona);
-            if (indexFile.items?.auto) {
-                const parsed = utils.id.parse(indexFile.items.auto);
-                index = parsed.index + index + 1;
-                return <RSS3AutoItemsList>await this.main.files.get(utils.id.getItems(persona, index));
-            } else {
-                return null;
-            }
-        } else {
-            return <RSS3AutoItemsList>await this.main.files.get(utils.id.getItems(persona, index));
-        }
+        return <RSS3AutoItemsList | null>await this.main.files.getList(persona, 'items', index, 'auto');
     }
 
     async getList(persona: string, breakpoint?: (file: RSS3AutoItemsList) => boolean) {

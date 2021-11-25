@@ -4,14 +4,13 @@ function parse(id: string) {
         return {
             persona: splited[0],
             type: splited[1] || 'index',
-            payload: null,
             index: splited[2] ? parseInt(splited[2]) : Infinity,
         };
     } else {
         return {
             persona: splited[0],
             type: splited[1] || 'index',
-            payload: splited[2],
+            payload: splited[2].split('.'),
             index: parseInt(splited[3]),
         };
     }
@@ -27,6 +26,8 @@ function get(persona: string, type: string, index: number | string, payload?: st
 
 export default {
     parse,
+
+    get,
 
     getItem(persona: string, index: number) {
         return get(persona, 'item', index);

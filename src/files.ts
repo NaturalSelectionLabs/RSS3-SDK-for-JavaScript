@@ -3,6 +3,7 @@ import utils from './utils';
 import axois from 'axios';
 import { equals } from 'typescript-is';
 import config from './config';
+import { AnyObject } from 'types/extend';
 
 class File {
     private main: Main;
@@ -70,6 +71,43 @@ class File {
                     }
                 }
             });
+        }
+    }
+
+    async getList(persona: string, field: 'assets' | 'backlinks' | 'links' | 'items', index = -1, type?: string) {
+        if (index < 0) {
+            const indexFile = <RSS3Index>await this.main.files.get(persona);
+            if (indexFile[field]) {
+                let fileID;
+                if (type) {
+                    if (indexFile[field]) {
+                        if (Array.isArray(indexFile[field])) {
+                            fileID = (<AnyObject[]>indexFile[field]).find((item: any) => item.type === type)?.list;
+                        } else {
+                            fileID = (<AnyObject>indexFile[field])[type];
+                        }
+                    }
+                } else {
+                    fileID = indexFile[field];
+                }
+                if (!fileID) {
+                    throw new Error(`${field} ${type ? `type ${type} ` : ''}does not exist`);
+                }
+                const parsed = utils.id.parse(fileID);
+                return <RSS3List>(
+                    await this.main.files.get(
+                        utils.id.get(parsed.persona, parsed.type, parsed.index + index + 1, parsed.payload),
+                    )
+                );
+            } else {
+                return null;
+            }
+        } else {
+            if (type) {
+                return <RSS3List>await this.main.files.get(utils.id.get(persona, 'list', index, [field, type]));
+            } else {
+                return <RSS3List>await this.main.files.get(utils.id.get(persona, 'list', index, [field]));
+            }
         }
     }
 

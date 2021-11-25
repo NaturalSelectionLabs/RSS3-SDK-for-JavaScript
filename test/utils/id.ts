@@ -36,28 +36,26 @@ test('id.parse', () => {
     expect(id.parse(persona)).toEqual({
         persona,
         type: 'index',
-        payload: null,
         index: Infinity,
     });
 
     expect(id.parse(id.getItem(persona, 100))).toEqual({
         persona,
         type: 'item',
-        payload: null,
         index: 100,
     });
 
     expect(id.parse(id.getItems(persona, 100))).toEqual({
         persona,
         type: 'list',
-        payload: 'items',
+        payload: ['items'],
         index: 100,
     });
 
     expect(id.parse(id.getLinks(persona, 'follow', 100))).toEqual({
         persona,
         type: 'list',
-        payload: 'links.follow',
+        payload: ['links', 'follow'],
         index: 100,
     });
 });

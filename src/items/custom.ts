@@ -35,18 +35,7 @@ class CustomItems {
     }
 
     async getListFile(persona: string, index = -1) {
-        if (index < 0) {
-            const indexFile = <RSS3Index>await this.main.files.get(persona);
-            if (indexFile.items?.custom) {
-                const parsed = utils.id.parse(indexFile.items.custom);
-                index = parsed.index + index + 1;
-                return <RSS3CustomItemsList>await this.main.files.get(utils.id.getItems(persona, index));
-            } else {
-                return null;
-            }
-        } else {
-            return <RSS3CustomItemsList>await this.main.files.get(utils.id.getItems(persona, index));
-        }
+        return <RSS3CustomItemsList | null>await this.main.files.getList(persona, 'items', index, 'custom');
     }
 
     async getList(persona: string, breakpoint?: (file: RSS3CustomItemsList) => boolean) {

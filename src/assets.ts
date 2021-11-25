@@ -10,18 +10,7 @@ class Assets {
     }
 
     async getListFile(persona: string, index = -1) {
-        if (index < 0) {
-            const indexFile = <RSS3Index>await this.main.files.get(persona);
-            if (indexFile.assets) {
-                const parsed = utils.id.parse(indexFile.assets);
-                index = parsed.index + index + 1;
-                return <RSS3AssetsList>await this.main.files.get(utils.id.getAssets(persona, index));
-            } else {
-                return null;
-            }
-        } else {
-            return <RSS3AssetsList>await this.main.files.get(utils.id.getAssets(persona, index));
-        }
+        return <RSS3AssetsList | null>await this.main.files.getList(persona, 'assets', index);
     }
 
     async getList(persona: string, breakpoint?: (file: RSS3AssetsList) => boolean) {
