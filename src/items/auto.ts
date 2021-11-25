@@ -1,10 +1,13 @@
 import Main from '../index';
+import Backlinks from './backlinks';
 
 class AutoItems {
     private main: Main;
+    backlinks: Backlinks;
 
     constructor(main: Main) {
         this.main = main;
+        this.backlinks = new Backlinks(main, 'auto');
     }
 
     async getListFile(persona: string, index = -1) {

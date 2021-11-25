@@ -35,7 +35,7 @@ const items1File = {
         {
             id: id.getAutoItem(rss3.account.address, 1),
             date_created: now,
-            date_modified: now,
+            date_updated: now,
             title: 'Test1',
         },
     ],
@@ -44,7 +44,7 @@ const items1File = {
 const itemTest: any = {
     id: id.getAutoItem(rss3.account.address, 0),
     date_created: now,
-    date_modified: now,
+    date_updated: now,
     title: 'Test0',
 };
 const items0File = {

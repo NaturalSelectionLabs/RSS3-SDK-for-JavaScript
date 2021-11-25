@@ -148,7 +148,7 @@ interface RSS3AutoAsset extends RSS3AssetBase {
 interface RSS3ItemBase {
     id: RSS3ItemID;
     date_created: string; // Specifies the published date in RFC 3339 format
-    date_modified: string; // Specifies the modified date in RFC 3339 format
+    date_updated: string; // Specifies the modified date in RFC 3339 format
 
     backlinks?: {
         // Interactive items from other personas.

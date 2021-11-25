@@ -35,7 +35,7 @@ const items1File = {
         {
             id: id.getCustomItem(rss3.account.address, 1),
             date_created: now,
-            date_modified: now,
+            date_updated: now,
             title: 'Test1',
         },
     ],
@@ -44,7 +44,7 @@ const items1File = {
 const itemTest: any = {
     id: id.getCustomItem(rss3.account.address, 0),
     date_created: now,
-    date_modified: now,
+    date_updated: now,
     title: 'Test0',
 };
 const items0File = {
@@ -81,7 +81,7 @@ test('Items.custom.post', async () => {
         file.list.unshift({
             id: id.getCustomItem(rss3.account.address, i),
             date_created: now,
-            date_modified: now,
+            date_updated: now,
             title: 'Test' + i,
         });
         items.push({
@@ -101,6 +101,6 @@ test('Items.custom.patch', async () => {
     itemTest.summary = 'TestSummary0';
     await rss3.items.custom.patch(itemTest);
     const result = (await rss3.items.custom.getListFile(rss3.account.address, 0))?.list?.[0];
-    (<any>result).date_modified = itemTest.date_modified;
+    (<any>result).date_updated = itemTest.date_updated;
     expect(result).toEqual(itemTest);
 });

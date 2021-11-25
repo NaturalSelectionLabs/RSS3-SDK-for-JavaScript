@@ -67,7 +67,9 @@ class File {
                         this.dirtyList[fileID] = 1;
                         resolve(this.list[fileID]);
                     } else {
-                        reject('Server response error. Error: ' + error.message);
+                        reject(
+                            `Server response error. Error: ${this.main.options.endpoint}/${fileID} ${error.message}`,
+                        );
                     }
                 }
             });
@@ -77,15 +79,13 @@ class File {
     async getList(persona: string, field: 'assets' | 'backlinks' | 'links' | 'items', index = -1, type?: string) {
         if (index < 0) {
             const indexFile = <RSS3Index>await this.main.files.get(persona);
-            if (indexFile[field]) {
+            if (indexFile?.[field]) {
                 let fileID;
                 if (type) {
-                    if (indexFile[field]) {
-                        if (Array.isArray(indexFile[field])) {
-                            fileID = (<AnyObject[]>indexFile[field]).find((item: any) => item.type === type)?.list;
-                        } else {
-                            fileID = (<AnyObject>indexFile[field])[type];
-                        }
+                    if (Array.isArray(indexFile[field])) {
+                        fileID = (<AnyObject[]>indexFile[field]).find((item: any) => item.type === type)?.list;
+                    } else {
+                        fileID = (<AnyObject>indexFile[field])[type];
                     }
                 } else {
                     fileID = indexFile[field];

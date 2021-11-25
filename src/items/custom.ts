@@ -1,8 +1,9 @@
 import Main from '../index';
 import utils from '../utils';
 import { equals } from 'typescript-is';
+import Backlinks from './backlinks';
 
-type ItemPost = Omit<RSS3CustomItem, 'id' | 'date_created' | 'date_modified'>;
+type ItemPost = Omit<RSS3CustomItem, 'id' | 'date_created' | 'date_updated'>;
 
 interface ItemPatch extends Partial<RSS3CustomItem> {
     id: RSS3CustomItemID;
@@ -10,9 +11,11 @@ interface ItemPatch extends Partial<RSS3CustomItem> {
 
 class CustomItems {
     private main: Main;
+    backlinks: Backlinks;
 
     constructor(main: Main) {
         this.main = main;
+        this.backlinks = new Backlinks(main, 'auto');
     }
 
     async getListFile(persona: string, index = -1) {
@@ -86,7 +89,7 @@ class CustomItems {
                 itemIn,
                 {
                     id: utils.id.getCustomItem(this.main.account.address, id),
-                    date_modified: nowDate,
+                    date_updated: nowDate,
                 },
             );
 
@@ -120,7 +123,7 @@ class CustomItems {
 
             if (position.index !== -1) {
                 position.file!.list![position.index] = Object.assign(position.file!.list![position.index], itemIn, {
-                    date_modified: new Date().toISOString(),
+                    date_updated: new Date().toISOString(),
                     date_created: position.file!.list![position.index].date_created,
                 });
 
