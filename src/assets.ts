@@ -1,7 +1,6 @@
 import Main from './index';
 import utils from './utils';
 import { equals } from 'typescript-is';
-import config from './config';
 
 class Assets {
     private main: Main;
@@ -72,8 +71,8 @@ class Assets {
         return result;
     }
 
-    async post(asset: RSS3UserAsset) {
-        if (utils.check.valueLength(asset) && equals<RSS3UserAsset>(asset)) {
+    async post(asset: RSS3CustomAsset) {
+        if (utils.check.valueLength(asset) && equals<RSS3CustomAsset>(asset)) {
             const list = await this.getList(
                 this.main.account.address,
                 (file) => !!file.list && file.list.findIndex((as) => this.assetsEquals(as, asset)) > -1,
@@ -112,7 +111,7 @@ class Assets {
         }
     }
 
-    async delete(asset: RSS3UserAsset) {
+    async delete(asset: RSS3CustomAsset) {
         const { file, index } = await this.getPosition(asset);
         let result = null;
         if (index !== -1) {
@@ -125,13 +124,13 @@ class Assets {
         return result;
     }
 
-    async patchTags(asset: RSS3UserAsset, tags: string[]) {
-        if (utils.check.valueLength(asset) && equals<RSS3UserAsset>(asset)) {
+    async patchTags(asset: RSS3CustomAsset, tags: string[]) {
+        if (utils.check.valueLength(asset) && equals<RSS3CustomAsset>(asset)) {
             const position = await this.getPosition(asset);
 
             if (position.index !== -1) {
-                if (!(<RSS3NodeAsset>position.file!.list![position.index]).auto) {
-                    (<RSS3UserAsset>position.file!.list![position.index]).tags = tags;
+                if (!(<RSS3AutoAsset>position.file!.list![position.index]).auto) {
+                    (<RSS3CustomAsset>position.file!.list![position.index]).tags = tags;
                     this.main.files.set(position.file!);
                     return position.file!.list![position.index];
                 } else {

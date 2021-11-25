@@ -1,7 +1,6 @@
-import Main from './index';
-import utils from './utils';
+import Main from '../index';
+import utils from '../utils';
 import { equals } from 'typescript-is';
-import config from './config';
 
 interface ItemPost {
     tags?: string[];
@@ -28,7 +27,7 @@ interface ItemPatch extends ItemPost {
     id: RSS3ItemID;
 }
 
-class Items {
+class CustomItems {
     private main: Main;
 
     constructor(main: Main) {
@@ -38,23 +37,23 @@ class Items {
     async getListFile(persona: string, index = -1) {
         if (index < 0) {
             const indexFile = <RSS3Index>await this.main.files.get(persona);
-            if (indexFile.items) {
-                const parsed = utils.id.parse(indexFile.items);
+            if (indexFile.items?.custom) {
+                const parsed = utils.id.parse(indexFile.items.custom);
                 index = parsed.index + index + 1;
-                return <RSS3ItemsList>await this.main.files.get(utils.id.getItems(persona, index));
+                return <RSS3CustomItemsList>await this.main.files.get(utils.id.getItems(persona, index));
             } else {
                 return null;
             }
         } else {
-            return <RSS3ItemsList>await this.main.files.get(utils.id.getItems(persona, index));
+            return <RSS3CustomItemsList>await this.main.files.get(utils.id.getItems(persona, index));
         }
     }
 
-    async getList(persona: string, breakpoint?: (file: RSS3ItemsList) => boolean) {
+    async getList(persona: string, breakpoint?: (file: RSS3CustomItemsList) => boolean) {
         const indexFile = <RSS3Index>await this.main.files.get(persona);
-        if (indexFile.items) {
-            return <RSS3Item[]>await this.main.files.getAll(indexFile.items, (file) => {
-                return breakpoint?.(<RSS3ItemsList>file) || false;
+        if (indexFile.items?.custom) {
+            return <RSS3CustomItem[]>await this.main.files.getAll(indexFile.items.custom, (file) => {
+                return breakpoint?.(<RSS3CustomItemsList>file) || false;
             });
         } else {
             return [];
@@ -63,7 +62,7 @@ class Items {
 
     private async getPosition(itemID: string) {
         let result: {
-            file: RSS3ItemsList | null;
+            file: RSS3CustomItemsList | null;
             index: number;
         } = {
             file: null,
@@ -101,7 +100,7 @@ class Items {
             let file = await this.getListFile(this.main.account.address, -1);
             if (!file) {
                 const newID = utils.id.getItems(this.main.account.address, 0);
-                file = <RSS3ItemsList>this.main.files.new(newID);
+                file = <RSS3CustomItemsList>this.main.files.new(newID);
             }
             if (!file.list) {
                 file.list = [];
@@ -110,7 +109,7 @@ class Items {
             const id = file.list[0] ? utils.id.parse(file.list[0].id).index + 1 : 0;
 
             const nowDate = new Date().toISOString();
-            const item: RSS3Item = Object.assign(
+            const item: RSS3CustomItem = Object.assign(
                 {
                     date_published: nowDate,
                 },
@@ -123,13 +122,16 @@ class Items {
 
             if (!utils.check.fileSizeWithNew(file, item)) {
                 const newID = utils.id.getItems(this.main.account.address, utils.id.parse(file.id).index + 1);
-                const newFile = <RSS3ItemsList>this.main.files.new(newID);
+                const newFile = <RSS3CustomItemsList>this.main.files.new(newID);
                 newFile.list = [item];
                 newFile.list_next = file.id;
                 this.main.files.set(newFile);
 
                 const indexFile = <RSS3Index>await this.main.files.get(this.main.account.address);
-                indexFile.items = newID;
+                if (!indexFile.items) {
+                    indexFile.items = {};
+                }
+                indexFile.items!.custom = newID;
                 this.main.files.set(indexFile);
             } else {
                 file.list.unshift(item);
@@ -160,4 +162,4 @@ class Items {
     }
 }
 
-export default Items;
+export default CustomItems;

@@ -74,10 +74,10 @@ class File {
     }
 
     async getAll(fileID: RSS3ListID, breakpoint?: (file: RSS3List) => boolean) {
-        let list: (RSS3ID | RSS3ItemID | RSS3Asset | RSS3Item)[] = [];
+        let list: (RSS3ID | RSS3ItemID | RSS3Asset | RSS3AutoItem | RSS3CustomItem)[] = [];
         let id: string | undefined = fileID;
         do {
-            const listFile = <RSS3List>await this.main.files.get(id);
+            const listFile = <RSS3List>await this.get(id);
             if (breakpoint && breakpoint(listFile)) {
                 break;
             }
