@@ -1,6 +1,6 @@
-import RSS3 from '../src/index';
+import RSS3 from '../../src/index';
 import { ethers } from 'ethers';
-import object from '../src/utils/object';
+import object from '../../src/utils/object';
 import nacl from 'tweetnacl';
 import naclUtil from 'tweetnacl-util';
 

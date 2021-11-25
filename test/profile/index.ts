@@ -1,7 +1,7 @@
-import RSS3 from '../src/index';
+import RSS3 from '../../src/index';
 import MockAdapter from 'axios-mock-adapter';
 import axios from 'axios';
-import config from '../src/config';
+import config from '../../src/config';
 import { ethers } from 'ethers';
 
 const now = new Date().toISOString();

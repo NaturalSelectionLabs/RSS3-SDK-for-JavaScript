@@ -1,8 +1,6 @@
-import RSS3 from '../src/index';
+import RSS3 from '../../src/index';
 import { ethers } from 'ethers';
-import object from '../src/utils/object';
-import nacl from 'tweetnacl';
-import naclUtil from 'tweetnacl-util';
+import object from '../../src/utils/object';
 
 test('Account.sign with singer', () => {
     const signer = ethers.Wallet.createRandom();
