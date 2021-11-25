@@ -103,18 +103,18 @@ it('File.getAll', async () => {
     });
     rss3.files.clearCache('', true);
 
-    mock.onGet(`test/${id.getItems(rss3.account.address, 1)}`).replyOnce(200, {
-        id: id.getItems(rss3.account.address, 1),
+    mock.onGet(`test/${id.getCustomItems(rss3.account.address, 1)}`).replyOnce(200, {
+        id: id.getCustomItems(rss3.account.address, 1),
         version: config.version,
         date_created: now,
         date_updated: now,
         signature: '',
 
         list: ['1', '2'],
-        list_next: id.getItems(rss3.account.address, 0),
+        list_next: id.getCustomItems(rss3.account.address, 0),
     });
-    mock.onGet(`test/${id.getItems(rss3.account.address, 0)}`).replyOnce(200, {
-        id: id.getItems(rss3.account.address, 0),
+    mock.onGet(`test/${id.getCustomItems(rss3.account.address, 0)}`).replyOnce(200, {
+        id: id.getCustomItems(rss3.account.address, 0),
         version: config.version,
         date_created: now,
         date_updated: now,
@@ -123,7 +123,7 @@ it('File.getAll', async () => {
         list: ['3'],
     });
 
-    expect(await rss3.files.getAll(id.getItems(rss3.account.address, 1))).toEqual(['1', '2', '3']);
+    expect(await rss3.files.getAll(id.getCustomItems(rss3.account.address, 1))).toEqual(['1', '2', '3']);
 });
 
 it('File.set', async () => {
@@ -166,7 +166,7 @@ it('File.sync', async () => {
     });
 
     mock.onPut('test').replyOnce(200, {
-        id: id.getItems(rss3.account.address, 0),
+        id: id.getCustomItems(rss3.account.address, 0),
         version: config.version,
         date_created: now,
         date_updated: now,

@@ -29,12 +29,20 @@ export default {
 
     get,
 
-    getItem(persona: string, index: number) {
-        return get(persona, 'item', index);
+    getCustomItem(persona: string, index: number) {
+        return get(persona, 'item', index, ['custom']);
     },
 
-    getItems(persona: string, index: number) {
-        return get(persona, 'list', index, ['items']);
+    getAutoItem(persona: string, index: number) {
+        return get(persona, 'item', index, ['auto']);
+    },
+
+    getCustomItems(persona: string, index: number) {
+        return get(persona, 'list', index, ['items', 'custom']);
+    },
+
+    getAutoItems(persona: string, index: number) {
+        return get(persona, 'list', index, ['items', 'auto']);
     },
 
     getLinks(persona: string, type: string, index: number | string) {

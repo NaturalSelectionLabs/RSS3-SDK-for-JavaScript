@@ -2,29 +2,10 @@ import Main from '../index';
 import utils from '../utils';
 import { equals } from 'typescript-is';
 
-interface ItemPost {
-    tags?: string[];
-    authors?: RSS3ID[];
-    title?: string;
-    summary?: string;
+type ItemPost = Omit<RSS3CustomItem, 'id' | 'date_created' | 'date_modified'>;
 
-    link?: {
-        type: string;
-        target: RSS3ItemID;
-    };
-
-    contents?: {
-        tags?: string[];
-        address: ThirdPartyAddress;
-        mime_type: string;
-        name?: string;
-        size_in_bytes?: string;
-        duration_in_seconds?: string;
-    }[];
-}
-
-interface ItemPatch extends ItemPost {
-    id: RSS3ItemID;
+interface ItemPatch extends Partial<RSS3CustomItem> {
+    id: RSS3CustomItemID;
 }
 
 class CustomItems {
@@ -57,7 +38,7 @@ class CustomItems {
             file: null,
             index: -1,
         };
-        this.getList(this.main.account.address, (file) => {
+        await this.getList(this.main.account.address, (file) => {
             if (!file.list) {
                 return false;
             }
@@ -88,7 +69,7 @@ class CustomItems {
         if (utils.check.valueLength(itemIn) && equals<ItemPost>(itemIn)) {
             let file = await this.getListFile(this.main.account.address, -1);
             if (!file) {
-                const newID = utils.id.getItems(this.main.account.address, 0);
+                const newID = utils.id.getCustomItems(this.main.account.address, 0);
                 file = <RSS3CustomItemsList>this.main.files.new(newID);
             }
             if (!file.list) {
@@ -100,17 +81,17 @@ class CustomItems {
             const nowDate = new Date().toISOString();
             const item: RSS3CustomItem = Object.assign(
                 {
-                    date_published: nowDate,
+                    date_created: nowDate,
                 },
                 itemIn,
                 {
-                    id: utils.id.getItem(this.main.account.address, id),
+                    id: utils.id.getCustomItem(this.main.account.address, id),
                     date_modified: nowDate,
                 },
             );
 
             if (!utils.check.fileSizeWithNew(file, item)) {
-                const newID = utils.id.getItems(this.main.account.address, utils.id.parse(file.id).index + 1);
+                const newID = utils.id.getCustomItems(this.main.account.address, utils.id.parse(file.id).index + 1);
                 const newFile = <RSS3CustomItemsList>this.main.files.new(newID);
                 newFile.list = [item];
                 newFile.list_next = file.id;
@@ -138,7 +119,10 @@ class CustomItems {
             const position = await this.getPosition(itemIn.id);
 
             if (position.index !== -1) {
-                position.file!.list![position.index] = Object.assign(position.file!.list![position.index], itemIn);
+                position.file!.list![position.index] = Object.assign(position.file!.list![position.index], itemIn, {
+                    date_modified: new Date().toISOString(),
+                    date_created: position.file!.list![position.index].date_created,
+                });
 
                 this.main.files.set(position.file!);
                 return position.file!.list![position.index];

@@ -1,0 +1,106 @@
+import RSS3 from '../../src/index';
+import MockAdapter from 'axios-mock-adapter';
+import axios from 'axios';
+import config from '../../src/config';
+import { ethers } from 'ethers';
+import id from '../../src/utils/id';
+
+const now = new Date().toISOString();
+const mock = new MockAdapter(axios);
+
+const signer = ethers.Wallet.createRandom();
+const rss3 = new RSS3({
+    endpoint: 'test',
+    address: signer.address,
+    sign: signer.signMessage.bind(signer),
+});
+
+const indexFile = {
+    id: rss3.account.address,
+    version: config.version,
+    date_created: now,
+    date_updated: now,
+    signature: '',
+    items: {
+        custom: id.getCustomItems(rss3.account.address, 1),
+    },
+};
+const items1File = {
+    id: id.getCustomItems(rss3.account.address, 1),
+    version: config.version,
+    date_created: now,
+    date_updated: now,
+    signature: '',
+    list: [
+        {
+            id: id.getCustomItem(rss3.account.address, 1),
+            date_created: now,
+            date_modified: now,
+            title: 'Test1',
+        },
+    ],
+    list_next: id.getCustomItems(rss3.account.address, 0),
+};
+const itemTest: any = {
+    id: id.getCustomItem(rss3.account.address, 0),
+    date_created: now,
+    date_modified: now,
+    title: 'Test0',
+};
+const items0File = {
+    id: id.getCustomItems(rss3.account.address, 0),
+    version: config.version,
+    date_created: now,
+    date_updated: now,
+    signature: '',
+    list: [itemTest],
+};
+mock.onGet(`test/${rss3.account.address}`).replyOnce(200, indexFile);
+mock.onGet(`test/${id.getCustomItems(rss3.account.address, 1)}`).replyOnce(200, items1File);
+mock.onGet(`test/${id.getCustomItems(rss3.account.address, 0)}`).replyOnce(200, items0File);
+
+test('Items.custom.getListFile', async () => {
+    expect(await rss3.items.custom.getListFile(rss3.account.address, -1)).toEqual(items1File);
+    expect(await rss3.items.custom.getListFile(rss3.account.address, 0)).toEqual(items0File);
+});
+
+test('Items.custom.getList', async () => {
+    expect(await rss3.items.custom.getList(rss3.account.address)).toEqual([...items1File.list, ...items0File.list]);
+});
+
+test('Items.custom.get', async () => {
+    expect(await rss3.items.custom.get(itemTest.id)).toEqual(itemTest);
+});
+
+test('Items.custom.post', async () => {
+    const file = JSON.parse(JSON.stringify(await rss3.items.custom.getListFile(rss3.account.address)));
+    file.signature = '0'.repeat(132);
+    const items = [];
+    let i = 2;
+    while (JSON.stringify(file).length < config.fileSizeLimit) {
+        file.list.unshift({
+            id: id.getCustomItem(rss3.account.address, i),
+            date_created: now,
+            date_modified: now,
+            title: 'Test' + i,
+        });
+        items.push({
+            title: 'Test' + i,
+        });
+    }
+    for (let i = 0; i < items.length; i++) {
+        await rss3.items.custom.post(items[i]);
+    }
+    expect((<any>await rss3.files.get()).items.custom).toBe(id.getCustomItems(rss3.account.address, 2));
+    const lastList = await rss3.items.custom.getListFile(rss3.account.address);
+    expect(lastList?.id).toBe(id.getCustomItems(rss3.account.address, 2));
+    expect(lastList?.list?.length).toBe(1);
+});
+
+test('Items.custom.patch', async () => {
+    itemTest.summary = 'TestSummary0';
+    await rss3.items.custom.patch(itemTest);
+    const result = (await rss3.items.custom.getListFile(rss3.account.address, 0))?.list?.[0];
+    (<any>result).date_modified = itemTest.date_modified;
+    expect(result).toEqual(itemTest);
+});

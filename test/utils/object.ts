@@ -1,6 +1,6 @@
 import object from '../../src/utils/object';
 
-test('id.getItem', () => {
+test('id.removeEmpty', () => {
     const obj = {
         a: [1],
         b: [],

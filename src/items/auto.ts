@@ -1,5 +1,4 @@
 import Main from '../index';
-import utils from '../utils';
 
 class AutoItems {
     private main: Main;
@@ -31,7 +30,7 @@ class AutoItems {
             file: null,
             index: -1,
         };
-        this.getList(this.main.account.address, (file) => {
+        await this.getList(this.main.account.address, (file) => {
             if (!file.list) {
                 return false;
             }
