@@ -14,9 +14,9 @@ class Backlinks {
         return await this.main.items[this.type].get(itemID);
     }
 
-    private async getPosition(itemID: string, type: string) {
+    private async getPosition(itemID: string, id: string) {
         const item = await this.getItem(itemID);
-        const index = (item?.backlinks || []).findIndex((lks) => lks.type === type);
+        const index = (item?.backlinks || []).findIndex((lks) => lks.id === id);
         return {
             item,
             index,
@@ -24,13 +24,13 @@ class Backlinks {
         };
     }
 
-    async getListFile(itemID: string, type: string, index = -1) {
+    async getListFile(itemID: string, id: string, index = -1) {
         if (index < 0) {
             const item = await this.getItem(itemID);
             if (item?.backlinks) {
-                const fileID = item.backlinks.find((link) => link.type === type)?.list;
+                const fileID = item.backlinks.find((link) => link.id === id)?.list;
                 if (!fileID) {
-                    throw new Error(`items ${itemID} backlinks ${type ? `type ${type} ` : ''}does not exist`);
+                    throw new Error(`items ${itemID} backlinks ${id ? `id ${id} ` : ''}does not exist`);
                 }
                 const parsed = utils.id.parse(fileID);
                 return <RSS3List>(
@@ -45,7 +45,7 @@ class Backlinks {
             const parsed = utils.id.parse(itemID);
             return <RSS3List>(
                 await this.main.files.get(
-                    utils.id.get(parsed.persona, 'list', index, ['item', parsed.index + '', 'backlinks', type]),
+                    utils.id.get(parsed.persona, 'list', index, ['item', parsed.index + '', 'backlinks', id]),
                 )
             );
         }

@@ -8,24 +8,24 @@ class Backlinks {
         this.main = main;
     }
 
-    private async getPosition(persona: string, type: string) {
+    private async getPosition(persona: string, id: string) {
         const file = <RSS3Index>await this.main.files.get(persona);
-        const index = (file.backlinks || []).findIndex((lks) => lks.type === type);
+        const index = (file.backlinks || []).findIndex((lks) => lks.id === id);
         return {
             file,
             index,
-            id: index !== -1 ? file.backlinks![index].list : null,
+            fileID: index !== -1 ? file.backlinks![index].list : null,
         };
     }
 
-    async getListFile(persona: string, type: string, index = -1) {
-        return <RSS3BacklinksList | null>await this.main.files.getList(persona, 'backlinks', index, type);
+    async getListFile(persona: string, id: string, index = -1) {
+        return <RSS3BacklinksList | null>await this.main.files.getList(persona, 'backlinks', index, id);
     }
 
-    async getList(persona: string, type: string, breakpoint?: (file: RSS3BacklinksList) => boolean) {
-        const { id } = await this.getPosition(persona, type);
-        if (id) {
-            return <RSS3ID[]>await this.main.files.getAll(id, (file) => {
+    async getList(persona: string, id: string, breakpoint?: (file: RSS3BacklinksList) => boolean) {
+        const { fileID } = await this.getPosition(persona, id);
+        if (fileID) {
+            return <RSS3ID[]>await this.main.files.getAll(fileID, (file) => {
                 return breakpoint?.(<RSS3BacklinksList>file) || false;
             });
         } else {

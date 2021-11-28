@@ -76,22 +76,22 @@ class File {
         }
     }
 
-    async getList(persona: string, field: 'assets' | 'backlinks' | 'links' | 'items', index = -1, type?: string) {
+    async getList(persona: string, field: 'assets' | 'backlinks' | 'links' | 'items', index = -1, id?: string) {
         if (index < 0) {
             const indexFile = <RSS3Index>await this.main.files.get(persona);
             if (indexFile?.[field]) {
                 let fileID;
-                if (type) {
+                if (id) {
                     if (Array.isArray(indexFile[field])) {
-                        fileID = (<AnyObject[]>indexFile[field]).find((item: any) => item.type === type)?.list;
+                        fileID = (<AnyObject[]>indexFile[field]).find((item: any) => item.id === id)?.list;
                     } else {
-                        fileID = (<AnyObject>indexFile[field])[type];
+                        fileID = (<AnyObject>indexFile[field])[id];
                     }
                 } else {
                     fileID = indexFile[field];
                 }
                 if (!fileID) {
-                    throw new Error(`${field} ${type ? `type ${type} ` : ''}does not exist`);
+                    throw new Error(`${field} ${id ? `id ${id} ` : ''}does not exist`);
                 }
                 const parsed = utils.id.parse(fileID);
                 return <RSS3List>(
@@ -103,8 +103,8 @@ class File {
                 return null;
             }
         } else {
-            if (type) {
-                return <RSS3List>await this.main.files.get(utils.id.get(persona, 'list', index, [field, type]));
+            if (id) {
+                return <RSS3List>await this.main.files.get(utils.id.get(persona, 'list', index, [field, id]));
             } else {
                 return <RSS3List>await this.main.files.get(utils.id.get(persona, 'list', index, [field]));
             }
