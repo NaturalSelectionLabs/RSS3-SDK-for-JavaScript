@@ -31,20 +31,14 @@ const assets1File = {
     signature: '',
     list: [
         {
-            identity: '0xC8b960D09C0078c18Dcbe7eB9AB9d816BcCa8944',
-            platform: 'EVM+',
-            id: '1',
-            type: 'test',
+            id: 'EVM+-0xC8b960D09C0078c18Dcbe7eB9AB9d816BcCa8944-test-1',
             auto: true,
         },
     ],
     list_next: id.getAssets(rss3.account.address, 0),
 };
 const assetTest: any = {
-    identity: 'RSS3',
-    platform: 'custom',
-    id: '1',
-    type: 'test',
+    id: 'custom-RSS3-test-1',
 };
 const assets0File = {
     id: id.getAssets(rss3.account.address, 0),
@@ -85,10 +79,7 @@ test('Assets.post', async () => {
     let i = 1;
     while (JSON.stringify(file).length < config.fileSizeLimit) {
         const newItem = {
-            identity: 'RSS3',
-            platform: <'custom'>'custom',
-            id: i++ + '',
-            type: 'test',
+            id: `custom-RSS3-test-${i++}`,
         };
         file.list.unshift(newItem);
         assets.push(newItem);

@@ -23,7 +23,7 @@ const indexFile = {
     signature: '',
     links: [
         {
-            type: 'test',
+            id: 'test',
             list: id.getLinks(rss3.account.address, 'test', 1),
         },
     ],
@@ -60,17 +60,17 @@ test('Links.getList', async () => {
 
 test('Links.postList', async () => {
     await rss3.links.postList({
-        type: 'test1',
+        id: 'test1',
         list: ['a', 'b'],
     });
     expect(await rss3.links.getList(rss3.account.address, 'test1')).toEqual(['a', 'b']);
     expect((<any>await rss3.files.get())?.links).toEqual([
         {
-            type: 'test',
+            id: 'test',
             list: id.getLinks(rss3.account.address, 'test', 1),
         },
         {
-            type: 'test1',
+            id: 'test1',
             list: id.getLinks(rss3.account.address, 'test1', 0),
         },
     ]);
@@ -82,7 +82,7 @@ test('Links.deleteList', async () => {
     expect(await rss3.links.getList(rss3.account.address, 'test1')).toEqual([]);
     expect((<any>await rss3.files.get())?.links).toEqual([
         {
-            type: 'test',
+            id: 'test',
             list: id.getLinks(rss3.account.address, 'test', 1),
         },
     ]);
@@ -92,7 +92,7 @@ test('Links.patchListTags', async () => {
     await rss3.links.patchListTags('test', ['test1']);
     expect((<any>await rss3.files.get())?.links).toEqual([
         {
-            type: 'test',
+            id: 'test',
             list: id.getLinks(rss3.account.address, 'test', 1),
             tags: ['test1'],
         },

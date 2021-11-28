@@ -34,12 +34,12 @@ const itemTest: any = {
     backlinks: [
         {
             auto: true,
-            type: 'like',
+            id: 'like',
             list: id.getItemBacklinks(rss3.account.address, 'like', 1, 0),
         },
         {
             auto: true,
-            type: 'comment',
+            id: 'comment',
             list: id.getItemBacklinks(rss3.account.address, 'comment', 1, 0),
         },
     ],

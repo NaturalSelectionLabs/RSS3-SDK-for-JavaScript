@@ -52,7 +52,7 @@ interface RSS3Index extends RSS3SignedBase {
         accounts?: {
             tags?: string[];
             id: string; // ${platform}-${identity}, for example, EVM+-0x1234567890123456789012345678901234567890 or Twitter-rss3_
-            signature?: string; // Signature of [["address": id], ["id": account.id]], optional for no public-key cryptography platform
+            signature?: string; // Signature of [["address", id], ["id", account.id], ["tags", account.tags]], optional for no public-key cryptography platform
         }[];
     };
 

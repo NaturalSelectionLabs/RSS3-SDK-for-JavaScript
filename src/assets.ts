@@ -24,15 +24,6 @@ class Assets {
         }
     }
 
-    private assetsEquals(asset1: RSS3Asset, asset2: RSS3Asset) {
-        return (
-            asset1.platform === asset2.platform &&
-            asset1.identity === asset2.identity &&
-            asset1.id === asset2.id &&
-            asset1.type === asset2.type
-        );
-    }
-
     private async getPosition(asset: RSS3Asset) {
         let result: {
             file: RSS3AssetsList | null;
@@ -46,7 +37,7 @@ class Assets {
             if (!file.list) {
                 return false;
             }
-            const index = file.list.findIndex((as) => this.assetsEquals(as, asset));
+            const index = file.list.findIndex((as) => as.id === asset.id);
             if (index !== -1) {
                 result = {
                     file,
@@ -64,9 +55,9 @@ class Assets {
         if (utils.check.valueLength(asset) && equals<RSS3CustomAsset>(asset)) {
             const list = await this.getList(
                 this.main.account.address,
-                (file) => !!file.list && file.list.findIndex((as) => this.assetsEquals(as, asset)) > -1,
+                (file) => !!file.list && file.list.findIndex((as) => as.id === asset.id) > -1,
             );
-            const index = list.findIndex((as) => this.assetsEquals(as, asset));
+            const index = list.findIndex((as) => as.id === asset.id);
             if (index === -1) {
                 let file = await this.getListFile(this.main.account.address, -1);
                 if (!file) {

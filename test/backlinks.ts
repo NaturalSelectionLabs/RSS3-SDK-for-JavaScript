@@ -24,7 +24,7 @@ const indexFile = {
     backlinks: [
         {
             auto: true,
-            type: 'test',
+            id: 'test',
             list: id.getBacklinks(rss3.account.address, 'test', 1),
         },
     ],
