@@ -82,3 +82,31 @@ test('id.parse', () => {
         index: 100,
     });
 });
+
+test('id.getAccount', () => {
+    expect(id.getAccount('EVM+', '0x1234567890123456789012345678901234567890')).toBe(
+        'EVM+-0x1234567890123456789012345678901234567890',
+    );
+});
+
+test('id.getAsset', () => {
+    expect(id.getAsset('EVM+', '0x1234567890123456789012345678901234567890', 'Ethereum.NFT', '0xxxx')).toBe(
+        'EVM+-0x1234567890123456789012345678901234567890-Ethereum.NFT-0xxxx',
+    );
+});
+
+test('id.parseAccount', () => {
+    expect(id.parseAccount('EVM+-0x1234567890123456789012345678901234567890')).toEqual({
+        platform: 'EVM+',
+        identity: '0x1234567890123456789012345678901234567890',
+    });
+});
+
+test('id.getAsset', () => {
+    expect(id.parseAsset('EVM+-0x1234567890123456789012345678901234567890-Ethereum.NFT-0xxxx')).toEqual({
+        platform: 'EVM+',
+        identity: '0x1234567890123456789012345678901234567890',
+        type: 'Ethereum.NFT',
+        uniqueID: '0xxxx',
+    });
+});

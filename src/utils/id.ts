@@ -60,4 +60,30 @@ export default {
     getItemBacklinks(persona: string, type: string, index: number, itemIndex: number) {
         return get(persona, 'list', index, ['item', itemIndex + '', 'backlinks', type]);
     },
+
+    getAccount(platform: string, identity: string) {
+        return `${platform}-${identity}`;
+    },
+
+    getAsset(platform: string, identity: string, type: string, uniqueID: string) {
+        return `${platform}-${identity}-${type}-${uniqueID}`;
+    },
+
+    parseAccount(id: string) {
+        const splited = id.split('-');
+        return {
+            platform: splited[0],
+            identity: splited[1],
+        };
+    },
+
+    parseAsset(id: string) {
+        const splited = id.split('-');
+        return {
+            platform: splited[0],
+            identity: splited[1],
+            type: splited[2],
+            uniqueID: splited[3],
+        };
+    },
 };
