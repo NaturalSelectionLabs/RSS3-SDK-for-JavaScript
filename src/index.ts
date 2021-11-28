@@ -5,6 +5,9 @@ import Items from './items/index';
 import Links from './links';
 import Backlinks from './backlinks';
 import Assets from './assets';
+import utils from './utils';
+
+export { utils };
 
 interface IOptions {
     endpoint: string;

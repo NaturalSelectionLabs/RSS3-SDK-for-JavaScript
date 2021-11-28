@@ -1,6 +1,11 @@
 import check from '../../src/utils/check';
 import config from '../../src/config';
 import { Buffer } from 'buffer';
+import { utils } from '../../src/index';
+
+test('utils.check', () => {
+    expect(utils.check).toBe(check);
+});
 
 test('check.valueLength', () => {
     expect(

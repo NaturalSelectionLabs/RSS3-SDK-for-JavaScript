@@ -1,4 +1,9 @@
 import object from '../../src/utils/object';
+import { utils } from '../../src/index';
+
+test('utils.object', () => {
+    expect(utils.object).toBe(object);
+});
 
 test('id.removeEmpty', () => {
     const obj = {
