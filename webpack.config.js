@@ -53,6 +53,11 @@ const config = {
         compress: true,
         static: './',
     },
+    plugins: [
+        new webpack.DefinePlugin({
+            'process.env': JSON.stringify({}),
+        }),
+    ],
 };
 
 module.exports = config;
