@@ -62,13 +62,13 @@ test('Assets.getList', async () => {
 });
 
 test('Assets.patchTags', async () => {
-    await rss3.assets.patchTags(assetTest, ['test1']);
+    await rss3.assets.patchTags(assetTest.id, ['test1']);
     assetTest.tags = ['test1'];
     expect((await rss3.assets.getListFile(rss3.account.address, 0))?.list).toEqual([assetTest]);
 });
 
 test('Assets.delete', async () => {
-    await rss3.assets.delete(assetTest);
+    await rss3.assets.delete(assetTest.id);
     expect((await rss3.assets.getListFile(rss3.account.address, 0))?.list).toEqual(undefined);
 });
 

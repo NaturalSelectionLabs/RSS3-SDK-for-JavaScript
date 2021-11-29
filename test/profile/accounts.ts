@@ -67,7 +67,7 @@ test('Accounts.patchTags', async () => {
 });
 
 test('Accounts.getSigMessage', async () => {
-    expect(await rss3.profile.accounts.getSigMessage(account2.id)).toEqual(
+    expect(await rss3.profile.accounts.getSigMessage(account2)).toEqual(
         object.stringifyObj({
             ...account2,
             address: rss3.account.address,

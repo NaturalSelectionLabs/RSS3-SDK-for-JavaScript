@@ -24,7 +24,7 @@ class Assets {
         }
     }
 
-    private async getPosition(asset: RSS3Asset) {
+    private async getPosition(id: string) {
         let result: {
             file: RSS3AssetsList | null;
             index: number;
@@ -37,7 +37,7 @@ class Assets {
             if (!file.list) {
                 return false;
             }
-            const index = file.list.findIndex((as) => as.id === asset.id);
+            const index = file.list.findIndex((as) => as.id === id);
             if (index !== -1) {
                 result = {
                     file,
@@ -91,8 +91,8 @@ class Assets {
         }
     }
 
-    async delete(asset: RSS3CustomAsset) {
-        const { file, index } = await this.getPosition(asset);
+    async delete(id: string) {
+        const { file, index } = await this.getPosition(id);
         let result = null;
         if (index !== -1) {
             file!.list!.splice(index, 1);
@@ -104,23 +104,19 @@ class Assets {
         return result;
     }
 
-    async patchTags(asset: RSS3CustomAsset, tags: string[]) {
-        if (utils.check.valueLength(asset) && equals<RSS3CustomAsset>(asset)) {
-            const position = await this.getPosition(asset);
+    async patchTags(id: string, tags: string[]) {
+        const position = await this.getPosition(id);
 
-            if (position.index !== -1) {
-                if (!(<RSS3AutoAsset>position.file!.list![position.index]).auto) {
-                    (<RSS3CustomAsset>position.file!.list![position.index]).tags = tags;
-                    this.main.files.set(position.file!);
-                    return position.file!.list![position.index];
-                } else {
-                    throw Error('Cannot add tags to node assets');
-                }
+        if (position.index !== -1) {
+            if (!(<RSS3AutoAsset>position.file!.list![position.index]).auto) {
+                (<RSS3CustomAsset>position.file!.list![position.index]).tags = tags;
+                this.main.files.set(position.file!);
+                return position.file!.list![position.index];
             } else {
-                return null;
+                throw Error('Cannot add tags to node assets');
             }
         } else {
-            throw Error('Parameter error');
+            return null;
         }
     }
 }

@@ -18,10 +18,9 @@ class Accounts {
         };
     }
 
-    async getSigMessage(id: string) {
-        const { file, index } = await this.getPosition(this.main.account.address, id);
+    async getSigMessage(account: RSS3Account) {
         return utils.object.stringifyObj({
-            ...file.profile?.accounts![index],
+            ...account,
             address: this.main.account.address,
         });
     }
@@ -63,8 +62,8 @@ class Accounts {
         }
     }
 
-    async getList(fileID: string = this.main.account.address) {
-        const file = <RSS3Index>await this.main.files.get(fileID);
+    async getList(persona: string = this.main.account.address) {
+        const file = <RSS3Index>await this.main.files.get(persona);
         return file.profile?.accounts || [];
     }
 
