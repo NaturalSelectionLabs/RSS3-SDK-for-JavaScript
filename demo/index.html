@@ -8,35 +8,37 @@
     <body>
         <script src="../RSS3.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/web3@1.4.0/dist/web3.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/ethers@5.5.1/dist/ethers.umd.js"></script>
         <script>
             console.log(RSS3);
-            window.rss3_1 = new RSS3({
+            window.rss3_new = new RSS3({
                 endpoint: 'http://localhost:3000',
             });
-            window.rss3_2 = new RSS3({
+            window.rss3_mnemonic = new RSS3({
                 endpoint: 'http://localhost:3000',
                 mnemonic: window.rss3_1.account.mnemonic,
             });
-            const metaMaskWeb3 = new Web3(window.ethereum);
-            try {
-                window.ethereum
-                    .request({
-                        method: 'eth_requestAccounts',
-                    })
-                    .then(async (accounts) => {
-                        const address = metaMaskWeb3.utils.toChecksumAddress(accounts[0]);
-                        window.rss3_3 = new RSS3({
-                            endpoint: 'http://localhost:3000',
-                            address,
-                            sign: async (data) => await metaMaskWeb3.eth.personal.sign(data, address),
-                            agentSign: true,
-                        });
-                        window.rss3_3.files.set(await window.rss3_3.files.get(address));
-                        await window.rss3_3.files.sync();
-                    });
-            } catch (e) {
-                console.error(e);
-            }
+
+            (async () => {
+                // ethers
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const signer = provider.getSigner();
+
+                window.rss3_ethers = new RSS3({
+                    endpoint: 'http://localhost:3000',
+                    address: await signer.getAddress(),
+                    sign: async (data) => await signer.signMessage(data),
+                });
+
+                // web3
+                const web3 = new Web3(window.ethereum);
+                const address = (await web3.eth.getAccounts())[0];
+                window.rss3_web3 = new RSS3({
+                    endpoint: '',
+                    address,
+                    sign: async (data) => await web3.eth.personal.sign(data, address),
+                });
+            })();
         </script>
     </body>
 </html>
