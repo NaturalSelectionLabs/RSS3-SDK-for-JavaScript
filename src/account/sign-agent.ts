@@ -61,14 +61,6 @@ class SignAgent {
         });
     }
 
-    check(obj: AnyObject) {
-        return nacl.sign.detached.verify(
-            new TextEncoder().encode(utils.object.stringifyObj(obj)),
-            naclUtil.decodeBase64(obj.agent_signature),
-            naclUtil.decodeBase64(obj.agent_id),
-        );
-    }
-
     private getKey(address: string) {
         return 'RSS3.0.' + md5(address);
     }

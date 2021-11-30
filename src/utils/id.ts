@@ -9,7 +9,7 @@ function parse(id: string) {
     } else {
         return {
             persona: splited[0],
-            type: splited[1] || 'index',
+            type: splited[1],
             payload: splited[2].split('.'),
             index: parseInt(splited[3]),
         };

@@ -64,21 +64,6 @@ class Account {
             }
         }
     }
-
-    check(obj: AnyObject, address = this.address) {
-        if (!obj.signature) {
-            return false;
-        } else {
-            if (obj.agent_signature && obj.agent_id) {
-                return (
-                    ethers.utils.verifyMessage(this.signAgent.getMessage(obj.agent_id), obj.signature) === address &&
-                    this.signAgent.check(obj)
-                );
-            } else {
-                return ethers.utils.verifyMessage(utils.object.stringifyObj(obj), obj.signature) === address;
-            }
-        }
-    }
 }
 
 export default Account;

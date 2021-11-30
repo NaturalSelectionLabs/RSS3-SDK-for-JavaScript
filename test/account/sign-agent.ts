@@ -44,27 +44,3 @@ test('Account.sign with sign agent', async () => {
     expect(data.agent_id).toBe(firstData.agent_id);
     expect(data.agent_signature).not.toBe(firstData.agent_signature);
 });
-
-test('Account.check with sign agent', async () => {
-    const signer = ethers.Wallet.createRandom();
-    const storage: any = {};
-    const rss3 = new RSS3({
-        endpoint: '',
-        mnemonic: signer.mnemonic.phrase,
-        agentSign: true,
-        agentStorage: {
-            set: (key, value) => {
-                storage[key] = value;
-                return Promise.resolve();
-            },
-            get: (key) => Promise.resolve(storage[key]),
-        },
-    });
-    const data: any = {
-        agent_id: 'test',
-        test1: 'r',
-    };
-    await rss3.account.sign(data);
-
-    expect(rss3.account.check(data, signer.address)).toBe(true);
-});

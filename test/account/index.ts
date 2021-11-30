@@ -41,18 +41,3 @@ test('Account.sign with custom sign', async () => {
             }),
     );
 });
-
-test('Account.check without sign agent', async () => {
-    const signer = ethers.Wallet.createRandom();
-    const rss3 = new RSS3({
-        endpoint: '',
-        mnemonic: signer.mnemonic.phrase,
-    });
-    const data: any = {
-        agent_id: 'test',
-        test1: 'r',
-    };
-    await rss3.account.sign(data);
-
-    expect(rss3.account.check(data, signer.address)).toBe(true);
-});
