@@ -22,7 +22,7 @@ const indexFile = {
     date_updated: now,
     signature: '',
     items: {
-        custom: id.getCustomItems(rss3.account.address, 1),
+        list_custom: id.getCustomItems(rss3.account.address, 1),
     },
 };
 const items1File = {
@@ -91,7 +91,7 @@ test('Items.custom.post', async () => {
     for (let i = 0; i < items.length; i++) {
         await rss3.items.custom.post(items[i]);
     }
-    expect((<any>await rss3.files.get()).items.custom).toBe(id.getCustomItems(rss3.account.address, 2));
+    expect((<any>await rss3.files.get()).items.list_custom).toBe(id.getCustomItems(rss3.account.address, 2));
     const lastList = await rss3.items.custom.getListFile(rss3.account.address);
     expect(lastList?.id).toBe(id.getCustomItems(rss3.account.address, 2));
     expect(lastList?.list?.length).toBe(1);

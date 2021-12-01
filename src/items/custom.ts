@@ -19,13 +19,13 @@ class CustomItems {
     }
 
     async getListFile(persona: string, index = -1) {
-        return <RSS3CustomItemsList | null>await this.main.files.getList(persona, 'items', index, 'custom');
+        return <RSS3CustomItemsList | null>await this.main.files.getList(persona, 'items', index, 'list_custom');
     }
 
     async getList(persona: string, breakpoint?: (file: RSS3CustomItemsList) => boolean) {
         const indexFile = <RSS3Index>await this.main.files.get(persona);
-        if (indexFile.items?.custom) {
-            return <RSS3CustomItem[]>await this.main.files.getAll(indexFile.items.custom, (file) => {
+        if (indexFile.items?.list_custom) {
+            return <RSS3CustomItem[]>await this.main.files.getAll(indexFile.items.list_custom, (file) => {
                 return breakpoint?.(<RSS3CustomItemsList>file) || false;
             });
         } else {
@@ -104,7 +104,7 @@ class CustomItems {
                 if (!indexFile.items) {
                     indexFile.items = {};
                 }
-                indexFile.items!.custom = newID;
+                indexFile.items!.list_custom = newID;
                 this.main.files.set(indexFile);
             } else {
                 file.list.unshift(item);

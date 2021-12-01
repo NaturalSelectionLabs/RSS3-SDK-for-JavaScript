@@ -6,18 +6,22 @@ import { ethers } from 'ethers';
 import nacl from 'tweetnacl';
 import naclUtil from 'tweetnacl-util';
 
-function valueLength(obj: AnyObject) {
+function valueLength(obj: AnyObject | string) {
     let result = true;
-    for (let key in obj) {
-        if (typeof obj[key] === 'object' && !valueLength(obj[key])) {
-            result = false;
-            break;
-        } else if (typeof obj[key] === 'string' && obj[key].length > config.maxValueLength) {
-            result = false;
-            break;
+    if (typeof obj === 'string') {
+        return obj.length <= config.maxValueLength;
+    } else {
+        for (let key in obj) {
+            if (typeof obj[key] === 'object' && !valueLength(obj[key])) {
+                result = false;
+                break;
+            } else if (typeof obj[key] === 'string' && obj[key].length > config.maxValueLength) {
+                result = false;
+                break;
+            }
         }
+        return result;
     }
-    return result;
 }
 
 function removeCustomProperties(obj: AnyObject) {

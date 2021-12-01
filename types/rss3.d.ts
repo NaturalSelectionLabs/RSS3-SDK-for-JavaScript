@@ -1,25 +1,32 @@
 // File ids
 type RSS3ID = string; // Same as ethereum address
 type RSS3CustomItemsListID = string; // `${RSS3ID}-list-items.custom-${index}`
-type RSS3AutoItemsListID = string; // `${RSS3ID}-list-items.auto-${index}`
+type RSS3AutoItemsListID = string; // `${RSS3ID}-list-items.auto-0`
+type RSS3CustomAssetsListID = string; // `${RSS3ID}-list-assets.custom-${index}`
+type RSS3AutoAssetsListID = string; // `${RSS3ID}-list-assets.auto-0`
 type RSS3LinksListID = string; // `${RSS3ID}-list-links.${links.id}-${index}`
-type RSS3BacklinksListID = string; // `${RSS3ID}-list-backlinks.${backlinks.id}-${index}`
-type RSS3AssetsListID = string; // `${RSS3ID}-list-assets-${index}`
-type RSS3ItemBacklinksListID = string; // `${RSS3ID}-list-item.${item.index}.backlinks.${backlinks.id}-${index}`
+type RSS3BacklinksListID = string; // `${RSS3ID}-list-backlinks.${backlinks.id}-0`
+type RSS3ItemBacklinksListID = string; // `${RSS3ID}-list-item.${item.index}.backlinks.${backlinks.id}-0`
 
-type RSS3ItemID = RSS3CustomItemID | RSS3AutoItemID;
-type RSS3CustomItemID = string; // `${RSS3ID}-item-custom-${index}`
-type RSS3AutoItemID = string; // `${RSS3ID}-item-auto-${index}`
 type ThirdPartyAddress = string[]; // A series of url or ipfs hash that link to an identical file
 
+type RSS3List =
+    | RSS3CustomItemsList
+    | RSS3AutoItemsList
+    | RSS3CustomAssetsList
+    | RSS3AutoAssetsList
+    | RSS3LinksList
+    | RSS3BacklinksList
+    | RSS3ItemBacklinksList;
 type RSS3ListID =
     | RSS3CustomItemsListID
     | RSS3AutoItemsListID
+    | RSS3CustomAssetsListID
+    | RSS3AutoAssetsListID
     | RSS3LinksListID
     | RSS3BacklinksListID
-    | RSS3AssetsListID
     | RSS3ItemBacklinksListID;
-type RSS3FileID = RSS3ID | RSS3ListID; // Unique indicate for current file
+type RSS3FileID = RSS3ID | RSS3ListID;
 type RSS3File = RSS3Index | RSS3List;
 
 // Common attributes for each files
@@ -56,92 +63,59 @@ interface RSS3Index extends RSS3SignedBase {
         }[];
     };
 
-    items?: {
-        custom?: RSS3CustomItemsListID;
-        auto?: RSS3AutoItemsListID;
-    };
-
     links?: {
         tags?: string[];
-        id: string; // Link id, for example: follow superfollow
+        id: string; // Link id, for example: following superfollowing
         list?: RSS3LinksListID; // Personas who belong to this link
     }[];
 
     backlinks?: {
-        // Backlinks for this persona, for example: follow link's backlink means followers.
+        // Backlinks for this persona, for example: following link's backlink means followers.
         auto: true;
         id: string; // The same as links.id
         list: RSS3BacklinksListID; // File ID of backlink list that belong to this link. See **RSS3List** for more details
     }[];
 
-    assets?: RSS3AssetsListID;
+    items?: {
+        list_custom?: RSS3CustomItemsListID;
+        list_auto?: RSS3AutoItemsListID;
+    };
+
+    assets?: {
+        list_custom?: RSS3CustomAssetsListID;
+        list_auto?: RSS3AutoAssetsListID;
+    };
 }
 
-// RSS3 list files, used for list of links, backlinks, contexts, items, assets
-type RSS3List =
-    | RSS3CustomItemsList
-    | RSS3AutoItemsList
-    | RSS3LinksList
-    | RSS3AssetsList
-    | RSS3BacklinksList
-    | RSS3ItemBacklinksList;
+// RSS3 list files, used for list of links, backlinks, items, assets, itemsbacklinks
+interface RSS3ListBase<IDType, ElementType> {
+    id: IDType;
+    list: ElementType[];
+    list_next?: IDType;
+}
 
-type RSS3CustomItemsList = (RSS3SignedBase | RSS3UnsignedBase) & {
-    id: RSS3CustomItemsListID;
-    list?: RSS3CustomItem[];
-    list_next?: RSS3CustomItemsListID;
-};
-
-type RSS3AutoItemsList = (RSS3SignedBase | RSS3UnsignedBase) & {
-    id: RSS3AutoItemsListID;
-    list?: RSS3AutoItem[];
-    list_next?: RSS3AutoItemsListID;
-};
-
-type RSS3AssetsList = (RSS3SignedBase | RSS3UnsignedBase) & {
-    id: RSS3AssetsListID;
-    list?: RSS3Asset[];
-    list_next?: RSS3AssetsListID;
-};
-
-type RSS3LinksList = RSS3SignedBase & {
-    id: RSS3LinksListID;
-    list?: RSS3ID[];
-    list_next?: RSS3LinksListID;
-};
-
-type RSS3BacklinksList = RSS3UnsignedBase & {
-    id: RSS3BacklinksListID;
-    list?: RSS3ID[];
-    list_next?: RSS3BacklinksListID;
-};
-
-type RSS3ItemBacklinksList = RSS3UnsignedBase & {
-    id: RSS3ItemBacklinksListID;
-    list?: RSS3ItemID[];
-    list_next?: RSS3ItemBacklinksListID;
-};
+type RSS3CustomItemsList = RSS3SignedBase & RSS3ListBase<RSS3CustomItemsListID, RSS3CustomItem>;
+type RSS3AutoItemsList = RSS3UnsignedBase & RSS3ListBase<RSS3AutoItemsListID, RSS3AutoItem>;
+type RSS3CustomAssetsList = RSS3SignedBase & RSS3ListBase<RSS3CustomAssetsListID, RSS3CustomAsset>;
+type RSS3AutoAssetsList = RSS3UnsignedBase & RSS3ListBase<RSS3AutoAssetsListID, RSS3AutoAsset>;
+type RSS3LinksList = RSS3SignedBase & RSS3ListBase<RSS3LinksListID, RSS3ID>;
+type RSS3BacklinksList = RSS3UnsignedBase & RSS3ListBase<RSS3BacklinksListID, RSS3ID>;
+type RSS3ItemBacklinksList = RSS3UnsignedBase & RSS3ListBase<RSS3ItemBacklinksListID, RSS3CustomItemID>;
 
 // Asset
-type RSS3Asset = RSS3CustomAsset | RSS3AutoAsset;
-
-interface RSS3CustomAsset {
-    // A type of asset posted by persona itself
-    id: string; // custom-${identity}-${type}-${id}, for example, persona's cute(q) Garage Kit(gk) (id 10035911): custom-gk-q-10035911
-    tags?: string[];
-}
-
-interface RSS3AutoAsset {
-    // A type of asset that is automatically generated by a node
-    id: string; // ${platform}-${identity}-${type}-${id}, for example, a NFT(id 0x456.5) in the Ethereum chain owned by apersona's EVM+ account(0x123): EVM+-0x123-Ethereum.NFT-0x456.5
-    auto: true;
-}
+type RSS3CustomAsset = string; // A type of asset posted by persona itself, custom-${identity}-${type}-${uniqueID}, for example, persona's cute(q) Garage Kit(gk) (uniqueID 10035911): custom-gk-q-10035911
+type RSS3AutoAsset = string; // A type of asset that is automatically generated by a node, ${platform}-${identity}-${type}-${uniqueID}, for example, a NFT(uniqueID 0x456.5) in the Ethereum chain owned by apersona's EVM+ account(0x123): EVM+-0x123-Ethereum.NFT-0x456.5
 
 // Item
+type RSS3CustomItemID = string; // `${RSS3ID}-item-custom-${index}`
+type RSS3AutoItemID = string; // `${RSS3ID}-item-auto-${index}`
+
 interface RSS3ItemBase {
-    id: RSS3ItemID;
     date_created: string; // Specifies the published date in RFC 3339 format
     date_updated: string; // Specifies the modified date in RFC 3339 format
+
+    title?: string;
+    summary?: string;
 
     backlinks?: {
         // Interactive items from other personas.
@@ -153,15 +127,13 @@ interface RSS3ItemBase {
 
 interface RSS3CustomItem extends RSS3ItemBase {
     // A type of content posted by persona itself
-    id: RSS3CustomItemID;
+    id: RSS3CustomItemID; // `${RSS3ID}-item-custom-${index}`
     tags?: string[];
     authors?: RSS3ID[];
-    title?: string;
-    summary?: string;
 
     link?: {
         id: string; // Link id for the non-original item, for example: comment like
-        target: RSS3ItemID; // Target of the non-original item
+        target: RSS3CustomItemID | RSS3AutoItemID; // Target of the non-original item
     };
 
     contents?: {
@@ -177,14 +149,14 @@ interface RSS3CustomItem extends RSS3ItemBase {
 
 interface RSS3AutoItem extends RSS3ItemBase {
     // A type of content that is automatically generated by a node to represent a change of an asset
-    id: RSS3AutoItemID;
-    auto: true;
+    id: RSS3AutoItemID; // `${RSS3ID}-item-auto-${index}`
 
-    content: {
-        field: string; // 'assets-EVM+-0x123-Ethereum.NFT-0x456.5' 'links-follow', 'profile-avatar', 'profile-accounts-EVM+-0x123', etc
+    target: {
+        field: string; // 'items-auto', `assets-${RSS3CustomAsset}` 'links-following', 'profile-avatar', `profile-accounts-${RSS3Account.id}`, etc
         action: {
             type: 'add' | 'remove' | 'update';
             payload?: string; // If the type is `add` or `remove`, then it is the added or removed content, empty means the content is itself, if the type is `update`, then it is the content after updating
+            proof?: string; // Additional information used to make this target unique
         };
     };
 }

@@ -1,5 +1,4 @@
 import Main from './index';
-import utils from './utils';
 
 class Backlinks {
     private main: Main;

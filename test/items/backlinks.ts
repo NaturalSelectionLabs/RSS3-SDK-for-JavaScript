@@ -22,7 +22,7 @@ const indexFile = {
     date_updated: now,
     signature: '',
     items: {
-        auto: id.getAutoItems(rss3.account.address, 0),
+        list_auto: id.getAutoItems(rss3.account.address, 0),
     },
 };
 const itemTest: any = {
@@ -43,6 +43,15 @@ const itemTest: any = {
             list: id.getItemBacklinks(rss3.account.address, 'comment', 1, 0),
         },
     ],
+
+    target: {
+        field: 'test0',
+        action: {
+            type: 'add',
+            payload: 'test',
+            proof: 'test',
+        },
+    },
 };
 const comment1Test = {
     id: id.getItemBacklinks(rss3.account.address, 'comment', 1, 0),
@@ -66,7 +75,7 @@ const items0File = {
     version: config.version,
     date_created: now,
     date_updated: now,
-    signature: '',
+    auto: true,
     list: [itemTest],
 };
 mock.onGet(`test/${rss3.account.address}`).replyOnce(200, indexFile);

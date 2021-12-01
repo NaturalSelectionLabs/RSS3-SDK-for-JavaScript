@@ -1,33 +1,30 @@
 import Main from '../index';
-import Backlinks from './backlinks';
 
-class AutoItems {
+class AutoAssets {
     private main: Main;
-    backlinks: Backlinks;
 
     constructor(main: Main) {
         this.main = main;
-        this.backlinks = new Backlinks(main, 'auto');
     }
 
     async getListFile(persona: string, index = -1) {
-        return <RSS3AutoItemsList | null>await this.main.files.getList(persona, 'items', index, 'list_auto');
+        return <RSS3AutoAssetsList | null>await this.main.files.getList(persona, 'assets', index, 'list_auto');
     }
 
-    async getList(persona: string, breakpoint?: (file: RSS3AutoItemsList) => boolean) {
+    async getList(persona: string, breakpoint?: (file: RSS3AutoAssetsList) => boolean) {
         const indexFile = <RSS3Index>await this.main.files.get(persona);
-        if (indexFile.items?.list_auto) {
-            return <RSS3AutoItem[]>await this.main.files.getAll(indexFile.items.list_auto, (file) => {
-                return breakpoint?.(<RSS3AutoItemsList>file) || false;
+        if (indexFile.assets?.list_auto) {
+            return <RSS3AutoAsset[]>await this.main.files.getAll(indexFile.assets.list_auto, (file) => {
+                return breakpoint?.(<RSS3AutoAssetsList>file) || false;
             });
         } else {
             return [];
         }
     }
 
-    private async getPosition(itemID: string) {
+    private async getPosition(asset: RSS3AutoAsset) {
         let result: {
-            file: RSS3AutoItemsList | null;
+            file: RSS3AutoAssetsList | null;
             index: number;
         } = {
             file: null,
@@ -37,7 +34,7 @@ class AutoItems {
             if (!file.list) {
                 return false;
             }
-            const index = file.list.findIndex((item) => item.id === itemID);
+            const index = file.list.findIndex((as) => as === asset);
             if (index !== -1) {
                 result = {
                     file,
@@ -51,8 +48,8 @@ class AutoItems {
         return result;
     }
 
-    async get(itemID: string) {
-        const position = await this.getPosition(itemID);
+    async get(asset: string) {
+        const position = await this.getPosition(asset);
         if (position.index !== -1) {
             return position.file!.list![position.index];
         } else {
@@ -61,4 +58,4 @@ class AutoItems {
     }
 }
 
-export default AutoItems;
+export default AutoAssets;

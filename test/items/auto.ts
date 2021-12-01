@@ -22,7 +22,7 @@ const indexFile = {
     date_updated: now,
     signature: '',
     items: {
-        auto: id.getAutoItems(rss3.account.address, 1),
+        list_auto: id.getAutoItems(rss3.account.address, 1),
     },
 };
 const items1File = {
@@ -30,13 +30,20 @@ const items1File = {
     version: config.version,
     date_created: now,
     date_updated: now,
-    signature: '',
+    auto: true,
     list: [
         {
             id: id.getAutoItem(rss3.account.address, 1),
             date_created: now,
             date_updated: now,
-            title: 'Test1',
+            target: {
+                field: 'test1',
+                action: {
+                    type: 'add',
+                    payload: 'test',
+                    proof: 'test',
+                },
+            },
         },
     ],
     list_next: id.getAutoItems(rss3.account.address, 0),
@@ -45,14 +52,21 @@ const itemTest: any = {
     id: id.getAutoItem(rss3.account.address, 0),
     date_created: now,
     date_updated: now,
-    title: 'Test0',
+    target: {
+        field: 'test0',
+        action: {
+            type: 'add',
+            payload: 'test',
+            proof: 'test',
+        },
+    },
 };
 const items0File = {
     id: id.getAutoItems(rss3.account.address, 0),
     version: config.version,
     date_created: now,
     date_updated: now,
-    signature: '',
+    auto: true,
     list: [itemTest],
 };
 mock.onGet(`test/${rss3.account.address}`).replyOnce(200, indexFile);

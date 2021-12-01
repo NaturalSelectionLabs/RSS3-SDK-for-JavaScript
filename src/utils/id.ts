@@ -53,8 +53,12 @@ export default {
         return get(persona, 'list', index, ['backlinks', type]);
     },
 
-    getAssets(persona: string, index: number) {
-        return get(persona, 'list', index, ['assets']);
+    getCustomAssets(persona: string, index: number) {
+        return get(persona, 'list', index, ['assets', 'custom']);
+    },
+
+    getAutoAssets(persona: string, index: number) {
+        return get(persona, 'list', index, ['assets', 'auto']);
     },
 
     getItemBacklinks(persona: string, type: string, index: number, itemIndex: number) {

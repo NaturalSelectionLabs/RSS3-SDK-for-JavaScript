@@ -104,7 +104,9 @@ class File {
             }
         } else {
             if (id) {
-                return <RSS3List>await this.main.files.get(utils.id.get(persona, 'list', index, [field, id]));
+                return <RSS3List>(
+                    await this.main.files.get(utils.id.get(persona, 'list', index, [field, id.replace(/list_/, '')]))
+                );
             } else {
                 return <RSS3List>await this.main.files.get(utils.id.get(persona, 'list', index, [field]));
             }
@@ -112,7 +114,7 @@ class File {
     }
 
     async getAll(fileID: RSS3ListID, breakpoint?: (file: RSS3List) => boolean) {
-        let list: (RSS3ID | RSS3ItemID | RSS3Asset | RSS3AutoItem | RSS3CustomItem)[] = [];
+        let list: (RSS3ID | RSS3CustomItemID | RSS3AutoAsset | RSS3CustomAsset | RSS3AutoItem | RSS3CustomItem)[] = [];
         let id: string | undefined = fileID;
         do {
             const listFile = <RSS3List>await this.get(id);

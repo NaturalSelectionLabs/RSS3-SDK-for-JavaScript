@@ -35,8 +35,12 @@ test('id.getBacklinks', () => {
     );
 });
 
-test('id.getAssets', () => {
-    expect(id.getAssets(persona, 100)).toBe('0xC8b960D09C0078c18Dcbe7eB9AB9d816BcCa8944-list-assets-100');
+test('id.getCustomAssets', () => {
+    expect(id.getCustomAssets(persona, 100)).toBe('0xC8b960D09C0078c18Dcbe7eB9AB9d816BcCa8944-list-assets.custom-100');
+});
+
+test('id.getAutoAssets', () => {
+    expect(id.getAutoAssets(persona, 100)).toBe('0xC8b960D09C0078c18Dcbe7eB9AB9d816BcCa8944-list-assets.auto-100');
 });
 
 test('id.getItemBacklinks', () => {

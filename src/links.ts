@@ -57,7 +57,9 @@ class Links {
                     id: links.id,
                     list: newID,
                 });
-                newFile.list = links.list;
+                if (links.list) {
+                    newFile.list = links.list;
+                }
                 if (!utils.check.fileSize(newFile)) {
                     this.main.files.clearCache(newID);
                     throw Error('Exceeding the file size limit');
