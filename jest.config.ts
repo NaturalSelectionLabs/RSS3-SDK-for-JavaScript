@@ -13,4 +13,5 @@ export default {
         },
     },
     setupFiles: ['./jest.setup.ts'],
+    coverageProvider: 'v8',
 };
