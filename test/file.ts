@@ -200,7 +200,7 @@ it('File.sync', async () => {
     await rss3.files.sync();
 
     expect(mock.history.put.length).toBe(1);
-    expect(JSON.parse(mock.history.put[0].data).contents).toEqual(
+    expect(JSON.parse(mock.history.put[0].data).files).toEqual(
         expect.arrayContaining([
             {
                 id: rss3.account.address,

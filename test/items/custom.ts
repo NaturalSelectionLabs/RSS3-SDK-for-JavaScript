@@ -95,6 +95,20 @@ test('Items.custom.post', async () => {
     const lastList = await rss3.items.custom.getListFile(rss3.account.address);
     expect(lastList?.id).toBe(id.getCustomItems(rss3.account.address, 2));
     expect(lastList?.list?.length).toBe(1);
+
+    const signer1 = ethers.Wallet.createRandom();
+    mock.onGet(`test/${signer1.address}`).reply(404, {
+        code: 5001,
+    });
+    const rss31 = new RSS3({
+        endpoint: 'test',
+        address: signer1.address,
+        sign: signer1.signMessage.bind(signer1),
+    });
+    await rss31.items.custom.post({
+        title: 'Test',
+    });
+    expect((<any>await rss31.files.get()).items.list_custom).toBe(id.getCustomItems(rss31.account.address, 0));
 });
 
 test('Items.custom.patch', async () => {
