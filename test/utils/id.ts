@@ -7,7 +7,7 @@ test('utils.id', () => {
     expect(utils.id).toBe(id);
 });
 
-test('id.getCustomItems', () => {
+test('id.getCustomItem', () => {
     expect(id.getCustomItem(persona, 100)).toBe('0xC8b960D09C0078c18Dcbe7eB9AB9d816BcCa8944-item-custom-100');
 });
 

@@ -63,6 +63,12 @@ class CustomAssets {
                 if (!file) {
                     const newID = utils.id.getCustomAssets(this.main.account.address, 0);
                     file = <RSS3CustomAssetsList>this.main.files.new(newID);
+
+                    const indexFile = <RSS3Index>await this.main.files.get(this.main.account.address);
+                    if (!indexFile.assets) {
+                        indexFile.assets = {};
+                    }
+                    indexFile.assets.list_custom = newID;
                 }
                 if (!file.list) {
                     file.list = [];

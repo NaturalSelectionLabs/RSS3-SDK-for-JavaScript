@@ -170,7 +170,7 @@ class File {
             method: 'put',
             url: this.main.options.endpoint,
             data: {
-                contents: contents,
+                files: contents,
             },
         }).then(() => {
             fileIDs.forEach((fileID) => {

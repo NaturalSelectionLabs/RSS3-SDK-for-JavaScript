@@ -74,6 +74,12 @@ class CustomItems {
             if (!file) {
                 const newID = utils.id.getCustomItems(this.main.account.address, 0);
                 file = <RSS3CustomItemsList>this.main.files.new(newID);
+
+                const indexFile = <RSS3Index>await this.main.files.get(this.main.account.address);
+                if (!indexFile.items) {
+                    indexFile.items = {};
+                }
+                indexFile.items.list_custom = newID;
             }
             if (!file.list) {
                 file.list = [];
@@ -104,7 +110,7 @@ class CustomItems {
                 if (!indexFile.items) {
                     indexFile.items = {};
                 }
-                indexFile.items!.list_custom = newID;
+                indexFile.items.list_custom = newID;
                 this.main.files.set(indexFile);
             } else {
                 file.list.unshift(item);

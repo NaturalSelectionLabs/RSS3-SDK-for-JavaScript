@@ -90,7 +90,7 @@ interface RSS3Index extends RSS3SignedBase {
 // RSS3 list files, used for list of links, backlinks, items, assets, itemsbacklinks
 interface RSS3ListBase<IDType, ElementType> {
     id: IDType;
-    list: ElementType[];
+    list?: ElementType[];
     list_next?: IDType;
 }
 
