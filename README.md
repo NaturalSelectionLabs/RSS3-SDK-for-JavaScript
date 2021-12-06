@@ -269,18 +269,47 @@ const account = await rss3.profile.accounts.delete(
 );
 ```
 
-### Items.auto
+### Items
 
-**items.auto.get()**
+**items.getListByPersona()**
 
 ```ts
-items.auto.get(itemID: string): Promise<RSS3AutoItem | null>
+items.getListByPersona(options: {
+    limit: number;
+    tsp: string;
+    persona: string;
+    linkID?: string;
+}): Promise<(RSS3CustomItem | RSS3AutoItem)[]>
 ```
 
 Example:
 
 ```ts
-const item = await rss3.auto.items.get('0x1234567890123456789012345678901234567890-item-auto-0');
+const followingTimeline = await rss3.items.getListByPersona({
+    persona: '0x1234567890123456789012345678901234567890',
+    linkID: 'following',
+    limit: 10;
+    tsp: '2021-12-06T13:59:57.030Z',
+});
+const personaTimeline = await rss3.items.getListByPersona({
+    persona: '0x1234567890123456789012345678901234567890',
+    limit: 10;
+    tsp: '2021-12-06T13:59:57.030Z',
+});
+```
+
+### Items.auto
+
+**items.auto.getListFile()**
+
+```ts
+items.auto.getListFile(persona: string, index?: number): Promise<RSS3AutoItemsList | null>
+```
+
+Example:
+
+```ts
+const items = await rss3.items.auto.getListFile(rss3.account.address, -1);
 ```
 
 **items.auto.getList()**
@@ -295,18 +324,22 @@ Example:
 const autoItems = await rss3.auto.items.getList('0x1234567890123456789012345678901234567890');
 ```
 
+**items.auto.backlinks.getListFile()**
+
+**items.auto.backlinks.getList()**
+
 ### Items.custom
 
-**items.custom.get()**
+**items.custom.getListFile()**
 
 ```ts
-items.custom.get(itemID: string): Promise<RSS3CustomItem | null>
+items.custom.getListFile(persona: string, index?: number): Promise<RSS3CustomItemsList | null>
 ```
 
 Example:
 
 ```ts
-const item = await rss3.custom.items.get('0x1234567890123456789012345678901234567890-item-custom-0');
+const items = await rss3.items.custom.getListFile(rss3.account.address, -1);
 ```
 
 **items.custom.getList()**
@@ -353,7 +386,23 @@ const newItem = await rss3.item.custom.patch({
 });
 ```
 
+**items.custom.backlinks.getListFile()**
+
+**items.custom.backlinks.getList()**
+
 ### Links
+
+**links.getListFile()**
+
+```ts
+links.getListFile(persona: string, id: string, index?: number): Promise<RSS3LinksList | null>
+```
+
+Example:
+
+```ts
+const followers = await rss3.links.getListFile(rss3.account.address, 'following', -1);
+```
 
 **links.getList()**
 
@@ -448,6 +497,18 @@ const following = await rss3.links.delete('following', '0xd0B85A7bB6B602f63B0202
 
 ### Backlinks
 
+**backlinks.getListFile()**
+
+```ts
+backlinks.getListFile(persona: string, id: string, index?: number): Promise<RSS3BacklinksList | null>
+```
+
+Example:
+
+```ts
+const followers = await rss3.backlinks.getListFile(rss3.account.address, 'following', -1);
+```
+
 **backlinks.getList()**
 
 ```ts
@@ -462,62 +523,100 @@ const followers = await rss3.backlinks.getList(rss3.account.address, 'following'
 
 ### Assets
 
-**assets.getList()**
+**assets.getDetails()**
 
 ```ts
-assets.getList(persona: string, breakpoint?: ((file: RSS3AssetsList) => boolean) | undefined): Promise<RSS3Asset[]>
+assets.getDetails(options: {
+    persona: string;
+    assets: string[];
+    full?: boolean;
+}): Promise<AnyObject[]>
 ```
 
 Example:
 
 ```ts
-const assets = await rss3.assets.getList(rss3.account.address);
-```
-
-**assets.post()**
-
-```ts
-assets.post(asset: RSS3CustomAsset): Promise<RSS3CustomAsset>
-```
-
-Example:
-
-```ts
-import { utils } from 'rss3';
-
-const asset = await rss3.assets.post({
-    id: utils.id.getAsset('EVM+', '0x1234567890123456789012345678901234567890', 'Ethereum.NFT', '0xxxx'),
-    tags: ['test'],
+const details = await rss3.assets.getDetails({
+    persona: '0x1234567890123456789012345678901234567890',
+    assets: ['xxx', 'xxx'],
+    full: true,
 });
 ```
 
-**assets.delete()**
+### Assets.auto
+
+**assets.auto.getListFile()**
 
 ```ts
-assets.delete(id: string): Promise<RSS3Asset[] | undefined>
+assets.auto.getListFile(persona: string, index?: number): Promise<RSS3AutoAssetsList | null>
 ```
 
 Example:
 
 ```ts
-const account = await rss3.assets.delete(
-    utils.id.getAsset('EVM+', '0x1234567890123456789012345678901234567890', 'Ethereum.NFT', '0xxxx'),
-);
+const assets = await rss3.assets.auto.getListFile(rss3.account.address, -1);
 ```
 
-**assets.patchTags**
+**assets.auto.getList()**
 
 ```ts
-assets.patchTags(id: string, tags: string[]): Promise<RSS3Asset | null>
+assets.auto.getList(persona: string, breakpoint?: (file: RSS3AutoAssetsList) => boolean): Promise<RSS3AutoAsset[]>
 ```
 
 Example:
 
 ```ts
-const account = await rss3.assets.patchTags(
-    utils.id.getAsset('EVM+', '0x1234567890123456789012345678901234567890', 'Ethereum.NFT', '0xxxx'),
-    ['test'],
-);
+const autoAssets = await rss3.auto.assets.getList('0x1234567890123456789012345678901234567890');
+```
+
+### Assets.custom
+
+**assets.custom.getListFile()**
+
+```ts
+assets.custom.getListFile(persona: string, index?: number): Promise<RSS3AutoAssetsList | null>
+```
+
+Example:
+
+```ts
+const assets = await rss3.assets.custom.getListFile(rss3.account.address, -1);
+```
+
+**assets.custom.getList()**
+
+```ts
+assets.custom.getList(persona: string, breakpoint?: (file: RSS3CustomAssetsList) => boolean): Promise<RSS3CustomAsset[]>
+```
+
+Example:
+
+```ts
+const customAssets = await rss3.custom.assets.getList('0x1234567890123456789012345678901234567890');
+```
+
+**asset.custom.post()**
+
+```ts
+asset.custom.post(asset: RSS3CustomAsset): Promise<RSS3CustomAsset>
+```
+
+Example:
+
+```ts
+const asset = await rss3.custom.asset.post('custom-gk-q-10035911');
+```
+
+**asset.custom.delete**
+
+```ts
+asset.custom.delete(asset: RSS3CustomAsset): Promise<RSS3CustomAsset[] | undefined>
+```
+
+Example:
+
+```ts
+const otherAsset = await rss3.asset.custom.delete('custom-gk-q-10035911');
 ```
 
 ## Development
