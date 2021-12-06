@@ -24,41 +24,6 @@ class AutoItems {
             return [];
         }
     }
-
-    private async getPosition(itemID: string) {
-        let result: {
-            file: RSS3AutoItemsList | null;
-            index: number;
-        } = {
-            file: null,
-            index: -1,
-        };
-        await this.getList(this.main.account.address, (file) => {
-            if (!file.list) {
-                return false;
-            }
-            const index = file.list.findIndex((item) => item.id === itemID);
-            if (index !== -1) {
-                result = {
-                    file,
-                    index,
-                };
-                return true;
-            } else {
-                return false;
-            }
-        });
-        return result;
-    }
-
-    async get(itemID: string) {
-        const position = await this.getPosition(itemID);
-        if (position.index !== -1) {
-            return position.file!.list![position.index];
-        } else {
-            return null;
-        }
-    }
 }
 
 export default AutoItems;

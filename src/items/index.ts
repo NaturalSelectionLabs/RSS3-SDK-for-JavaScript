@@ -15,7 +15,7 @@ class Items {
         this.custom = new CustomItems(main);
     }
 
-    async getListByLink(options: { limit: number; tsp: string; persona: string; linkID: string }) {
+    async getListByPersona(options: { limit: number; tsp: string; persona: string; linkID?: string }) {
         const response = await axois({
             method: 'get',
             url: `${this.main.options.endpoint}/items/list`,
