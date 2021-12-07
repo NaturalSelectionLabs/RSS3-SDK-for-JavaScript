@@ -55,7 +55,3 @@ test('Assets.auto.getListFile', async () => {
 test('Assets.auto.getList', async () => {
     expect(await rss3.assets.auto.getList(rss3.account.address)).toEqual([...assets1File.list, ...assets0File.list]);
 });
-
-test('Assets.auto.get', async () => {
-    expect(await rss3.assets.auto.get(itemTest)).toEqual(itemTest);
-});
