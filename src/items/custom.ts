@@ -59,6 +59,15 @@ class CustomItems {
         return result;
     }
 
+    async get(itemID: string) {
+        const position = await this.getPosition(itemID);
+        if (position.index !== -1) {
+            return position.file!.list![position.index];
+        } else {
+            return null;
+        }
+    }
+
     async post(itemIn: ItemPost) {
         if (utils.check.valueLength(itemIn) && equals<ItemPost>(itemIn)) {
             let file = await this.getListFile(this.main.account.address, -1);
