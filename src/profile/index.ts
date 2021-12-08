@@ -2,6 +2,7 @@ import Main from '../index';
 import { equals } from 'typescript-is';
 import utils from '../utils';
 import Accounts from './accounts';
+import axois from 'axios';
 
 class Profile {
     private main: Main;
@@ -31,6 +32,17 @@ class Profile {
         } else {
             throw Error('Parameter error');
         }
+    }
+
+    async getList(personas: string[]) {
+        const response = await axois({
+            method: 'get',
+            url: `${this.main.options.endpoint}/profile/list`,
+            params: {
+                personas: personas.join(','),
+            },
+        });
+        return <(RSS3Profile & { persona: string })[]>response.data.data;
     }
 }
 

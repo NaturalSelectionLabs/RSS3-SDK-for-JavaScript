@@ -206,6 +206,21 @@ const newProfile = await rss3.profile.patch({
 });
 ```
 
+**profile.getList()**
+
+```ts
+profile.get(personas: string[]): Promise<(RSS3Profile & { persona: string })[]>
+```
+
+Example:
+
+```ts
+const profiles = rss3.profile.getList([
+    '0xC8b960D09C0078c18Dcbe7eB9AB9d816BcCa8944',
+    '0xee8fEeb6D0c2fC02Ef41879514A75d0E791b5061',
+]);
+```
+
 ### Profile.accounts
 
 **profile.accounts.getSigMessage()**
