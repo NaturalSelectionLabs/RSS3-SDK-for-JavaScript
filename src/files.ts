@@ -44,7 +44,7 @@ class File {
                         url: `${this.main.options.endpoint}/${fileID}`,
                     });
                     const content = data.data;
-                    if (equals<RSS3File>(content)) {
+                    if (equals<RSS3File>(utils.object.removeCustomProperties(content))) {
                         // const check = this.main.account.check(content, utils.id.parse(fileID).persona);
                         // if (!check) {
                         //     reject('The signature does not match.');

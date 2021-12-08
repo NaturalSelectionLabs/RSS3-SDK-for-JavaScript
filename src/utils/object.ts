@@ -26,6 +26,18 @@ function removeEmpty(
     }
 }
 
+function removeCustomProperties(obj: AnyObject) {
+    const result = JSON.parse(JSON.stringify(obj));
+    for (let key in result) {
+        if (key[0] === '_') {
+            delete result[key];
+        } else if (typeof result[key] === 'object') {
+            result[key] = removeCustomProperties(result[key]);
+        }
+    }
+    return result;
+}
+
 export default {
     removeEmpty,
 
@@ -62,4 +74,6 @@ export default {
         let message = obj2Array(removeNotSignProperties(obj));
         return JSON.stringify(message);
     },
+
+    removeCustomProperties,
 };

@@ -24,20 +24,6 @@ test('check.valueLength', () => {
     ).toBe(false);
 });
 
-test('check.removeCustomProperties', () => {
-    const obj = {
-        test1: 'r',
-        test2: {
-            _test3: 'r',
-        },
-        _test4: 'r',
-    };
-    expect(check.removeCustomProperties(obj)).toEqual({
-        test1: 'r',
-        test2: {},
-    });
-});
-
 test('check.fileSize', () => {
     const testObj = {
         t: 'r',

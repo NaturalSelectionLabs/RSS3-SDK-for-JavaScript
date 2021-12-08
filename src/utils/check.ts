@@ -24,18 +24,6 @@ function valueLength(obj: AnyObject | string) {
     }
 }
 
-function removeCustomProperties(obj: AnyObject) {
-    const result = JSON.parse(JSON.stringify(obj));
-    for (let key in result) {
-        if (key[0] === '_') {
-            delete result[key];
-        } else if (typeof result[key] === 'object') {
-            result[key] = removeCustomProperties(result[key]);
-        }
-    }
-    return result;
-}
-
 function fileSize(obj: AnyObject) {
     const toBeObj = JSON.parse(JSON.stringify(obj));
     object.removeEmpty(toBeObj);
@@ -49,8 +37,6 @@ function fileSize(obj: AnyObject) {
 
 export default {
     valueLength,
-
-    removeCustomProperties,
 
     fileSize,
 

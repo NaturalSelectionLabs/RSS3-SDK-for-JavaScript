@@ -28,3 +28,17 @@ test('id.removeEmpty', () => {
         },
     });
 });
+
+test('check.removeCustomProperties', () => {
+    const obj = {
+        test1: 'r',
+        test2: {
+            _test3: 'r',
+        },
+        _test4: 'r',
+    };
+    expect(object.removeCustomProperties(obj)).toEqual({
+        test1: 'r',
+        test2: {},
+    });
+});
