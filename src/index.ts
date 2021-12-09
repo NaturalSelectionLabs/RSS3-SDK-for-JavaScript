@@ -4,7 +4,7 @@ import Profile from './profile/index';
 import Items from './items/index';
 import Links from './links';
 import Backlinks from './backlinks';
-import Assets from './assets';
+import Assets from './assets/index';
 import utils from './utils';
 
 export { utils };
