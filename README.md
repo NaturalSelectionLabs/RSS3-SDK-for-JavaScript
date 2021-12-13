@@ -542,7 +542,6 @@ const followers = await rss3.backlinks.getList(rss3.account.address, 'following'
 
 ```ts
 assets.getDetails(options: {
-    persona: string;
     assets: string[];
     full?: boolean;
 }): Promise<AnyObject[]>
@@ -552,7 +551,6 @@ Example:
 
 ```ts
 const details = await rss3.assets.getDetails({
-    persona: '0x1234567890123456789012345678901234567890',
     assets: ['xxx', 'xxx'],
     full: true,
 });

@@ -16,12 +16,11 @@ class Assets {
         this.custom = new CustomAssets(main);
     }
 
-    async getDetails(options: { persona: string; assets: string[]; full?: boolean }) {
+    async getDetails(options: { assets: string[]; full?: boolean }) {
         const response = await axois({
             method: 'get',
             url: `${this.main.options.endpoint}/assets/details`,
             params: {
-                persona: options.persona,
                 assets: options.assets.join(','),
                 full: options.full ? '1' : '0',
             },
