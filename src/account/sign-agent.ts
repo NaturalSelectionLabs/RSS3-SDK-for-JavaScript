@@ -67,7 +67,7 @@ class SignAgent {
 
     private set(value: IStorageData) {
         const key = this.getKey(this.main.account.address);
-        const va = Buffer.from(JSON.stringify(value), 'base64').toString();
+        const va = Buffer.from(JSON.stringify(value)).toString('base64');
         if (this.main.options.agentStorage) {
             this.main.options.agentStorage.set(key, va);
         } else {
@@ -98,7 +98,7 @@ class SignAgent {
                 data = Cookies.get(this.getKey(this.main.account.address));
             }
             if (data) {
-                const result = <IStorageData>JSON.parse(Buffer.from(data).toString('base64'));
+                const result = <IStorageData>JSON.parse(Buffer.from(data, 'base64').toString());
                 this.set(result);
                 return result;
             } else {
