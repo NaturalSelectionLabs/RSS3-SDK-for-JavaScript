@@ -37,13 +37,13 @@ class Account {
             this.privateKey = this.signer.privateKey.slice(2);
             this.address = this.signer.address;
         }
-        if (this.main.options.agentSign) {
-            this.signAgent = new SignAgent(main);
-        }
     }
 
     async sign(obj: AnyObject) {
         if (this.main.options.agentSign) {
+            if (!this.signAgent) {
+                this.signAgent = new SignAgent(this.main);
+            }
             obj.agent_id = await this.signAgent.getAddress();
             const agentMessage = this.signAgent.getMessage(obj.agent_id);
             if (!obj.agent_signature || ethers.utils.verifyMessage(agentMessage, obj.signature) !== obj.id) {
