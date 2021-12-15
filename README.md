@@ -294,6 +294,7 @@ items.getListByPersona(options: {
     tsp: string;
     persona: string;
     linkID?: string;
+    fieldLike?: string;
 }): Promise<(RSS3CustomItem | RSS3AutoItem)[]>
 ```
 

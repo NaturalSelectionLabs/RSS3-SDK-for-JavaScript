@@ -15,7 +15,13 @@ class Items {
         this.custom = new CustomItems(main);
     }
 
-    async getListByPersona(options: { limit: number; tsp: string; persona: string; linkID?: string }) {
+    async getListByPersona(options: {
+        limit: number;
+        tsp: string;
+        persona: string;
+        linkID?: string;
+        fieldLike?: string;
+    }) {
         const response = await axois({
             method: 'get',
             url: `${this.main.options.endpoint}/items/list`,
@@ -24,6 +30,7 @@ class Items {
                 tsp: options.tsp,
                 persona: options.persona,
                 linkID: options.linkID,
+                fieldLike: options.fieldLike,
             },
         });
         return <(RSS3CustomItem | RSS3AutoItem)[]>response.data.data;
