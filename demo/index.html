@@ -12,11 +12,11 @@
         <script>
             console.log(RSS3);
             window.rss3_new = new RSS3({
-                endpoint: 'http://localhost:3000',
+                endpoint: 'https://prenode.rss3.dev',
             });
             window.rss3_mnemonic = new RSS3({
-                endpoint: 'http://localhost:3000',
-                mnemonic: window.rss3_1.account.mnemonic,
+                endpoint: 'https://prenode.rss3.dev',
+                mnemonic: window.rss3_new.account.mnemonic,
             });
 
             (async () => {
@@ -25,7 +25,7 @@
                 const signer = provider.getSigner();
 
                 window.rss3_ethers = new RSS3({
-                    endpoint: 'http://localhost:3000',
+                    endpoint: 'https://prenode.rss3.dev',
                     address: await signer.getAddress(),
                     sign: async (data) => await signer.signMessage(data),
                 });

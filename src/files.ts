@@ -4,6 +4,7 @@ import axois from 'axios';
 import { equals } from 'typescript-is';
 import config from './config';
 import { AnyObject } from 'types/extend';
+import AsyncLock from 'async-lock';
 
 class File {
     private main: Main;
@@ -13,9 +14,11 @@ class File {
     private dirtyList: {
         [key: string]: number;
     } = {};
+    private lock: AsyncLock;
 
     constructor(main: Main) {
         this.main = main;
+        this.lock = new AsyncLock();
     }
 
     new(fileID: string) {
@@ -32,48 +35,48 @@ class File {
     }
 
     get(fileID: string = this.main.account.address, force?: boolean): Promise<RSS3File> {
-        if (this.list[fileID] && !force) {
-            return new Promise<RSS3File>((resolve) => {
-                resolve(this.list[fileID]);
-            });
-        } else {
-            return new Promise<RSS3File>(async (resolve, reject) => {
-                try {
-                    const data = await axois({
-                        method: 'get',
-                        url: `${this.main.options.endpoint}/${fileID}`,
-                    });
-                    const content = data.data;
-                    if (equals<RSS3File>(utils.object.removeCustomProperties(content))) {
-                        // const check = this.main.account.check(content, utils.id.parse(fileID).persona);
-                        // if (!check) {
-                        //     reject('The signature does not match.');
-                        // }
-                        this.list[fileID] = content;
-                        resolve(this.list[fileID]);
-                    } else {
-                        reject('Incorrectly formatted content.');
-                    }
-                } catch (error: any) {
-                    if (error.response?.data?.code === 5001) {
-                        const nowDate = new Date().toISOString();
-                        this.list[fileID] = {
-                            id: fileID,
-                            version: config.version,
-                            date_created: nowDate,
-                            date_updated: nowDate,
-                            signature: '',
-                        };
-                        this.dirtyList[fileID] = 1;
-                        resolve(this.list[fileID]);
-                    } else {
-                        reject(
-                            `Server response error. Error: ${this.main.options.endpoint}/${fileID} ${error.message}`,
-                        );
+        return new Promise<RSS3File>((resolve, reject) => {
+            this.lock.acquire(fileID, async () => {
+                if (this.list[fileID] && !force) {
+                    resolve(this.list[fileID]);
+                } else {
+                    try {
+                        const data = await axois({
+                            method: 'get',
+                            url: `${this.main.options.endpoint}/${fileID}`,
+                        });
+                        const content = data.data;
+                        if (equals<RSS3File>(utils.object.removeCustomProperties(content))) {
+                            // const check = this.main.account.check(content, utils.id.parse(fileID).persona);
+                            // if (!check) {
+                            //     reject('The signature does not match.');
+                            // }
+                            this.list[fileID] = content;
+                            resolve(this.list[fileID]);
+                        } else {
+                            reject('Incorrectly formatted content.');
+                        }
+                    } catch (error: any) {
+                        if (error.response?.data?.code === 5001) {
+                            const nowDate = new Date().toISOString();
+                            this.list[fileID] = {
+                                id: fileID,
+                                version: config.version,
+                                date_created: nowDate,
+                                date_updated: nowDate,
+                                signature: '',
+                            };
+                            this.dirtyList[fileID] = 1;
+                            resolve(this.list[fileID]);
+                        } else {
+                            reject(
+                                `Server response error. Error: ${this.main.options.endpoint}/${fileID} ${error.message}`,
+                            );
+                        }
                     }
                 }
             });
-        }
+        });
     }
 
     async getList(persona: string, field: 'assets' | 'backlinks' | 'links' | 'items', index = -1, id?: string) {
