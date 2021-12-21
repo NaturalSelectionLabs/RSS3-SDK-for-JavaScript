@@ -1,4 +1,5 @@
 import Main from '../index';
+import utils from '../utils';
 
 class AutoAssets {
     private main: Main;
@@ -13,13 +14,10 @@ class AutoAssets {
 
     async getList(persona: string, breakpoint?: (file: RSS3AutoAssetsList) => boolean) {
         const indexFile = <RSS3Index>await this.main.files.get(persona);
-        if (indexFile.assets?.list_auto) {
-            return <RSS3AutoAsset[]>await this.main.files.getAll(indexFile.assets.list_auto, (file) => {
-                return breakpoint?.(<RSS3AutoAssetsList>file) || false;
-            });
-        } else {
-            return [];
-        }
+        const listFile = indexFile.assets?.list_auto || utils.id.getAutoAssets(persona, 0);
+        return <RSS3AutoAsset[]>await this.main.files.getAll(listFile, (file) => {
+            return breakpoint?.(<RSS3AutoAssetsList>file) || false;
+        });
     }
 }
 

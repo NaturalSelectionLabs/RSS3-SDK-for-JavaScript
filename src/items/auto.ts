@@ -1,5 +1,6 @@
 import Main from '../index';
 import Backlinks from './backlinks';
+import utils from '../utils';
 
 class AutoItems {
     private main: Main;
@@ -16,13 +17,10 @@ class AutoItems {
 
     async getList(persona: string, breakpoint?: (file: RSS3AutoItemsList) => boolean) {
         const indexFile = <RSS3Index>await this.main.files.get(persona);
-        if (indexFile.items?.list_auto) {
-            return <RSS3AutoItem[]>await this.main.files.getAll(indexFile.items.list_auto, (file) => {
-                return breakpoint?.(<RSS3AutoItemsList>file) || false;
-            });
-        } else {
-            return [];
-        }
+        const listFile = indexFile.items?.list_auto || utils.id.getAutoItems(persona, 0);
+        return <RSS3AutoItem[]>await this.main.files.getAll(listFile, (file) => {
+            return breakpoint?.(<RSS3AutoItemsList>file) || false;
+        });
     }
 
     private async getPosition(itemID: string) {
