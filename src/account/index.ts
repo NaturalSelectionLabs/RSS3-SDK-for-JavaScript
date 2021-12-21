@@ -46,7 +46,10 @@ class Account {
             }
             obj.agent_id = await this.signAgent.getAddress();
             const agentMessage = this.signAgent.getMessage(obj.agent_id);
-            if (!obj.agent_signature || ethers.utils.verifyMessage(agentMessage, obj.signature) !== obj.id) {
+            if (
+                !obj.agent_signature ||
+                ethers.utils.verifyMessage(agentMessage, obj.signature) !== utils.id.parse(obj.id).persona
+            ) {
                 if (this.signer) {
                     obj.signature = await this.signer.signMessage(agentMessage);
                 } else if ((<IOptionsSign>this.main.options).sign) {
