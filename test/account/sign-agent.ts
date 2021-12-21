@@ -20,6 +20,7 @@ test('Account.sign with sign agent', async () => {
         },
     });
     const data: any = {
+        id: signer.address,
         agent_id: 'test',
         test1: 'r',
     };
