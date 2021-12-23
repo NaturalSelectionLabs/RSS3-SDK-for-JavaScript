@@ -1,4 +1,5 @@
 import Main from './index';
+import utils from './utils';
 
 class Backlinks {
     private main: Main;
@@ -23,13 +24,10 @@ class Backlinks {
 
     async getList(persona: string, id: string, breakpoint?: (file: RSS3BacklinksList) => boolean) {
         const { fileID } = await this.getPosition(persona, id);
-        if (fileID) {
-            return <RSS3ID[]>await this.main.files.getAll(fileID, (file) => {
-                return breakpoint?.(<RSS3BacklinksList>file) || false;
-            });
-        } else {
-            return [];
-        }
+        const listFile = fileID || utils.id.getBacklinks(persona, id, 0);
+        return <RSS3ID[]>await this.main.files.getAll(listFile, (file) => {
+            return breakpoint?.(<RSS3BacklinksList>file) || false;
+        });
     }
 }
 

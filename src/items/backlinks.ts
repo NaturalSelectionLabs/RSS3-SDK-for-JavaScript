@@ -53,13 +53,12 @@ class Backlinks {
 
     async getList(itemID: string, type: string, breakpoint?: (file: RSS3BacklinksList) => boolean) {
         const { id } = await this.getPosition(itemID, type);
-        if (id) {
-            return <RSS3ID[]>await this.main.files.getAll(id, (file) => {
-                return breakpoint?.(<RSS3BacklinksList>file) || false;
-            });
-        } else {
-            return [];
-        }
+        const parsed = utils.id.parse(itemID);
+        const listFile =
+            id || utils.id.getItemBacklinks(parsed.persona, parsed.payload![3], 0, parseInt(parsed.payload![1], 10));
+        return <RSS3ID[]>await this.main.files.getAll(listFile, (file) => {
+            return breakpoint?.(<RSS3BacklinksList>file) || false;
+        });
     }
 }
 
