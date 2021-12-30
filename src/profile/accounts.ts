@@ -20,7 +20,7 @@ class Accounts {
 
     async getSigMessage(account: RSS3Account) {
         return utils.object.stringifyObj({
-            ...account,
+            id: account.id,
             address: this.main.account.address,
         });
     }
