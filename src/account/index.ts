@@ -4,10 +4,14 @@ import { IOptionsMnemonic, IOptionsPrivateKey, IOptionsSign } from './../index';
 import { ethers } from 'ethers';
 import utils from './../utils';
 import SignAgent from './sign-agent';
+import AsyncLock from 'async-lock';
 
 class Account {
     private main: Main;
     private signer: ethers.Wallet;
+    private lock: AsyncLock;
+    private signCache: Map<string, string>;
+
     mnemonic: string | undefined;
     privateKey: string | undefined;
     address: string;
@@ -15,6 +19,8 @@ class Account {
 
     constructor(main: Main) {
         this.main = main;
+        this.lock = new AsyncLock();
+        this.signCache = new Map();
 
         if ((<IOptionsMnemonic>main.options).mnemonic) {
             // mnemonic
@@ -53,19 +59,35 @@ class Account {
                 if (this.signer) {
                     obj.signature = await this.signer.signMessage(agentMessage);
                 } else if ((<IOptionsSign>this.main.options).sign) {
-                    obj.signature = await (<IOptionsSign>this.main.options).sign(agentMessage);
+                    obj.signature = await this.outerSign(agentMessage);
                 }
             }
             obj.agent_signature = await this.signAgent.sign(obj);
         } else {
             delete obj.agent_signature;
             delete obj.agent_id;
+            const agentMessage = utils.object.stringifyObj(obj);
             if (this.signer) {
-                obj.signature = await this.signer.signMessage(utils.object.stringifyObj(obj));
+                obj.signature = await this.signer.signMessage(agentMessage);
             } else if ((<IOptionsSign>this.main.options).sign) {
-                obj.signature = await (<IOptionsSign>this.main.options).sign(utils.object.stringifyObj(obj));
+                obj.signature = await this.outerSign(agentMessage);
             }
         }
+    }
+
+    private outerSign(agentMessage: string) {
+        return new Promise(async (resolve, reject) => {
+            this.lock.acquire(agentMessage, async () => {
+                let signature;
+                if (!this.signCache.has(agentMessage)) {
+                    signature = await (<IOptionsSign>this.main.options).sign(agentMessage);
+                    this.signCache.set(agentMessage, signature);
+                } else {
+                    signature = this.signCache.get(agentMessage);
+                }
+                resolve(signature);
+            });
+        });
     }
 }
 
