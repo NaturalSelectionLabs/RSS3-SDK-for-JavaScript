@@ -1,5 +1,5 @@
 function parse(id: string) {
-    const splited = id.split('-');
+    const splited = split(id);
     if (splited.length <= 3) {
         return {
             persona: splited[0],
@@ -22,6 +22,19 @@ function get(persona: string, type: string, index: number | string, payload?: st
         payloadString = '-' + payload.join('.');
     }
     return `${persona}-${type}${payloadString}-${index}`;
+}
+
+function split(obj: string) {
+    const splited = obj.split('-');
+    if (splited) {
+        for (let i = 0; i < splited.length; i++) {
+            while (splited[i].endsWith('\\')) {
+                splited[i] = splited[i].slice(0, -1) + '-' + splited[i + 1];
+                splited.splice(i + 1, 1);
+            }
+        }
+    }
+    return splited;
 }
 
 export default {
@@ -66,15 +79,18 @@ export default {
     },
 
     getAccount(platform: string, identity: string) {
-        return `${platform}-${identity}`;
+        return `${platform.replace(/-/g, '\\-')}-${identity.replace(/-/g, '\\-')}`;
     },
 
     getAsset(platform: string, identity: string, type: string, uniqueID: string) {
-        return `${platform}-${identity}-${type}-${uniqueID}`;
+        return `${platform.replace(/-/g, '\\-')}-${identity.replace(/-/g, '\\-')}-${type.replace(
+            /-/g,
+            '\\-',
+        )}-${uniqueID.replace(/-/g, '\\-')}`;
     },
 
     parseAccount(id: string) {
-        const splited = id.split('-');
+        const splited = split(id);
         return {
             platform: splited[0],
             identity: splited[1],
@@ -82,7 +98,7 @@ export default {
     },
 
     parseAsset(id: string) {
-        const splited = id.split('-');
+        const splited = split(id);
         return {
             platform: splited[0],
             identity: splited[1],
