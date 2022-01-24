@@ -94,7 +94,7 @@ class File {
                     fileID = indexFile[field];
                 }
                 if (!fileID) {
-                    throw new Error(`${field} ${id ? `id ${id} ` : ''}does not exist`);
+                    return null;
                 }
                 const parsed = utils.id.parse(fileID);
                 return <RSS3List>(
