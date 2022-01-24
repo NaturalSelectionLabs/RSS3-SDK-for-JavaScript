@@ -17,20 +17,23 @@ class Items {
 
     async getListByPersona(options: {
         limit: number;
-        tsp: string;
-        persona: string;
+        tsp?: string;
+        persona?: string;
         linkID?: string;
         fieldLike?: string;
+        personaList?: string[];
     }) {
+        const usePost = options.personaList && options.personaList.length > 250;
         const response = await axois({
-            method: 'get',
+            method: usePost ? 'post' : 'get',
             url: `${this.main.options.endpoint}/items/list`,
-            params: {
+            [usePost ? 'data' : 'params']: {
                 limit: options.limit,
                 tsp: options.tsp,
                 persona: options.persona,
                 linkID: options.linkID,
                 fieldLike: options.fieldLike,
+                personaList: options.personaList?.join(','),
             },
         });
         return <(RSS3CustomItem | RSS3AutoItem)[]>response.data.data;
