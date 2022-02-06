@@ -15,13 +15,14 @@ class Items {
         this.custom = new CustomItems(main);
     }
 
-    async getListByPersona(options: {
+    async getList(options: {
         limit: number;
         tsp?: string;
         persona?: string;
         linkID?: string;
         fieldLike?: string;
         personaList?: string[];
+        linkTarget?: string;
     }) {
         const usePost = options.personaList && options.personaList.length > 250;
         const response = await axois({
@@ -34,9 +35,22 @@ class Items {
                 linkID: options.linkID,
                 fieldLike: options.fieldLike,
                 personaList: options.personaList?.join(','),
+                linkTarget: options.linkTarget,
             },
         });
         return <(RSS3CustomItem | RSS3AutoItem)[]>response.data.data;
+    }
+
+    async getListByPersona(options: {
+        limit: number;
+        tsp?: string;
+        persona?: string;
+        linkID?: string;
+        fieldLike?: string;
+        personaList?: string[];
+        linkTarget?: string;
+    }) {
+        this.getList(options);
     }
 }
 
