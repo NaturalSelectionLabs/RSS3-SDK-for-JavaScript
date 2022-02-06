@@ -80,6 +80,7 @@ class CustomItems {
                     indexFile.items = {};
                 }
                 indexFile.items.list_custom = newID;
+                this.main.files.set(indexFile);
             }
             if (!file.list) {
                 file.list = [];
