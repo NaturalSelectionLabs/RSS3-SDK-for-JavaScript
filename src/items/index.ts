@@ -50,7 +50,7 @@ class Items {
         personaList?: string[];
         linkTarget?: string;
     }) {
-        this.getList(options);
+        await this.getList(options);
     }
 }
 
