@@ -48,6 +48,9 @@ const links0File = {
 mock.onGet(`test/${rss3.account.address}`).replyOnce(200, indexFile);
 mock.onGet(`test/${id.getLinks(rss3.account.address, 'test', 1)}`).replyOnce(200, links1File);
 mock.onGet(`test/${id.getLinks(rss3.account.address, 'test', 0)}`).replyOnce(200, links0File);
+mock.onGet(`test/${id.getLinks(rss3.account.address, 'test1', 0)}`).reply(404, {
+    code: 5001,
+});
 
 test('Links.getListFile', async () => {
     expect(await rss3.links.getListFile(rss3.account.address, 'test', -1)).toEqual(links1File);
