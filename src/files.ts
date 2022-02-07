@@ -66,7 +66,9 @@ class File {
                                 date_updated: nowDate,
                                 signature: '',
                             };
-                            this.dirtyList[fileID] = 1;
+                            if (fileID === this.main.account.address) {
+                                this.dirtyList[fileID] = 1;
+                            }
                             resolve(this.list[fileID]);
                         } else {
                             reject(

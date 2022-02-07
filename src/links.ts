@@ -17,11 +17,23 @@ class Links {
 
     private async getPosition(persona: string, id: string) {
         const file = <RSS3Index>await this.main.files.get(persona);
-        const index = (file.links || []).findIndex((lks) => lks.id === id);
+        let index = (file.links || []).findIndex((lks) => lks.id === id);
+        let page = -1;
+        if (index === -1) {
+            let trialList;
+            do {
+                trialList = <RSS3Index>await this.main.files.get(utils.id.getLinks(persona, id, page + 1));
+                if (trialList?.signature) {
+                    page++;
+                } else {
+                    break;
+                }
+            } while (true);
+        }
         return {
             file,
             index,
-            fileID: index !== -1 ? file.links![index].list : null,
+            fileID: index !== -1 ? file.links![index].list : page > -1 ? utils.id.getLinks(persona, id, page) : null,
         };
     }
 
