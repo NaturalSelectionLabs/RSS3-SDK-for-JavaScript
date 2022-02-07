@@ -29,6 +29,16 @@ class Links {
                     break;
                 }
             } while (true);
+            if (page > -1 && persona === this.main.account.address) {
+                if (!file.links) {
+                    file.links = [];
+                }
+                file.links.push({
+                    id,
+                    list: utils.id.getLinks(persona, id, page),
+                });
+                this.main.files.set(file);
+            }
         }
         return {
             file,
