@@ -36,6 +36,7 @@
         "crypto-js": "4.1.1",
         "ethers": "5.4.1",
         "js-cookie": "3.0.1",
+        "json-stringify-deterministic": "1.0.4",
         "tweetnacl": "1.0.3",
         "tweetnacl-util": "0.15.1",
         "typescript-is": "0.18.2",
