@@ -5,35 +5,42 @@ import Items from './items/index';
 import Links from './links';
 import Backlinks from './backlinks';
 import Assets from './assets/index';
-import utils from './utils';
-
-export { utils };
 
 interface IOptions {
     endpoint: string;
-    agentSign?: boolean;
-    agentStorage?: {
-        set: (key: string, value: string) => Promise<void>;
-        get: (key: string) => Promise<string>;
-    };
 }
 
 export interface IOptionsMnemonic extends IOptions {
-    mnemonic?: string;
-    mnemonicPath?: string;
+    account: {
+        platform?: string;
+        mnemonic: string;
+        mnemonicPath?: string;
+    };
 }
 
 export interface IOptionsPrivateKey extends IOptions {
-    privateKey: string;
+    account: {
+        platform?: string;
+        privateKey: string;
+    };
 }
 
 export interface IOptionsSign extends IOptions {
-    address: string;
-    sign: (data: string) => Promise<string>;
+    account: {
+        platform?: string;
+        identity: string;
+        sign: (message: string) => Promise<string>;
+    };
+}
+
+export interface IOptionsNew extends IOptions {
+    account?: {
+        platform?: string;
+    };
 }
 
 class RSS3 {
-    options: IOptionsMnemonic | IOptionsPrivateKey | IOptionsSign;
+    options: IOptionsMnemonic | IOptionsPrivateKey | IOptionsSign | IOptionsNew;
     account: Account;
     files: Files;
     profile: Profile;
@@ -42,8 +49,18 @@ class RSS3 {
     backlinks: Backlinks;
     assets: Assets;
 
-    constructor(options: IOptionsMnemonic | IOptionsPrivateKey | IOptionsSign) {
+    constructor(options: IOptionsMnemonic | IOptionsPrivateKey | IOptionsSign | IOptionsNew) {
         this.options = options;
+
+        if (!this.options.endpoint) {
+            throw new Error('Option endpoint is required');
+        }
+        if (!this.options.account) {
+            this.options.account = {};
+        }
+        if (!this.options.account.platform) {
+            this.options.account.platform = 'ethereum';
+        }
 
         this.files = new Files(this);
         this.account = new Account(this);
