@@ -77,13 +77,16 @@ const obj: any = {
     },
 };
 
-const agentMessage = UtilsSignature.getMessage(obj);
-
 const signer = ethers.Wallet.createRandom();
 obj.identifier = `rss3://account:${signer.address}@ethereum`;
+
+const agentMessage = UtilsSignature.getMessage(obj);
 
 (async () => {
     obj.signature = await signer.signMessage(agentMessage);
     console.log(agentMessage);
+    console.log('-------------------------------------');
     console.log(obj);
+    console.log('-------------------------------------');
+    console.log(JSON.stringify(obj));
 })();
