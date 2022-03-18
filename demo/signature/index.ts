@@ -79,6 +79,7 @@ const obj: any = {
 
 const signer = ethers.Wallet.createRandom();
 obj.identifier = `rss3://account:${signer.address}@ethereum`;
+delete obj.signature;
 
 const agentMessage = UtilsSignature.getMessage(obj);
 
