@@ -17,8 +17,8 @@ We've seen the Web1 era when everyone was happy to use RSS as a standard format 
 
 We all agree that information should be more freely distributed in the Web3 era, and to facilitate this we need a common format that we can all use to syndicate information, reducing the cost of use and development. So we created a new protocol RSS3, RSS stands for a tribute to the history and 3 stands for Web3.
 
-This is the official JavaScript SDK for [RSS network](https://rss3.wiki/network-api.html), currently supporting the [RSS3 protocol](https://rss3.wiki/protocol.html) v0.3.1.
+This is the official JavaScript SDK for [RSS3 network](https://rss3.io/sdk/rss3-sdk-for-javascript.html), currently supporting the [RSS3 protocol](https://github.com/NaturalSelectionLabs/RSS3/blob/main/versions/v0.3.1.md) v0.3.1.
 
 ## Documentation
 
-To check out live examples and docs, visit [rss3.wiki](https://rss3.wiki/rss3-sdk-for-javascript.html)
+To check out live examples and docs, visit [rss3.io](https://rss3.io/sdk/rss3-sdk-for-javascript.html)
