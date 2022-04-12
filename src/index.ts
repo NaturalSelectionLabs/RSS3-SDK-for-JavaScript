@@ -1,57 +1,44 @@
-import Account from './account/index';
-import Files from './files';
-import Profile from './profile/index';
-import Items from './items/index';
+import Utils from './utils';
+import Profiles from './profiles';
 import Links from './links';
 import Backlinks from './backlinks';
-import Assets from './assets/index';
-import utils from './utils';
-
-export { utils };
+import Assets from './assets';
+import Notes from './notes';
 
 interface IOptions {
     endpoint: string;
-    agentSign?: boolean;
-    agentStorage?: {
-        set: (key: string, value: string) => Promise<void>;
-        get: (key: string) => Promise<string>;
-    };
-}
-
-export interface IOptionsMnemonic extends IOptions {
-    mnemonic?: string;
-    mnemonicPath?: string;
-}
-
-export interface IOptionsPrivateKey extends IOptions {
-    privateKey: string;
-}
-
-export interface IOptionsSign extends IOptions {
-    address: string;
-    sign: (data: string) => Promise<string>;
+    appName?: string;
 }
 
 class RSS3 {
-    options: IOptionsMnemonic | IOptionsPrivateKey | IOptionsSign;
-    account: Account;
-    files: Files;
-    profile: Profile;
-    items: Items;
+    options: IOptions;
+
+    utils: Utils;
+    profiles: Profiles;
     links: Links;
     backlinks: Backlinks;
+    notes: Notes;
     assets: Assets;
 
-    constructor(options: IOptionsMnemonic | IOptionsPrivateKey | IOptionsSign) {
+    constructor(options: IOptions) {
         this.options = options;
 
-        this.files = new Files(this);
-        this.account = new Account(this);
-        this.profile = new Profile(this);
-        this.items = new Items(this);
+        this.options.endpoint = this.options.endpoint.replace(/\/$/, '');
+
+        if (!this.options.endpoint) {
+            throw new Error('Option endpoint is required');
+        }
+
+        this.utils = new Utils(this);
+        this.profiles = new Profiles(this);
         this.links = new Links(this);
         this.backlinks = new Backlinks(this);
         this.assets = new Assets(this);
+        this.notes = new Notes(this);
+    }
+
+    async get(uri: string) {
+        return <LinksResponse>(await this.utils.requestURI(uri)).data;
     }
 }
 
