@@ -56,6 +56,7 @@ const config = {
     plugins: [
         new webpack.DefinePlugin({
             'process.env': JSON.stringify({}),
+            SDK_VERSION: `"${require('./package.json').version}"`,
         }),
     ],
 };

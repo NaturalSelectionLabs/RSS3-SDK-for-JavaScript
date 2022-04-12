@@ -10,7 +10,7 @@
     ],
     "scripts": {
         "dev": "webpack serve --mode development",
-        "build": "ttsc",
+        "build": "webpack --mode production",
         "prepare": "husky install",
         "test": "jest"
     },

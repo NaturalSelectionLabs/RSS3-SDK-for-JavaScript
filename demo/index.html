@@ -7,38 +7,26 @@
     </head>
     <body>
         <script src="../RSS3.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/web3@1.4.0/dist/web3.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/ethers@5.5.1/dist/ethers.umd.js"></script>
+        <!-- <script src="https://cdn.jsdelivr.net/npm/web3@1.4.0/dist/web3.min.js"></script> -->
+        <!-- <script src="https://cdn.jsdelivr.net/npm/ethers@5.5.1/dist/ethers.umd.js"></script> -->
         <script>
             console.log(RSS3);
-            window.rss3_new = new RSS3({
-                endpoint: 'https://prenode.rss3.dev',
-            });
-            window.rss3_mnemonic = new RSS3({
-                endpoint: 'https://prenode.rss3.dev',
-                mnemonic: window.rss3_new.account.mnemonic,
+            window.rss3 = new RSS3({
+                endpoint: 'http://test-pregod.rss3.dev/v0.4.0/',
+                appName: 'Demo',
             });
 
-            (async () => {
-                // ethers
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
-                const signer = provider.getSigner();
+            // (async () => {
+            //     // ethers
+            //     const provider = new ethers.providers.Web3Provider(window.ethereum);
+            //     const signer = provider.getSigner();
 
-                window.rss3_ethers = new RSS3({
-                    endpoint: 'https://prenode.rss3.dev',
-                    address: await signer.getAddress(),
-                    sign: async (data) => await signer.signMessage(data),
-                });
-
-                // web3
-                const web3 = new Web3(window.ethereum);
-                const address = (await web3.eth.getAccounts())[0];
-                window.rss3_web3 = new RSS3({
-                    endpoint: '',
-                    address,
-                    sign: async (data) => await web3.eth.personal.sign(data, address),
-                });
-            })();
+            //     window.rss3_ethers = new RSS3({
+            //         endpoint: 'https://prenode.rss3.dev',
+            //         address: await signer.getAddress(),
+            //         sign: async (data) => await signer.signMessage(data),
+            //     });
+            // })();
         </script>
     </body>
 </html>
