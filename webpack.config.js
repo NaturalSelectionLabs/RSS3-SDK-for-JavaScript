@@ -1,6 +1,5 @@
 const webpack = require('webpack');
 const path = require('path');
-const typescriptIsTransformer = require('typescript-is/lib/transform-inline/transformer').default;
 
 const config = {
     entry: {
@@ -26,11 +25,6 @@ const config = {
                     },
                     {
                         loader: 'ts-loader',
-                        options: {
-                            getCustomTransformers: (program) => ({
-                                before: [typescriptIsTransformer(program)],
-                            }),
-                        },
                     },
                 ],
                 exclude: /node_modules/,
@@ -44,10 +38,6 @@ const config = {
     },
     resolve: {
         extensions: ['.tsx', '.ts', '.js'],
-        fallback: {
-            // for typescript-is
-            util: require.resolve('util/'),
-        },
     },
     devServer: {
         compress: true,

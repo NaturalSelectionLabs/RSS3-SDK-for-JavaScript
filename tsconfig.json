@@ -11,12 +11,7 @@
         "moduleResolution": "node",
         "sourceMap": false,
         "outDir": "dist",
-        "baseUrl": ".",
-        "plugins": [
-            {
-                "transform": "typescript-is/lib/transform-inline/transformer"
-            }
-        ]
+        "baseUrl": "."
     },
     "include": ["src/**/*", "types/*"]
 }
