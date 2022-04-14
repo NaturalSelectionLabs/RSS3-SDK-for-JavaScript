@@ -6,27 +6,6 @@
         <title>RSS3-SDK demo</title>
     </head>
     <body>
-        <script src="../RSS3.js"></script>
-        <!-- <script src="https://cdn.jsdelivr.net/npm/web3@1.4.0/dist/web3.min.js"></script> -->
-        <!-- <script src="https://cdn.jsdelivr.net/npm/ethers@5.5.1/dist/ethers.umd.js"></script> -->
-        <script>
-            console.log(RSS3);
-            window.rss3 = new RSS3({
-                endpoint: 'http://test-pregod.rss3.dev/v0.4.0/',
-                appName: 'Demo',
-            });
-
-            // (async () => {
-            //     // ethers
-            //     const provider = new ethers.providers.Web3Provider(window.ethereum);
-            //     const signer = provider.getSigner();
-
-            //     window.rss3_ethers = new RSS3({
-            //         endpoint: 'https://prenode.rss3.dev',
-            //         address: await signer.getAddress(),
-            //         sign: async (data) => await signer.signMessage(data),
-            //     });
-            // })();
-        </script>
+        <script type="module" src="./index.ts"></script>
     </body>
 </html>
