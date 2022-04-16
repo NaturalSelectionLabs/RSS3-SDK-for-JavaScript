@@ -1,11 +1,11 @@
 {
     "compilerOptions": {
         "strict": true,
-        "module": "commonjs",
+        "module": "esnext",
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
         "strictPropertyInitialization": false,
-        "target": "es6",
+        "target": "esnext",
         "declaration": true,
         "noImplicitAny": true,
         "moduleResolution": "node",
