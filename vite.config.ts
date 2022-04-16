@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite';
-import path from 'path';
+import path, { format } from 'path';
 import { version } from './package.json';
 import vue from '@vitejs/plugin-vue';
 import AutoImport from 'unplugin-auto-import/vite';
@@ -11,8 +11,8 @@ export default defineConfig({
         lib: {
             entry: path.resolve(__dirname, 'src/index.ts'),
             name: 'RSS3',
-            formats: ['umd'],
-            fileName: () => `rss3.js`,
+            formats: ['umd', 'es'],
+            fileName: (format) => `rss3.${format}.js`,
         },
     },
     define: {
