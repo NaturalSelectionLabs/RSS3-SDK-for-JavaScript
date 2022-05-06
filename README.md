@@ -1,3 +1,7 @@
+> ⚠️ 
+> 
+> This SDK has been deprecated and we are going to launch a new scheme and supporting facilities soon
+
 <p align="center">
     <p align="center">
         <img src="https://graphics.rss3.workers.dev/" alt="RSS3" width="100">
