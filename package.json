@@ -2,13 +2,20 @@
     "name": "rss3",
     "version": "0.8.19",
     "description": "",
-    "main": "dist/rss3.js",
     "type": "module",
     "files": [
         "src",
         "dist",
         "types"
     ],
+    "main": "./dist/rss3.umd.js",
+    "module": "./dist/rss3.es.js",
+    "exports": {
+        ".": {
+            "import": "./dist/rss3.es.js",
+            "require": "./dist/rss3.umd.js"
+        }
+    },
     "scripts": {
         "prepare": "husky install",
         "dev": "vite",
